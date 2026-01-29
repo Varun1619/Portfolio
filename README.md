@@ -6,10 +6,6 @@
 
 A modern portfolio website featuring an interactive ETL Pipeline Simulator that demonstrates real data engineering concepts.
 
-## Live Demo
-
-**[varunsingh.dev](https://varunsingh.dev)**
-
 ## Features
 
 **Interactive ETL Pipeline Simulator**  
