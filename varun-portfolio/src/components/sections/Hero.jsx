@@ -1,130 +1,79 @@
-import React from 'react';
-import { funFacts } from '../../data/experiences';
-import { socialLinks } from '../../data/skills';
-import SkillIcon from '../../assets/icons/SkillIcons';
+// Hero.jsx
+import { useEffect, useState } from 'react';
 
-const Hero = ({ loaded }) => {
+const Hero = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
   return (
-    <section
-      id="home"
-      className="min-h-screen flex items-center px-6 pt-20 relative overflow-hidden"
-    >
-      {/* Background Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 right-20 w-72 h-72 bg-violet-200 rounded-full blur-3xl opacity-40 animate-pulse" />
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-indigo-200 rounded-full blur-3xl opacity-30 animate-pulse" />
-      </div>
-
-      <div className="max-w-6xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
-        {/* Left Column: Content */}
-        <div
-          className={`text-center lg:text-left transition-all duration-1000 ${
-            loaded ? 'translate-x-0 opacity-100' : '-translate-x-20 opacity-0'
-          }`}
-        >
-          {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-100 to-indigo-100 text-violet-700 text-sm font-medium mb-6">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            Open to Opportunities
-          </div>
-
-          {/* Heading */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-4 leading-tight">
-            Hi, I'm{' '}
-            <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Varun
-            </span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-2xl text-slate-500 font-light mb-2">
-            Data Engineer & Pipeline Architect
-          </p>
-          <p className="text-lg text-slate-400 mb-8 max-w-lg mx-auto lg:mx-0">
-            I turn messy data into clean insights. Currently crafting data magic at{' '}
-            <span className="text-violet-600 font-medium">Northeastern University</span> 🎓
-          </p>
-
-          {/* Fun Facts */}
-          <div className="flex flex-wrap gap-3 justify-center lg:justify-start mb-8">
-            {funFacts.map((fact, i) => (
-              <div key={i} className="group relative">
-                <div className="px-3 py-2 bg-white rounded-full shadow-sm border border-slate-100 text-sm flex items-center gap-2 hover:border-violet-200 hover:shadow-md transition-all cursor-default">
-                  <span>{fact.icon}</span>
-                  <span className="text-slate-600">{fact.text}</span>
-                </div>
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  {fact.detail}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex gap-4 justify-center lg:justify-start">
-            <a
-              href="#playground"
-              className="px-6 py-3 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium hover:shadow-lg hover:shadow-violet-300 hover:-translate-y-1 transition-all"
-            >
-              Try the Playground ↓
-            </a>
-            <a
-              href={socialLinks.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 rounded-full border-2 border-slate-200 text-slate-600 font-medium hover:border-violet-300 transition-all"
-            >
-              LinkedIn →
-            </a>
-          </div>
+    <section className="relative min-h-screen flex items-center justify-center bg-slate-950 overflow-hidden py-12 px-4">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-grid-pattern bg-[size:50px_50px] opacity-20" />
+      <div className="absolute inset-0 bg-gradient-radial from-violet-900/20 via-transparent to-transparent" />
+      
+      {/* Floating Orbs */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-violet-600/30 rounded-full blur-[100px] animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse delay-500" />
+      
+      <div className="relative z-10 max-w-4xl mx-auto text-center">
+        {/* Greeting */}
+        <p className={`text-violet-400 text-lg mb-4 transition-all duration-700 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}>
+          👋 Hello, I'm
+        </p>
+        
+        {/* Name */}
+        <h1 className={`text-5xl md:text-7xl font-bold mb-4 transition-all duration-700 delay-100 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}>
+          <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_200%]">
+            Varun Singh
+          </span>
+        </h1>
+        
+        {/* Title */}
+        <h2 className={`text-2xl md:text-3xl text-slate-300 mb-6 transition-all duration-700 delay-200 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}>
+          Data Engineer
+        </h2>
+        
+        {/* Description */}
+        <p className={`text-slate-400 text-lg max-w-2xl mx-auto mb-8 transition-all duration-700 delay-300 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}>
+          Building scalable data pipelines and transforming raw data into actionable insights
+        </p>
+        
+        {/* CTA Buttons */}
+        <div className={`flex flex-wrap justify-center gap-4 transition-all duration-700 delay-400 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}>
+          <a 
+            href="#playground" 
+            className="group relative px-8 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-full font-medium overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-violet-500/25"
+          >
+            <span className="relative z-10">View ETL Demo</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </a>
+          <a 
+            href="#contact" 
+            className="px-8 py-3 border border-slate-600 rounded-full font-medium text-slate-300 hover:border-violet-500 hover:text-violet-400 transition-all duration-300 hover:scale-105"
+          >
+            Get In Touch
+          </a>
         </div>
-
-        {/* Right Column: Animated Avatar */}
-        <div
-          className={`relative transition-all duration-1000 delay-300 ${
-            loaded ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-          }`}
-        >
-          <div className="relative mx-auto w-80 h-80">
-            {/* Rotating Borders */}
-            <div
-              className="absolute inset-0 rounded-full border-2 border-dashed border-violet-200"
-              style={{ animation: 'spin 30s linear infinite' }}
-            />
-            <div
-              className="absolute inset-4 rounded-full border-2 border-dashed border-indigo-200"
-              style={{ animation: 'spin 25s linear infinite reverse' }}
-            />
-
-            {/* Gradient Ring */}
-            <div className="absolute inset-8 rounded-full bg-gradient-to-br from-violet-400 via-indigo-400 to-purple-500" />
-
-            {/* Avatar Center */}
-            <div className="absolute inset-10 rounded-full bg-white shadow-2xl flex items-center justify-center">
-              <div className="text-6xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                VS
-              </div>
-            </div>
-
-            {/* Floating Skill Icons */}
-            <div
-              className="absolute -top-2 right-4 p-2 bg-white rounded-xl shadow-lg"
-              style={{ animation: 'bounce 3s infinite' }}
-            >
-              <SkillIcon name="Python" size={28} />
-            </div>
-            <div
-              className="absolute bottom-8 -left-4 p-2 bg-white rounded-xl shadow-lg"
-              style={{ animation: 'bounce 3.5s infinite' }}
-            >
-              <SkillIcon name="Apache Spark" size={28} />
-            </div>
-            <div
-              className="absolute top-1/2 -right-4 p-2 bg-white rounded-xl shadow-lg"
-              style={{ animation: 'bounce 4s infinite' }}
-            >
-              <SkillIcon name="Kafka" size={28} />
-            </div>
+        
+        {/* Scroll Indicator */}
+        <div className={`mt-16 transition-all duration-700 delay-500 ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}>
+          <div className="w-6 h-10 border-2 border-slate-600 rounded-full mx-auto flex justify-center">
+            <div className="w-1.5 h-3 bg-violet-500 rounded-full mt-2 animate-bounce" />
           </div>
         </div>
       </div>
