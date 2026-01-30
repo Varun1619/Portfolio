@@ -1,68 +1,70 @@
-import React from 'react';
-import { stats } from '../../data/experiences';
-import { skills } from '../../data/skills';
-import SkillIcon from '../../assets/icons/SkillIcons';
+// About.jsx
+import { useEffect, useRef, useState } from 'react';
 
-const About = ({ sectionClass }) => {
+const About = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+    
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
+
+  const stats = [
+    { value: '140K+', label: 'Records Processed' },
+    { value: '50%', label: 'Manual Work Reduced' },
+    { value: '25%', label: 'Data Accessibility Improved' },
+  ];
+
   return (
-    <section id="about" className="py-24 px-6">
+    <section ref={sectionRef} id="about" className="py-16 px-4 bg-slate-950">
       <div className="max-w-6xl mx-auto">
-        <div className={`text-center mb-16 ${sectionClass}`}>
-          <span className="text-violet-600 font-medium">About Me</span>
-          <h2 className="text-4xl md:text-5xl font-black mt-2">
-            The{' '}
-            <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-              Data Nerd
-            </span>{' '}
-            Behind the Code
-          </h2>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className={sectionClass}>
-            <p className="text-lg text-slate-600 leading-relaxed mb-6">
-              I'm not your typical data engineer. Sure, I build ETL pipelines
-              and optimize queries, but I also believe data should tell a story.
-              At{' '}
-              <span className="font-semibold text-violet-600">
-                Mass General Brigham
-              </span>
-              , I processed 140K+ medical records. At{' '}
-              <span className="font-semibold text-violet-600">LTI Mindtree</span>
-              , I trained 50+ engineers on Kafka.
+        <h2 className={`text-4xl font-bold text-center mb-12 transition-all duration-700 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
+          <span className="gradient-text">About Me</span>
+        </h2>
+        
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          {/* Left: Text */}
+          <div className={`transition-all duration-700 delay-200 ${
+            isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
+          }`}>
+            <p className="text-slate-300 text-lg leading-relaxed mb-6">
+              I'm a Data Engineer pursuing my MS in Information Systems at Northeastern University. 
+              I specialize in building robust data pipelines, optimizing ETL processes, and 
+              creating scalable data architectures.
             </p>
-            <p className="text-lg text-slate-600 leading-relaxed mb-8">
-              When I'm not wrangling data, you'll find me exploring new tech,
-              gaming, or hunting for the perfect cup of coffee ☕
+            <p className="text-slate-400 leading-relaxed">
+              With hands-on experience at Mass General Brigham, LTI Mindtree, and Nismotek, 
+              I've developed solutions that process hundreds of thousands of records while 
+              significantly reducing manual intervention.
             </p>
-            <div className="flex flex-wrap gap-3">
-              {skills.slice(0, 6).map((skill) => (
-                <div
-                  key={skill.name}
-                  className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm border border-slate-100 hover:border-violet-200 transition-all"
-                >
-                  <SkillIcon name={skill.name} size={20} />
-                  <span className="text-sm font-medium text-slate-700">
-                    {skill.name}
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
-
-          <div className={`grid grid-cols-2 gap-4 ${sectionClass}`}>
-            {stats.map((stat, i) => (
-              <div
-                key={i}
-                className="p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all"
+          
+          {/* Right: Stats */}
+          <div className={`grid grid-cols-3 gap-4 transition-all duration-700 delay-400 ${
+            isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+          }`}>
+            {stats.map((stat, idx) => (
+              <div 
+                key={idx}
+                className="glass-card p-6 text-center hover:border-violet-500/50 transition-all duration-300 hover:-translate-y-1"
               >
-                <span className="text-3xl">{stat.icon}</span>
-                <div
-                  className={`text-3xl font-black mt-2 bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}
-                >
-                  {stat.num}
-                </div>
-                <div className="text-sm text-slate-500">{stat.label}</div>
+                <div className="text-3xl font-bold gradient-text mb-2">{stat.value}</div>
+                <div className="text-slate-400 text-sm">{stat.label}</div>
               </div>
             ))}
           </div>

@@ -1,44 +1,28 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#8b5cf6',
-          600: '#7c3aed',
-          700: '#6d28d9',
-          800: '#5b21b6',
-          900: '#4c1d95',
-        },
-      },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        dark: {
+          950: '#0a0a0f',
+          900: '#0f0f1a',
+          800: '#1a1a2e',
+          700: '#252540',
+        }
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-out forwards',
-        'slide-in': 'slideIn 0.5s ease-out forwards',
-        'spin-slow': 'spin 30s linear infinite',
-        'spin-slow-reverse': 'spin 25s linear infinite reverse',
-        'bounce-slow': 'bounce 3s infinite',
+        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+        'fade-in-left': 'fadeInLeft 0.6s ease-out forwards',
+        'fade-in-right': 'fadeInRight 0.6s ease-out forwards',
+        'float': 'float 3s ease-in-out infinite',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+        'gradient': 'gradient-shift 3s ease infinite',
+        'spin-slow': 'spin 8s linear infinite',
       },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        slideIn: {
-          '0%': { opacity: '0', transform: 'translateX(-20px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'grid-pattern': 'linear-gradient(to right, rgba(139, 92, 246, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(139, 92, 246, 0.1) 1px, transparent 1px)',
       },
     },
   },
