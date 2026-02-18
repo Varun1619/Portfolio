@@ -3,99 +3,233 @@ import { useEffect, useRef, useState } from 'react';
 
 const experiences = [
   {
-    role: 'Data Analyst Co-op',
+    role: 'Digital Data Engineer Intern',
     company: 'Mass General Brigham',
-    period: 'Jan 2024 - Present',
-    highlights: ['Processed 140,000+ records', 'Built automated reporting pipelines'],
+    period: 'Jun 2025 — Dec 2025',
+    tech: ['MS Fabric', 'PySpark', 'Power BI', 'Power Apps'],
+    details: [
+      'Architected distributed data pipelines with built in observability to consolidate multi source data into a centralized cloud Data Lake, reducing manual intervention by 50%.',
+      'Built scalable cloud based data applications processing 140K+ records per batch with 99%+ SLA compliance for downstream analytics.',
+      'Designed reusable data ingestion frameworks using PySpark, reducing new pipeline development time by 40%.',
+    ],
   },
   {
     role: 'Software Engineer',
     company: 'LTI Mindtree',
-    period: '2021 - 2023',
-    highlights: ['Reduced manual intervention by 50%', 'Developed data integration solutions'],
+    period: 'Sep 2022 — Jul 2024',
+    tech: ['Apache Kafka', 'Spark', 'Java', 'MySQL', 'PostgreSQL'],
+    details: [
+      'Engineered high throughput distributed ETL applications using Java, Apache Spark, and Apache Kafka with 25% improved data accessibility.',
+      'Optimized Spark jobs through partition tuning and broadcast joins, reducing batch processing time by 40%.',
+      'Trained 48+ engineers; recognized with Best Manager Award for technical mentorship.',
+    ],
   },
   {
-    role: 'Data Engineer Intern',
+    role: 'Data Analyst Intern',
     company: 'Nismotek',
-    period: '2020 - 2021',
-    highlights: ['Improved data accessibility by 25%', 'Optimized database queries'],
+    period: 'Nov 2020 — Apr 2021',
+    tech: ['Python', 'PySpark', 'MySQL'],
+    details: [
+      'Designed normalized data models and validation frameworks ensuring data integrity for operational reporting.',
+      'Built automation mechanisms cutting data entry effort by 60%.',
+    ],
   },
 ];
 
 const Experience = () => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
-  
+
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     );
-    
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+    if (sectionRef.current) obs.observe(sectionRef.current);
+    return () => obs.disconnect();
   }, []);
 
+  const reveal = (delay = 0) =>
+    `transition-all duration-[800ms] ease-out ${
+      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[60px]'
+    }`;
+
   return (
-    <section 
-      ref={sectionRef} 
-      id="experience" 
-      className="relative py-16 px-4 bg-slate-950 overflow-hidden"
+    <section
+      ref={sectionRef}
+      id="experience"
+      style={{ padding: '120px 40px', background: '#0a0a0a' }}
     >
-      {/* Subtle Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-violet-950/20 via-slate-950 to-slate-950" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-indigo-600/5 rounded-full blur-[100px]" />
-      
-      <div className="relative z-10 max-w-4xl mx-auto">
-        <h2 className={`text-4xl font-bold text-center mb-12 transition-all duration-700 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+      {/* Section header */}
+      <div className={reveal()} style={{ transitionDelay: '0.1s' }}>
+        <p
+          style={{
+            fontSize: '0.65rem',
+            fontWeight: 600,
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: '#00e87b',
+            marginBottom: '12px',
+          }}
+        >
+          Career
+        </p>
+        <h2
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 'clamp(2rem, 5vw, 4rem)',
+            fontWeight: 700,
+            lineHeight: 1.1,
+            letterSpacing: '-0.02em',
+            marginBottom: '40px',
+            color: '#f0f0f0',
+          }}
+        >
+          Work{' '}
+          <span
+            style={{
+              WebkitTextStroke: '1.5px #f0f0f0',
+              color: 'transparent',
+            }}
+          >
             Experience
           </span>
         </h2>
-        
-        <div className="relative">
-          {/* Timeline Line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-violet-600 via-purple-600 to-indigo-600" />
-          
-          {experiences.map((exp, idx) => (
-            <div 
-              key={idx}
-              className={`relative flex flex-col md:flex-row gap-4 mb-8 transition-all duration-700 ${
-                isVisible 
-                  ? 'opacity-100 translate-y-0' 
-                  : 'opacity-0 translate-y-8'
-              }`}
-              style={{ transitionDelay: `${idx * 150}ms` }}
-            >
-              {/* Timeline Dot with Glow */}
-              <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-violet-500 rounded-full -translate-x-1/2 mt-6 ring-4 ring-slate-950 z-10 shadow-lg shadow-violet-500/50" />
-              
-              {/* Card */}
-              <div className={`ml-12 md:ml-0 ${idx % 2 === 0 ? 'md:mr-auto md:pr-12' : 'md:ml-auto md:pl-12'} md:w-1/2`}>
-                <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 hover:border-violet-500/40 hover:bg-slate-900/80 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-500/10">
-                  <span className="text-violet-400 text-sm font-medium">{exp.period}</span>
-                  <h3 className="text-xl font-bold text-white mt-1">{exp.role}</h3>
-                  <p className="text-slate-400 mb-3">{exp.company}</p>
-                  <ul className="space-y-1">
-                    {exp.highlights.map((h, i) => (
-                      <li key={i} className="text-slate-300 text-sm flex items-start gap-2">
-                        <span className="text-violet-400 mt-1">▹</span>
-                        {h}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+      </div>
+
+      {/* Experience cards */}
+      <div style={{ display: 'grid', gap: '2px' }}>
+        {experiences.map((exp, idx) => (
+          <ExperienceCard
+            key={idx}
+            experience={exp}
+            isVisible={isVisible}
+            delay={0.2 + idx * 0.15}
+          />
+        ))}
       </div>
     </section>
+  );
+};
+
+// ===== Card Component =====
+const ExperienceCard = ({ experience, isVisible, delay }) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`transition-all duration-[800ms] ease-out ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[60px]'
+      }`}
+      style={{
+        background: hovered ? 'rgba(0,232,123,0.03)' : '#111111',
+        padding: 'clamp(28px, 4vw, 48px)',
+        border: `1px solid ${hovered ? 'rgba(0,232,123,0.15)' : 'rgba(255,255,255,0.08)'}`,
+        borderRadius: '2px',
+        position: 'relative',
+        overflow: 'hidden',
+        transitionDelay: `${delay}s`,
+        transition: 'opacity 0.8s ease, transform 0.8s ease, background 0.5s, border-color 0.5s',
+      }}
+    >
+      {/* Left accent bar */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '3px',
+          height: hovered ? '100%' : '0%',
+          background: '#00e87b',
+          transition: 'height 0.5s ease',
+        }}
+      />
+
+      {/* Header row */}
+      <div
+        className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"
+        style={{ marginBottom: '20px' }}
+      >
+        <div>
+          <div
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 'clamp(1.1rem, 2vw, 1.4rem)',
+              fontWeight: 700,
+              color: '#f0f0f0',
+            }}
+          >
+            {experience.role}
+          </div>
+          <div
+            style={{
+              color: '#00e87b',
+              fontWeight: 500,
+              fontSize: '1rem',
+              marginTop: '4px',
+            }}
+          >
+            {experience.company}
+          </div>
+        </div>
+        <div
+          style={{
+            fontSize: '0.75rem',
+            fontWeight: 500,
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            color: '#888',
+            background: 'rgba(0,232,123,0.15)',
+            padding: '6px 14px',
+            borderRadius: '2px',
+            whiteSpace: 'nowrap',
+            alignSelf: 'flex-start',
+          }}
+        >
+          {experience.period}
+        </div>
+      </div>
+
+      {/* Tech tags */}
+      <div className="flex flex-wrap gap-2" style={{ marginBottom: '20px' }}>
+        {experience.tech.map((t) => (
+          <span
+            key={t}
+            style={{
+              fontSize: '0.7rem',
+              fontWeight: 500,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: '#00e87b',
+              border: '1px solid rgba(0,232,123,0.15)',
+              padding: '4px 10px',
+              borderRadius: '2px',
+            }}
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+
+      {/* Detail paragraphs */}
+      <div>
+        {experience.details.map((detail, i) => (
+          <p
+            key={i}
+            style={{
+              color: '#888',
+              fontSize: '0.9rem',
+              lineHeight: 1.7,
+              marginBottom: i < experience.details.length - 1 ? '10px' : 0,
+            }}
+          >
+            {detail}
+          </p>
+        ))}
+      </div>
+    </div>
   );
 };
 

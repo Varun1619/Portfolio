@@ -10,7 +10,9 @@ import Hero from './components/sections/Hero';
 import About from './components/sections/About';
 import Playground from './components/sections/Playground';
 import Experience from './components/sections/Experience';
-import Contact from './components/sections/Contact';
+import Projects from './components/sections/Projects';
+import Skills from './components/sections/Skills';
+import CustomCursor from './components/common/CustomCursor';
 
 // Preloader component
 const Preloader = ({ loaded }) => (
@@ -41,6 +43,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white text-slate-800 overflow-x-hidden">
+
+      <CustomCursor />
+
       {/* Preloader */}
       <Preloader loaded={loaded} />
 
@@ -54,18 +59,23 @@ function App() {
         <About 
           sectionClass={getSectionClass('about')} 
         />
-        
-        <Playground 
-          sectionClass={getSectionClass('playground')} 
-        />
-        
+
         <Experience 
           sectionClass={getSectionClass('experience')} 
         />
         
-        <Contact 
-          sectionClass={getSectionClass('contact')} 
+        <Projects 
+          sectionClass={getSectionClass('projects')} 
         />
+
+        <Playground 
+          sectionClass={getSectionClass('playground')} 
+        />
+
+        <Skills 
+          sectionClass={getSectionClass('skills')} 
+        />
+      
       </main>
 
       {/* Footer */}
