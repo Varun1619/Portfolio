@@ -1,5 +1,6 @@
 // Projects.jsx
 import { useEffect, useRef, useState } from 'react';
+import { projects as allProjects } from '../../data/projects';
 
 const C = {
   bg: '#0a0a0a', bg2: '#111111',
@@ -8,28 +9,17 @@ const C = {
   border: 'rgba(255,255,255,0.08)',
 };
 
-const projects = [
-  {
-    num: '01',
-    name: 'Revenue Analytics Data Platform',
-    desc: 'Scalable cloud analytics platform ingesting engagement metrics from multiple REST APIs, supporting batch and near real time queries with dimensional data models.',
-    stack: ['SQL', 'Spark', 'MongoDB', 'Data Modeling'],
-  },
-  {
-    num: '02',
-    name: 'AI Document Assistant',
-    desc: 'GenAI powered RAG system achieving 90% relevance accuracy over custom document collections with optimized retrieval and evaluation metrics.',
-    stack: ['Python', 'LangChain', 'OpenAI', 'ChromaDB', 'RAG'],
-  },
-  {
-    num: '03',
-    name: 'Object & Distance Detection',
-    desc: 'Assistive system for visually impaired using SSD with 98% detection accuracy. Published research findings in IRJMETS.',
-    stack: ['Python', 'OpenCV', 'SSD', 'ML'],
-  },
-];
+// Shape the imported data to match the carousel card expectations
+const projects = allProjects.map((p) => ({
+  num: p.num,
+  name: p.name,
+  desc: p.desc,
+  stack: p.stack,
+  link: p.github || null,
+  id: p.id,
+}));
 
-const Projects = () => {
+const Projects = ({ onViewAll }) => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
 
@@ -47,7 +37,7 @@ const Projects = () => {
     : 'opacity-0 translate-y-[60px]';
 
   // Duplicate for infinite scroll
-  const allProjects = [...projects, ...projects];
+  const carouselProjects = [...projects, ...projects];
 
   return (
     <div
@@ -66,33 +56,73 @@ const Projects = () => {
         className={`transition-all duration-[800ms] ease-out ${reveal}`}
         style={{ padding: '0 40px', marginBottom: '48px', transitionDelay: '0.1s' }}
       >
-        <p
-          style={{
-            fontSize: '0.65rem',
-            fontWeight: 600,
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: C.accent,
-            marginBottom: '12px',
-          }}
-        >
-          Featured Work
-        </p>
-        <h2
-          style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 'clamp(2rem, 5vw, 4rem)',
-            fontWeight: 700,
-            lineHeight: 1.1,
-            letterSpacing: '-0.02em',
-            color: C.text,
-          }}
-        >
-          Selected{' '}
-          <span style={{ WebkitTextStroke: '1.5px #f0f0f0', color: 'transparent' }}>
-            Projects
-          </span>
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <p
+              style={{
+                fontSize: '0.65rem',
+                fontWeight: 600,
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                color: C.accent,
+                marginBottom: '12px',
+              }}
+            >
+              Featured Work
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 'clamp(2rem, 5vw, 4rem)',
+                fontWeight: 700,
+                lineHeight: 1.1,
+                letterSpacing: '-0.02em',
+                color: C.text,
+              }}
+            >
+              Selected{' '}
+              <span style={{ WebkitTextStroke: '1.5px #f0f0f0', color: 'transparent' }}>
+                Projects
+              </span>
+            </h2>
+          </div>
+          {onViewAll && (
+            <button
+              onClick={onViewAll}
+              style={{
+                background: 'none',
+                border: `1px solid ${C.border}`,
+                borderRadius: '3px',
+                color: C.muted,
+                cursor: 'pointer',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                padding: '10px 20px',
+                transition: 'all 0.2s',
+                fontFamily: 'inherit',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = C.accent;
+                e.currentTarget.style.color = C.accent;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = C.border;
+                e.currentTarget.style.color = C.muted;
+              }}
+            >
+              View All
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Scrolling track */}
@@ -101,8 +131,8 @@ const Projects = () => {
         style={{ transitionDelay: '0.25s' }}
       >
         <div className="scroll-track">
-          {allProjects.map((project, idx) => (
-            <ProjectCard key={idx} project={project} />
+          {carouselProjects.map((project, idx) => (
+            <ProjectCard key={idx} project={project} onViewAll={onViewAll} />
           ))}
         </div>
       </div>
@@ -128,14 +158,16 @@ const Projects = () => {
 };
 
 // ===== Project Card =====
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, onViewAll }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={onViewAll}
       style={{
+        cursor: 'pointer',
         flexShrink: 0,
         width: '420px',
         background: C.bg,
@@ -203,7 +235,7 @@ const ProjectCard = ({ project }) => {
       </div>
 
       {/* Tech stack */}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-1.5" style={{ marginBottom: project.link ? '20px' : 0 }}>
         {project.stack.map((tech) => (
           <span
             key={tech}
@@ -222,6 +254,32 @@ const ProjectCard = ({ project }) => {
           </span>
         ))}
       </div>
+
+      {/* GitHub link */}
+      {project.link && (
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '0.75rem',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: hovered ? C.accent : C.muted,
+            textDecoration: 'none',
+            transition: 'color 0.3s',
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+          View on GitHub
+        </a>
+      )}
     </div>
   );
 };
