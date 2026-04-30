@@ -159,18 +159,104 @@ export const projects = [
     ],
   },
   {
-    id: 'revenue-analytics',
+    id: 'chinook',
     num: '02',
-    name: 'Revenue Analytics Data Platform',
-    tagline: 'Scalable cloud analytics platform ingesting engagement metrics from multiple REST APIs, supporting batch and near real-time queries with dimensional data models.',
-    desc: 'Scalable cloud analytics platform ingesting engagement metrics from multiple REST APIs, supporting batch and near real time queries with dimensional data models.',
-    stack: ['SQL', 'Spark', 'MongoDB', 'Data Modeling'],
-    tags: ['Data Engineering', 'Analytics'],
-    video: null,
+    name: 'Chinook Data Pipeline',
+    tagline: 'End-to-end metadata-driven pipeline over the Chinook music store dataset — Raw Parquet through Bronze, Silver, and Gold Delta layers on Databricks, fully orchestrated via Databricks Workflows.',
+    desc: 'End-to-end metadata-driven pipeline over the Chinook music store dataset — Raw Parquet through Bronze, Silver, and Gold Delta layers on Databricks, fully orchestrated via Databricks Workflows.',
+    stack: ['Databricks', 'PySpark', 'Delta Lake', 'Databricks DQX', 'Databricks Workflows', 'Unity Catalog', 'Azure SQL'],
+    tags: ['Data Engineering'],
+    course: 'INFO 7374 · Northeastern',
+    date: 'Spring 2026',
+    video: '/videos/chinook.mp4',
     github: null,
-    metrics: [],
-    pipeline: [],
-    overview: 'Scalable cloud analytics platform ingesting engagement metrics from multiple REST APIs, supporting batch and near real-time queries with dimensional data models.',
+
+    metrics: [
+      { label: 'Source tables', value: '11', color: '#00e87b' },
+      { label: 'Gold dims', value: '7', color: '#00e87b' },
+      { label: 'Fact tables', value: '2', color: '#f0f0f0' },
+      { label: 'Notebooks', value: '5', color: '#4fc3f7' },
+    ],
+
+    pipeline: [
+      { layer: 'RAW', label: 'Extract', sub: 'Parquet in Volume with dated paths', color: '#f0f0f0' },
+      { layer: 'BRONZE', label: 'Load Raw', sub: 'Delta tables, exact copy, overwrite per run', color: '#f5a623' },
+      { layer: 'SILVER', label: 'Cleansing', sub: 'DQX validation, nulls handled, quarantine', color: '#c8c8c8' },
+      { layer: 'GOLD', label: 'Dimensional', sub: '7 SCD1 dims + 1 SCD2 + 2 facts', color: '#00e87b' },
+      { layer: 'ORCH', label: 'Workflows', sub: 'Execution log + Databricks Workflows', color: '#4fc3f7' },
+    ],
+
+    overview: 'End-to-end metadata-driven pipeline over the Chinook music store dataset. The pipeline reads from Azure SQL via Connection Manager, stages Parquet files in Databricks Volumes with dated paths, loads Bronze Delta tables, applies DQX profiling and quarantine logic through Silver, and builds a fully typed Gold dimensional model orchestrated via Databricks Workflows.',
+
+    notebooks: [
+      {
+        num: '01',
+        title: 'extract_from_source',
+        file: 'extract_from_source.ipynb',
+        bullets: [
+          'Reads pipeline_control to discover active tables',
+          'Loops over tables and extracts via Connection Manager from Azure SQL',
+          'Writes raw Parquet files to Databricks Volume with dated paths',
+        ],
+      },
+      {
+        num: '02',
+        title: 'load_raw',
+        file: 'load_raw.ipynb',
+        bullets: [
+          'Writes Parquet to Volume with dated paths',
+          'Logs row counts and load status to execution_log',
+        ],
+      },
+      {
+        num: '03',
+        title: 'raw_to_bronze',
+        file: 'raw_to_bronze.ipynb',
+        bullets: [
+          'Reads the latest successful path from execution_log',
+          'Writes Delta to Bronze with overwrite mode',
+        ],
+      },
+      {
+        num: '04',
+        title: 'bronze_to_silver',
+        file: 'bronze_to_silver.ipynb',
+        bullets: [
+          'DQX profiling on nulls, duplicates, and ranges',
+          'Bad rows drop to quarantine, clean rows promoted to Silver',
+        ],
+      },
+      {
+        num: '05',
+        title: 'silver_to_gold',
+        file: 'silver_to_gold.ipynb',
+        bullets: [
+          'Builds 7 dims with SCD Type 1 (artist, album, genre, media_type, employee, track)',
+          'dim_customer with SCD Type 2',
+          'fact_sales (invoiceline + invoice + dim_customer)',
+          'fact_sales_customer_agg (aggregate from gold.fact_sales)',
+        ],
+      },
+    ],
+
+    goldTables: [
+      { table: 'dim_artist', scd: 'SCD1', source: 'silver.artist' },
+      { table: 'dim_album', scd: 'SCD1', source: 'silver.album' },
+      { table: 'dim_genre', scd: 'SCD1', source: 'silver.genre' },
+      { table: 'dim_media_type', scd: 'SCD1', source: 'silver.mediatype' },
+      { table: 'dim_employee', scd: 'SCD1', source: 'silver.employee' },
+      { table: 'dim_track', scd: 'SCD1', source: 'silver.track' },
+      { table: 'dim_customer', scd: 'SCD2', source: 'silver.customer' },
+      { table: 'fact_sales', scd: 'Fact', source: 'invoiceline + invoice + dim_customer' },
+      { table: 'fact_sales_customer_agg', scd: 'Aggregate', source: 'gold.fact_sales' },
+    ],
+
+    contributors: [
+      { initials: 'VS', name: 'Varun Singh', role: 'Gold layer, mapping document, job orchestration' },
+      { initials: 'KT', name: 'Krupali Tejani', role: 'Raw → Bronze → Silver, DQX validation' },
+      { initials: 'AG', name: 'Akshay Govind', role: 'Environment setup, metadata tables, extract notebook' },
+    ],
+
     engineeringDecisions: [],
   },
   {

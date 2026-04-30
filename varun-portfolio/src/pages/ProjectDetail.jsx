@@ -424,9 +424,212 @@ const GenericDetail = ({ project, onBack }) => {
   );
 };
 
+// ─── SCD badge colours ────────────────────────────────────────────────────────
+const scdColor = { SCD1: '#00e87b', SCD2: '#f5a623', Fact: '#4fc3f7', Aggregate: '#a78bfa' };
+
+// ─── Chinook detail ───────────────────────────────────────────────────────────
+const ChinookDetail = ({ project, onBack }) => {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    const t = setTimeout(() => setVisible(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
+  const fade = (delay = '0s') => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateY(0)' : 'translateY(20px)',
+    transition: `opacity 0.55s ease ${delay}, transform 0.55s ease ${delay}`,
+  });
+
+  return (
+    <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
+
+      {/* ── Hero ── */}
+      <div style={{ paddingTop: '100px', paddingBottom: '56px', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px' }}>
+          <BackButton onClick={onBack} />
+          <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
+            {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
+            {project.course && <span style={tagStyleDark}>{project.course}</span>}
+            {project.date && <span style={tagStyleDark}>{project.date}</span>}
+          </div>
+          <h1 style={{ ...fade('0.1s'), fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.text, marginBottom: '14px' }}>{project.name}</h1>
+          <p style={{ ...fade('0.15s'), fontSize: '1rem', color: C.muted, lineHeight: 1.65, maxWidth: '680px', marginBottom: '28px' }}>{project.tagline}</p>
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noopener noreferrer"
+              style={{ ...actionBtnStyle, ...fade('0.2s') }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
+              View on GitHub
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* ── Metrics ── */}
+      <Divider />
+      <div style={{ background: C.bg }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2px' }}>
+          {project.metrics.map((m, i) => (
+            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
+              <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '2rem', fontWeight: 700, color: m.color || C.text, lineHeight: 1 }}>{m.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Pipeline ── */}
+      <Divider />
+      <div style={{ background: C.bg2 }}>
+        <Section label="Pipeline Architecture">
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)` }}>
+            {project.pipeline.map((stage, i) => (
+              <div key={i} style={{ position: 'relative', padding: '24px 16px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
+                <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: stage.color || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.88rem', fontWeight: 600, color: C.text, marginBottom: '5px' }}>{stage.label}</div>
+                <div style={{ fontSize: '0.68rem', color: stage.color || C.muted, lineHeight: 1.4 }}>{stage.sub}</div>
+                {i < project.pipeline.length - 1 && (
+                  <div style={{ position: 'absolute', right: '-10px', top: '50%', transform: 'translateY(-50%)', zIndex: 2, color: C.muted, fontSize: '1.1rem' }}>›</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Section>
+      </div>
+
+      {/* ── Video ── */}
+      {project.video && (
+        <>
+          <Divider />
+          <Section label="Demo">
+            <div style={{ borderRadius: '4px', overflow: 'hidden', border: `1px solid ${C.border}`, background: '#000' }}>
+              <video src={project.video} controls autoPlay muted loop style={{ width: '100%', display: 'block', maxHeight: '520px', objectFit: 'contain' }} />
+            </div>
+          </Section>
+        </>
+      )}
+
+      {/* ── Overview ── */}
+      {project.overview && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg2 }}>
+            <Section label="Project Overview">
+              <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px' }}>{project.overview}</p>
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Notebooks ── */}
+      {project.notebooks && (
+        <>
+          <Divider />
+          <Section label="Notebooks">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {project.notebooks.map((nb) => (
+                <div key={nb.num}
+                  style={{ display: 'grid', gridTemplateColumns: '48px 1fr', gap: '20px', padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
+                >
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.6rem', fontWeight: 800, color: 'rgba(255,255,255,0.06)', lineHeight: 1, paddingTop: '2px' }}>{nb.num}</div>
+                  <div>
+                    <code style={{ fontSize: '0.82rem', color: C.accent, fontFamily: 'monospace', display: 'block', marginBottom: '6px', fontWeight: 600 }}>{nb.title}</code>
+                    <ul style={{ margin: 0, padding: '0 0 0 16px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                      {nb.bullets.map((b, i) => (
+                        <li key={i} style={{ fontSize: '0.82rem', color: C.muted, lineHeight: 1.6 }}>{b}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Section>
+        </>
+      )}
+
+      {/* ── Gold Layer ── */}
+      {project.goldTables && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg2 }}>
+            <Section label="Gold Layer">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '10px' }}>
+                {project.goldTables.map((t) => (
+                  <div key={t.table}
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 18px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
+                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
+                  >
+                    <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.06em', padding: '3px 7px', borderRadius: '3px', background: `${scdColor[t.scd]}20`, color: scdColor[t.scd], border: `1px solid ${scdColor[t.scd]}40`, whiteSpace: 'nowrap' }}>{t.scd}</span>
+                    <div>
+                      <code style={{ fontSize: '0.82rem', color: C.text, fontFamily: 'monospace', fontWeight: 500 }}>{t.table}</code>
+                      <div style={{ fontSize: '0.7rem', color: C.muted, marginTop: '2px' }}>{t.source}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Stack ── */}
+      <Divider />
+      <Section label="Tech Stack">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {project.stack.map((tech) => (
+            <span key={tech}
+              style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg2, transition: 'all 0.2s', cursor: 'default' }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
+            >{tech}</span>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── Contributors ── */}
+      {project.contributors && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg2 }}>
+            <Section label="Contributors">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {project.contributors.map((c) => (
+                  <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: C.accentDim, border: `1px solid rgba(0,232,123,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.72rem', fontWeight: 700, color: C.accent, flexShrink: 0 }}>
+                      {c.initials}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: C.text }}>{c.name}</div>
+                      <div style={{ fontSize: '0.78rem', color: C.muted, marginTop: '2px' }}>{c.role}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Footer ── */}
+      <Divider />
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px' }}>
+        <p style={{ fontSize: '0.7rem', color: C.muted }}>Northeastern University · INFO 7374 · Spring 2026</p>
+      </div>
+    </div>
+  );
+};
+
 // ─── Router ───────────────────────────────────────────────────────────────────
 const ProjectDetail = ({ project, onBack }) => {
   if (project.id === 'foodlens') return <FoodLensDetail project={project} onBack={onBack} />;
+  if (project.id === 'chinook') return <ChinookDetail project={project} onBack={onBack} />;
   return <GenericDetail project={project} onBack={onBack} />;
 };
 

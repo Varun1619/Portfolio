@@ -69,36 +69,6 @@ const ProjectCard = ({ project, onClick }) => {
                 transition: 'opacity 0.4s',
               }}
             />
-            {/* Play hint overlay */}
-            {!hovered && (
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'rgba(0,0,0,0.3)',
-                }}
-              >
-                <div
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    background: 'rgba(0,232,123,0.2)',
-                    border: `1px solid ${C.accent}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill={C.accent}>
-                    <path d="M4 2l10 6-10 6V2z" />
-                  </svg>
-                </div>
-              </div>
-            )}
           </>
         ) : (
           /* Placeholder for projects without video */
