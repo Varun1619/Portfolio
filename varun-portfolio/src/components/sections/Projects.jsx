@@ -9,35 +9,17 @@ const C = {
   border: 'rgba(255,255,255,0.08)',
 };
 
-const projects = [
-  {
-    num: '01',
-    name: 'Revenue Analytics Data Platform',
-    desc: 'Scalable cloud analytics platform ingesting engagement metrics from multiple REST APIs, supporting batch and near real time queries with dimensional data models.',
-    stack: ['SQL', 'Spark', 'MongoDB', 'Data Modeling'],
-  },
-  {
-    num: '02',
-    name: 'AI Document Assistant',
-    desc: 'GenAI powered RAG system achieving 90% relevance accuracy over custom document collections with optimized retrieval and evaluation metrics.',
-    stack: ['Python', 'LangChain', 'OpenAI', 'ChromaDB', 'RAG'],
-  },
-  {
-    num: '03',
-    name: 'Object & Distance Detection',
-    desc: 'Assistive system for visually impaired using SSD with 98% detection accuracy. Published research findings in IRJMETS.',
-    stack: ['Python', 'OpenCV', 'SSD', 'ML'],
-  },
-  {
-    num: '04',
-    name: 'FoodLens — Food Inspection Analytics',
-    desc: 'End-to-end Medallion Architecture pipeline on Databricks processing 386k+ inspections across Chicago & Dallas. Star schema with SCD Type 2, 1.3M+ violation records, and Power BI dashboards.',
-    stack: ['PySpark', 'Delta Lake', 'Databricks', 'Power BI', 'Data Modeling'],
-    link: 'https://github.com/Varun1619/foodlens-data-engineering',
-  },
-];
+// Shape the imported data to match the carousel card expectations
+const projects = allProjects.map((p) => ({
+  num: p.num,
+  name: p.name,
+  desc: p.desc,
+  stack: p.stack,
+  link: p.github || null,
+  id: p.id,
+}));
 
-const Projects = () => {
+const Projects = ({ onViewAll = null }) => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
 
@@ -176,16 +158,16 @@ const Projects = () => {
 };
 
 // ===== Project Card =====
-const ProjectCard = ({ project, onViewAll }) => {
+const ProjectCard = ({ project, onViewAll = null }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={onViewAll}
+      onClick={onViewAll || undefined}
       style={{
-        cursor: 'pointer',
+        cursor: onViewAll ? 'pointer' : 'default',
         flexShrink: 0,
         width: '420px',
         background: C.bg,
