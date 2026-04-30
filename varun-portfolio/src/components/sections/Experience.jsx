@@ -58,7 +58,7 @@ const Experience = () => {
     <section
       ref={sectionRef}
       id="experience"
-      style={{ padding: '120px 40px', background: '#0a0a0a' }}
+      style={{ padding: 'clamp(60px, 10vw, 120px) clamp(16px, 5vw, 40px)', background: '#0a0a0a' }}
     >
       {/* Section header */}
       <div className={reveal()} style={{ transitionDelay: '0.1s' }}>

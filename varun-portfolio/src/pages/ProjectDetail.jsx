@@ -24,7 +24,7 @@ const SectionLabel = ({ children }) => (
 const Divider = () => <div style={{ borderTop: `1px solid ${C.border}` }} />;
 
 const Section = ({ label, children }) => (
-  <div style={{ maxWidth: '900px', margin: '0 auto', padding: '56px 40px' }}>
+  <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(36px, 6vw, 56px) clamp(16px, 5vw, 40px)' }}>
     {label && <SectionLabel>{label}</SectionLabel>}
     {children}
   </div>
@@ -80,8 +80,8 @@ const FoodLensDetail = ({ project, onBack }) => {
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
 
       {/* ── Hero ── */}
-      <div style={{ paddingTop: '100px', paddingBottom: '56px', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px' }}>
+      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
           <BackButton onClick={onBack} />
 
           <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
@@ -114,7 +114,7 @@ const FoodLensDetail = ({ project, onBack }) => {
       {/* ── Metrics ── */}
       <Divider />
       <div style={{ background: C.bg }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '2px' }}>
           {project.metrics.map((m, i) => (
             <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
               <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
@@ -128,7 +128,8 @@ const FoodLensDetail = ({ project, onBack }) => {
       <Divider />
       <div style={{ background: C.bg2 }}>
         <Section label="Pipeline Architecture">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', minWidth: '480px' }}>
             {project.pipeline.map((stage, i) => (
               <div key={i} style={{ position: 'relative', padding: '28px 20px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
                 <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: pipelineColors[stage.layer] || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
@@ -139,6 +140,7 @@ const FoodLensDetail = ({ project, onBack }) => {
                 )}
               </div>
             ))}
+          </div>
           </div>
           {project.schemas && (
             <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -213,7 +215,7 @@ const FoodLensDetail = ({ project, onBack }) => {
           <Divider />
           <div style={{ background: C.bg2 }}>
             <Section label="Dimensional Model">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '32px' }}>
                 {/* Dimensions */}
                 <div>
                   <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, marginBottom: '12px' }}>Dimensions</p>
@@ -270,7 +272,8 @@ const FoodLensDetail = ({ project, onBack }) => {
         <>
           <Divider />
           <Section label="Silver Validation Rules">
-            <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: `1px solid ${C.border}`, borderRadius: '3px' }}>
+          <div style={{ minWidth: '420px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 80px', padding: '10px 16px', background: C.bg3, borderBottom: `1px solid ${C.border}` }}>
                 {['Rule', 'City', 'Level'].map((h) => (
                   <span key={h} style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted }}>{h}</span>
@@ -283,6 +286,7 @@ const FoodLensDetail = ({ project, onBack }) => {
                   <span style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: r.level === 'error' ? '#ff6b6b' : '#f5a623', background: r.level === 'error' ? 'rgba(255,107,107,0.1)' : 'rgba(245,166,35,0.1)', padding: '3px 8px', borderRadius: '2px', display: 'inline-block' }}>{r.level}</span>
                 </div>
               ))}
+          </div>
             </div>
           </Section>
         </>
@@ -294,7 +298,7 @@ const FoodLensDetail = ({ project, onBack }) => {
           <Divider />
           <div style={{ background: C.bg2 }}>
             <Section label="Key Engineering Decisions">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: '16px' }}>
                 {project.engineeringDecisions.map((d, i) => (
                   <div key={i}
                     style={{ padding: '24px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
@@ -316,7 +320,7 @@ const FoodLensDetail = ({ project, onBack }) => {
         <>
           <Divider />
           <Section label="Tools &amp; Stack">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '24px' }}>
               <div>
                 <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', padding: '10px 16px', background: C.bg3, borderBottom: `1px solid ${C.border}` }}>
@@ -371,7 +375,7 @@ const FoodLensDetail = ({ project, onBack }) => {
 
       {/* ── Footer ── */}
       <Divider />
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(24px, 5vw, 40px)' }}>
         <p style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '16px' }}>Northeastern University — Data Engineering Final Project — Spring 2026</p>
         {project.github && (
           <a href={project.github} target="_blank" rel="noopener noreferrer" style={actionBtnStyle}
@@ -393,8 +397,8 @@ const GenericDetail = ({ project, onBack }) => {
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
-      <div style={{ paddingTop: '100px', paddingBottom: '56px', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px' }}>
+      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
           <BackButton onClick={onBack} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
             {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
@@ -446,8 +450,8 @@ const ChinookDetail = ({ project, onBack }) => {
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
 
       {/* ── Hero ── */}
-      <div style={{ paddingTop: '100px', paddingBottom: '56px', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px' }}>
+      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
           <BackButton onClick={onBack} />
           <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
             {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
@@ -472,7 +476,7 @@ const ChinookDetail = ({ project, onBack }) => {
       {/* ── Metrics ── */}
       <Divider />
       <div style={{ background: C.bg }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '2px' }}>
           {project.metrics.map((m, i) => (
             <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
               <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
@@ -486,7 +490,8 @@ const ChinookDetail = ({ project, onBack }) => {
       <Divider />
       <div style={{ background: C.bg2 }}>
         <Section label="Pipeline Architecture">
-          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)` }}>
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px` }}>
             {project.pipeline.map((stage, i) => (
               <div key={i} style={{ position: 'relative', padding: '24px 16px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
                 <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: stage.color || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
@@ -497,6 +502,7 @@ const ChinookDetail = ({ project, onBack }) => {
                 )}
               </div>
             ))}
+          </div>
           </div>
         </Section>
       </div>
@@ -559,7 +565,7 @@ const ChinookDetail = ({ project, onBack }) => {
           <Divider />
           <div style={{ background: C.bg2 }}>
             <Section label="Gold Layer">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '10px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(300px, 100%), 1fr))', gap: '10px' }}>
                 {project.goldTables.map((t) => (
                   <div key={t.table}
                     style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 18px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
@@ -619,7 +625,7 @@ const ChinookDetail = ({ project, onBack }) => {
 
       {/* ── Footer ── */}
       <Divider />
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(24px, 5vw, 40px)' }}>
         <p style={{ fontSize: '0.7rem', color: C.muted }}>Northeastern University · INFO 7374 · Spring 2026</p>
       </div>
     </div>

@@ -170,7 +170,7 @@ const Playground = () => {
   ];
 
   return (
-    <section ref={sectionRef} id="etl" style={{ background: C.bg, padding: '120px 40px', overflow: 'hidden' }}>
+    <section ref={sectionRef} id="etl" style={{ background: C.bg, padding: 'clamp(60px, 10vw, 120px) clamp(16px, 5vw, 40px)', overflow: 'hidden' }}>
       {/* Header */}
       <div className={`transition-all duration-[800ms] ease-out ${reveal}`} style={{ transitionDelay: '0.1s' }}>
         <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.accent, marginBottom: '12px' }}>

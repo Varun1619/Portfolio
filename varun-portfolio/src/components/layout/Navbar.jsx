@@ -39,7 +39,7 @@ const Navbar = ({ route, navigate }) => {
     <nav
       className="fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between"
       style={{
-        padding: '20px 40px',
+        padding: '20px clamp(16px, 5vw, 40px)',
         mixBlendMode: 'difference',
         transition: 'all 0.3s',
       }}

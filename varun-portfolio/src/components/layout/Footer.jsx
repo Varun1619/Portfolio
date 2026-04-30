@@ -29,7 +29,7 @@ const Footer = () => {
       {/* Main CTA area */}
       <div
         className="relative overflow-hidden flex flex-col items-center justify-center text-center"
-        style={{ minHeight: '60vh', padding: '80px 40px' }}
+        style={{ minHeight: '60vh', padding: 'clamp(48px, 8vw, 80px) clamp(16px, 5vw, 40px)' }}
       >
         {/* Large background text */}
         <div
@@ -147,7 +147,7 @@ const Footer = () => {
       <div
         className="flex flex-wrap items-center justify-between"
         style={{
-          padding: '24px 40px',
+          padding: '24px clamp(16px, 5vw, 40px)',
           borderTop: '1px solid rgba(255,255,255,0.08)',
           gap: '16px',
         }}

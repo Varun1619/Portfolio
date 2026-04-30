@@ -47,14 +47,14 @@ const Projects = ({ onViewAll = null }) => {
         overflow: 'hidden',
         borderTop: `1px solid ${C.border}`,
         borderBottom: `1px solid ${C.border}`,
-        padding: '80px 0',
+        padding: 'clamp(48px, 8vw, 80px) 0',
         background: C.bg2,
       }}
     >
       {/* Header */}
       <div
         className={`transition-all duration-[800ms] ease-out ${reveal}`}
-        style={{ padding: '0 40px', marginBottom: '48px', transitionDelay: '0.1s' }}
+        style={{ padding: '0 clamp(16px, 5vw, 40px)', marginBottom: '48px', transitionDelay: '0.1s' }}
       >
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
@@ -141,7 +141,7 @@ const Projects = ({ onViewAll = null }) => {
         .scroll-track {
           display: flex;
           gap: 24px;
-          padding: 0 40px;
+          padding: 0 clamp(16px, 5vw, 40px);
           width: max-content;
           animation: scrollProjects 25s linear infinite;
         }
@@ -169,10 +169,10 @@ const ProjectCard = ({ project, onViewAll = null }) => {
       style={{
         cursor: onViewAll ? 'pointer' : 'default',
         flexShrink: 0,
-        width: '420px',
+        width: 'clamp(280px, 80vw, 420px)',
         background: C.bg,
         border: `1px solid ${hovered ? C.accent : C.border}`,
-        padding: '40px',
+        padding: 'clamp(20px, 4vw, 40px)',
         borderRadius: '2px',
         transition: 'all 0.4s',
         position: 'relative',

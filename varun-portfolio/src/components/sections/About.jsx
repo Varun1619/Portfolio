@@ -94,7 +94,7 @@ const About = () => {
         className={`flex items-center justify-center text-center ${reveal()}`}
         style={{
           minHeight: '60vh',
-          padding: '80px 40px',
+          padding: 'clamp(48px, 8vw, 80px) clamp(16px, 5vw, 40px)',
           background: '#111111',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
           transitionDelay: '0.1s',

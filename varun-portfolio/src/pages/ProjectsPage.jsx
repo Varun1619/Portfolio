@@ -238,8 +238,8 @@ const ProjectsPage = ({ onProjectSelect, onBack }) => {
         minHeight: '100vh',
         background: C.bg,
         color: C.text,
-        paddingTop: '100px',
-        paddingBottom: '80px',
+        paddingTop: 'clamp(72px, 10vw, 100px)',
+        paddingBottom: 'clamp(48px, 8vw, 80px)',
       }}
     >
       {/* Header */}
@@ -247,7 +247,7 @@ const ProjectsPage = ({ onProjectSelect, onBack }) => {
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: '0 40px',
+          padding: '0 clamp(16px, 5vw, 40px)',
           marginBottom: '60px',
           opacity: visible ? 1 : 0,
           transform: visible ? 'translateY(0)' : 'translateY(30px)',
@@ -320,7 +320,7 @@ const ProjectsPage = ({ onProjectSelect, onBack }) => {
           margin: '0 auto',
           padding: '0 40px',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(360px, 100%), 1fr))',
           gap: '28px',
           opacity: visible ? 1 : 0,
           transform: visible ? 'translateY(0)' : 'translateY(40px)',
