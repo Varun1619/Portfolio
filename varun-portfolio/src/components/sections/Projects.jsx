@@ -1,5 +1,6 @@
 // Projects.jsx
 import { useEffect, useRef, useState } from 'react';
+import { projects as allProjects } from '../../data/projects';
 
 const C = {
   bg: '#0a0a0a', bg2: '#111111',
@@ -54,7 +55,7 @@ const Projects = () => {
     : 'opacity-0 translate-y-[60px]';
 
   // Duplicate for infinite scroll
-  const allProjects = [...projects, ...projects];
+  const carouselProjects = [...projects, ...projects];
 
   return (
     <div
@@ -73,33 +74,73 @@ const Projects = () => {
         className={`transition-all duration-[800ms] ease-out ${reveal}`}
         style={{ padding: '0 40px', marginBottom: '48px', transitionDelay: '0.1s' }}
       >
-        <p
-          style={{
-            fontSize: '0.65rem',
-            fontWeight: 600,
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: C.accent,
-            marginBottom: '12px',
-          }}
-        >
-          Featured Work
-        </p>
-        <h2
-          style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 'clamp(2rem, 5vw, 4rem)',
-            fontWeight: 700,
-            lineHeight: 1.1,
-            letterSpacing: '-0.02em',
-            color: C.text,
-          }}
-        >
-          Selected{' '}
-          <span style={{ WebkitTextStroke: '1.5px #f0f0f0', color: 'transparent' }}>
-            Projects
-          </span>
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <p
+              style={{
+                fontSize: '0.65rem',
+                fontWeight: 600,
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                color: C.accent,
+                marginBottom: '12px',
+              }}
+            >
+              Featured Work
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 'clamp(2rem, 5vw, 4rem)',
+                fontWeight: 700,
+                lineHeight: 1.1,
+                letterSpacing: '-0.02em',
+                color: C.text,
+              }}
+            >
+              Selected{' '}
+              <span style={{ WebkitTextStroke: '1.5px #f0f0f0', color: 'transparent' }}>
+                Projects
+              </span>
+            </h2>
+          </div>
+          {onViewAll && (
+            <button
+              onClick={onViewAll}
+              style={{
+                background: 'none',
+                border: `1px solid ${C.border}`,
+                borderRadius: '3px',
+                color: C.muted,
+                cursor: 'pointer',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                padding: '10px 20px',
+                transition: 'all 0.2s',
+                fontFamily: 'inherit',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = C.accent;
+                e.currentTarget.style.color = C.accent;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = C.border;
+                e.currentTarget.style.color = C.muted;
+              }}
+            >
+              View All
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Scrolling track */}
@@ -108,8 +149,8 @@ const Projects = () => {
         style={{ transitionDelay: '0.25s' }}
       >
         <div className="scroll-track">
-          {allProjects.map((project, idx) => (
-            <ProjectCard key={idx} project={project} />
+          {carouselProjects.map((project, idx) => (
+            <ProjectCard key={idx} project={project} onViewAll={onViewAll} />
           ))}
         </div>
       </div>
@@ -135,14 +176,16 @@ const Projects = () => {
 };
 
 // ===== Project Card =====
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, onViewAll }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={onViewAll}
       style={{
+        cursor: 'pointer',
         flexShrink: 0,
         width: '420px',
         background: C.bg,

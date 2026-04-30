@@ -1,7 +1,7 @@
 // Navbar.jsx
 import { useState, useEffect } from 'react';
 
-const Navbar = () => {
+const Navbar = ({ route, navigate }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -10,16 +10,27 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const links = [
-    { label: 'Experience', href: '#experience' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'ETL Sim', href: '#etl' },
-    { label: 'Skills', href: '#skills' },
-    { label: 'Contact', href: '#contact' },
-  ];
+  const isHome = !route || route.page === 'home';
+
+  const links = isHome
+    ? [
+        { label: 'Experience', href: '#experience' },
+        { label: 'ETL Sim', href: '#etl' },
+        { label: 'Skills', href: '#skills' },
+        { label: 'Contact', href: '#contact' },
+      ]
+    : [];
 
   const handleClick = (e, href) => {
     e.preventDefault();
+    if (!isHome) {
+      navigate && navigate('home');
+      setTimeout(() => {
+        const el = document.querySelector(href);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+      return;
+    }
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -38,7 +49,11 @@ const Navbar = () => {
         href="#"
         onClick={(e) => {
           e.preventDefault();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          if (navigate && !isHome) {
+            navigate('home');
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
         }}
         className="no-underline"
         style={{
@@ -55,6 +70,30 @@ const Navbar = () => {
 
       {/* Nav Links */}
       <div className="hidden md:flex items-center" style={{ gap: '28px' }}>
+        {/* Always show Projects page link */}
+        <button
+          onClick={() => navigate && navigate('projects')}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: route?.page === 'projects' || route?.page === 'project-detail' ? '#00e87b' : '#888',
+            cursor: 'pointer',
+            fontSize: '0.75rem',
+            fontWeight: 500,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            transition: 'color 0.3s',
+            padding: 0,
+            fontFamily: 'inherit',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = '#00e87b')}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color =
+              route?.page === 'projects' || route?.page === 'project-detail' ? '#00e87b' : '#888';
+          }}
+        >
+          Projects
+        </button>
         {links.map((link) => (
           <a
             key={link.label}
@@ -134,6 +173,30 @@ const Navbar = () => {
           transition: 'all 0.3s ease',
         }}
       >
+        {/* Projects page link in mobile */}
+        <button
+          onClick={() => {
+            navigate && navigate('projects');
+            const menu = document.getElementById('mobileMenu');
+            if (menu) { menu.style.opacity = '0'; menu.style.visibility = 'hidden'; menu.style.transform = 'translateY(-10px)'; }
+          }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: route?.page === 'projects' || route?.page === 'project-detail' ? '#00e87b' : '#888',
+            cursor: 'pointer',
+            fontSize: '0.75rem',
+            fontWeight: 500,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            transition: 'color 0.3s',
+            padding: 0,
+            fontFamily: 'inherit',
+            textAlign: 'left',
+          }}
+        >
+          Projects
+        </button>
         {links.map((link) => (
           <a
             key={link.label}
