@@ -11,9 +11,6 @@ export const projects = [
     date: 'Spring 2026',
     video: '/videos/foodlens.mp4',
     github: 'https://github.com/Varun1619/foodlens-data-engineering',
-    flowchartImg: '/images/foodlens-flowchart.png',
-    erDiagramImg: '/images/foodlens-er-diagram.png',
-
     metrics: [
       { label: 'Chicago inspections', value: '308,431', color: '#00e87b' },
       { label: 'Dallas inspections', value: '78,984', color: '#00e87b' },

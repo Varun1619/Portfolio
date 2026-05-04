@@ -61,6 +61,105 @@ const BackButton = ({ onClick }) => (
   </button>
 );
 
+// ─── FoodLens inline diagrams ────────────────────────────────────────────────
+const FoodLensFlowchart = () => {
+  const Arrow = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
+      <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
+      </div>
+    </div>
+  );
+
+  const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
+    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '4px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
+      {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
+    </div>
+  );
+
+  const Row = ({ children }) => (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
+  );
+
+  return (
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
+      <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Row>
+          <Node label="Chicago CSV" sub="308K rows, 20 cols" />
+          <Node label="Dallas CSV" sub="78K rows, 117 cols" />
+        </Row>
+        <Arrow />
+        <Node label="Bronze Layer" sub="Notebook 01" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" />
+        <Arrow />
+        <Node label="DQX Profiling" sub="Notebook 02" borderColor="#4fc3f7" bg="rgba(79,195,247,0.07)" />
+        <Arrow />
+        <Node label="Silver Layer" sub="Notebook 03" borderColor="#00e87b" bg="rgba(0,232,123,0.07)" />
+        <Arrow />
+        <Node label="Parse violations" />
+        <Arrow />
+        <Node label="DQX validation" sub="17 rules" />
+        <Arrow />
+        <Row>
+          <Node label="Dedup + trim" />
+          <Node label="93K quarantined" borderColor="#ff6b6b" bg="rgba(255,107,107,0.1)" />
+        </Row>
+        <Arrow />
+        <Row>
+          <Node label="221K Chicago" sub="inspections" minW="140px" />
+          <Node label="72K Dallas" sub="inspections" minW="140px" />
+          <Node label="1.3M" sub="violations" minW="120px" />
+        </Row>
+        <Arrow />
+        <Node label="Gold Layer" sub="Notebook 04" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" />
+        <Arrow />
+        <Row>
+          <Node label="7 dimensions" sub="SCD2 on establishment" minW="155px" />
+          <Node label="fact_inspection" sub="293K rows" minW="140px" />
+          <Node label="fact_violation" sub="bridge table" minW="140px" />
+        </Row>
+        <Arrow />
+        <Node label="Power BI Dashboard" sub="Overview / Analysis / Report" borderColor="#a78bfa" bg="rgba(167,139,250,0.07)" minW="230px" />
+      </div>
+    </div>
+  );
+};
+
+const FoodLensERDiagram = () => {
+  const tables = [
+    { name: 'dim_date', color: '#f5a623', cols: [{ t: 'int', n: 'date_key', k: 'PK' }, { t: 'date', n: 'full_date' }, { t: 'int', n: 'year' }, { t: 'int', n: 'quarter' }, { t: 'int', n: 'month' }, { t: 'string', n: 'day_of_week' }] },
+    { name: 'dim_establishment', color: '#4fc3f7', cols: [{ t: 'int', n: 'establishment_key', k: 'PK' }, { t: 'string', n: 'dba_name' }, { t: 'string', n: 'aka_name' }, { t: 'string', n: 'license_number' }, { t: 'string', n: 'facility_type' }, { t: 'string', n: 'risk_category' }, { t: 'date', n: 'eff_start_date' }, { t: 'date', n: 'eff_end_date' }, { t: 'string', n: 'is_current' }, { t: 'string', n: 'row_hash' }] },
+    { name: 'dim_location', color: '#00e87b', cols: [{ t: 'int', n: 'location_key', k: 'PK' }, { t: 'string', n: 'address' }, { t: 'string', n: 'city' }, { t: 'string', n: 'state' }, { t: 'string', n: 'zip_code' }, { t: 'double', n: 'latitude' }, { t: 'double', n: 'longitude' }] },
+    { name: 'dim_inspection_type', color: '#a78bfa', cols: [{ t: 'int', n: 'inspection_type_key', k: 'PK' }, { t: 'string', n: 'inspection_type_name' }, { t: 'string', n: 'city_source' }] },
+    { name: 'dim_result', color: '#ff6b6b', cols: [{ t: 'int', n: 'result_key', k: 'PK' }, { t: 'string', n: 'result_description' }, { t: 'int', n: 'derived_score' }, { t: 'string', n: 'city_source' }] },
+    { name: 'dim_risk_category', color: '#eab308', cols: [{ t: 'int', n: 'risk_key', k: 'PK' }, { t: 'string', n: 'risk_description' }, { t: 'string', n: 'city_source' }] },
+    { name: 'dim_violation', color: '#c084fc', cols: [{ t: 'int', n: 'violation_key', k: 'PK' }, { t: 'string', n: 'violation_code' }, { t: 'string', n: 'violation_description' }, { t: 'string', n: 'city_source' }, { t: 'boolean', n: 'is_critical' }] },
+    { name: 'fact_inspection', color: '#f472b6', cols: [{ t: 'int', n: 'inspection_key', k: 'PK' }, { t: 'string', n: 'inspection_id' }, { t: 'int', n: 'establishment_key', k: 'FK' }, { t: 'int', n: 'date_key', k: 'FK' }, { t: 'int', n: 'location_key', k: 'FK' }, { t: 'int', n: 'inspection_type_key', k: 'FK' }, { t: 'int', n: 'result_key', k: 'FK' }, { t: 'int', n: 'risk_key', k: 'FK' }, { t: 'int', n: 'violation_score' }, { t: 'int', n: 'violation_count' }, { t: 'string', n: 'city_source' }] },
+    { name: 'fact_inspection_violation', color: '#4fc3f7', cols: [{ t: 'int', n: 'inspection_violation_key', k: 'PK' }, { t: 'int', n: 'inspection_key', k: 'FK' }, { t: 'int', n: 'violation_key', k: 'FK' }, { t: 'int', n: 'violation_points' }, { t: 'boolean', n: 'is_critical' }] },
+  ];
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(210px, 100%), 1fr))', gap: '10px' }}>
+      {tables.map((tbl) => (
+        <div key={tbl.name} style={{ border: `1px solid ${tbl.color}50`, borderRadius: '3px', overflow: 'hidden' }}>
+          <div style={{ padding: '7px 12px', background: `${tbl.color}14`, borderBottom: `1px solid ${tbl.color}40` }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: tbl.color, fontFamily: 'monospace' }}>{tbl.name}</span>
+          </div>
+          {tbl.cols.map((col, i) => (
+            <div key={col.n} style={{ display: 'grid', gridTemplateColumns: '50px 1fr auto', gap: '6px', padding: '4px 12px', background: i % 2 === 0 ? C.bg : 'transparent', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.58rem', color: C.muted, fontFamily: 'monospace' }}>{col.t}</span>
+              <span style={{ fontSize: '0.68rem', color: col.k ? C.text : '#aaa', fontFamily: 'monospace', fontWeight: col.k ? 500 : 400 }}>{col.n}</span>
+              {col.k && (
+                <span style={{ fontSize: '0.52rem', fontWeight: 700, color: col.k === 'PK' ? '#f5a623' : '#4fc3f7', background: col.k === 'PK' ? 'rgba(245,166,35,0.12)' : 'rgba(79,195,247,0.12)', padding: '1px 5px', borderRadius: '2px', whiteSpace: 'nowrap' }}>{col.k}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // ─── FoodLens detail ──────────────────────────────────────────────────────────
 const FoodLensDetail = ({ project, onBack }) => {
   const [visible, setVisible] = useState(false);
@@ -152,16 +251,11 @@ const FoodLensDetail = ({ project, onBack }) => {
           <div style={{ background: C.bg2 }}>
             <Section label="Architecture">
               {project.architectureDesc && (
-                <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px', marginBottom: project.flowchartImg ? '28px' : 0 }}>
+                <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px', marginBottom: '28px' }}>
                   {project.architectureDesc}
                 </p>
               )}
-              {project.flowchartImg && (
-                <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
-                  <img src={project.flowchartImg} alt="Pipeline flowchart" style={{ width: '100%', display: 'block' }}
-                    onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} />
-                </div>
-              )}
+              <FoodLensFlowchart />
             </Section>
           </div>
         </>
@@ -219,12 +313,9 @@ const FoodLensDetail = ({ project, onBack }) => {
                   {project.dimensionalModelDesc}
                 </p>
               )}
-              {project.erDiagramImg && (
-                <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden', marginBottom: '32px' }}>
-                  <img src={project.erDiagramImg} alt="Star schema ER diagram" style={{ width: '100%', display: 'block' }}
-                    onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} />
-                </div>
-              )}
+              <div style={{ marginBottom: '32px' }}>
+                <FoodLensERDiagram />
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '32px' }}>
                 {/* Dimensions */}
                 <div>
