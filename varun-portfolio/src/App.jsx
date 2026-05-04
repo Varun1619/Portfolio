@@ -127,7 +127,11 @@ function App() {
         <Hero loaded={loaded} />
         <About sectionClass={getSectionClass('about')} />
         <Experience sectionClass={getSectionClass('experience')} />
-        <Projects sectionClass={getSectionClass('projects')} onViewAll={() => navigate('projects')} />
+        <Projects
+          sectionClass={getSectionClass('projects')}
+          onViewAll={() => navigate('projects')}
+          onProjectSelect={(project) => navigate('project-detail', project.id)}
+        />
         <Playground sectionClass={getSectionClass('playground')} />
         <Skills sectionClass={getSectionClass('skills')} />
       </main>

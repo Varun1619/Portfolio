@@ -19,7 +19,7 @@ const projects = allProjects.map((p) => ({
   id: p.id,
 }));
 
-const Projects = ({ onViewAll = null }) => {
+const Projects = ({ onViewAll = null, onProjectSelect = null }) => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
 
@@ -132,7 +132,7 @@ const Projects = ({ onViewAll = null }) => {
       >
         <div className="scroll-track">
           {carouselProjects.map((project, idx) => (
-            <ProjectCard key={idx} project={project} onViewAll={onViewAll} />
+            <ProjectCard key={idx} project={project} onViewAll={onViewAll} onProjectSelect={onProjectSelect} />
           ))}
         </div>
       </div>
@@ -158,16 +158,17 @@ const Projects = ({ onViewAll = null }) => {
 };
 
 // ===== Project Card =====
-const ProjectCard = ({ project, onViewAll = null }) => {
+const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
   const [hovered, setHovered] = useState(false);
+  const handleClick = onProjectSelect ? () => onProjectSelect(project) : (onViewAll || undefined);
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={onViewAll || undefined}
+      onClick={handleClick}
       style={{
-        cursor: onViewAll ? 'pointer' : 'default',
+        cursor: (onProjectSelect || onViewAll) ? 'pointer' : 'default',
         flexShrink: 0,
         width: 'clamp(280px, 80vw, 420px)',
         background: C.bg,
