@@ -142,19 +142,30 @@ const FoodLensDetail = ({ project, onBack }) => {
             ))}
           </div>
           </div>
-          {project.schemas && (
-            <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {project.schemas.map((s) => (
-                <div key={s.layer} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 14px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.75rem' }}>
-                  <span style={{ color: pipelineColors[s.layer.toUpperCase()] || C.accent, fontWeight: 600 }}>{s.layer}</span>
-                  <span style={{ color: C.muted }}>→</span>
-                  <code style={{ color: C.text, fontFamily: 'monospace', fontSize: '0.72rem' }}>{s.schema}</code>
-                </div>
-              ))}
-            </div>
-          )}
         </Section>
       </div>
+
+      {/* ── Architecture ── */}
+      {(project.architectureDesc || project.flowchartImg) && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg2 }}>
+            <Section label="Architecture">
+              {project.architectureDesc && (
+                <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px', marginBottom: project.flowchartImg ? '28px' : 0 }}>
+                  {project.architectureDesc}
+                </p>
+              )}
+              {project.flowchartImg && (
+                <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
+                  <img src={project.flowchartImg} alt="Pipeline flowchart" style={{ width: '100%', display: 'block' }}
+                    onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} />
+                </div>
+              )}
+            </Section>
+          </div>
+        </>
+      )}
 
       {/* ── Video ── */}
       {project.video && (
@@ -165,18 +176,6 @@ const FoodLensDetail = ({ project, onBack }) => {
               <video src={project.video} controls autoPlay muted loop style={{ width: '100%', display: 'block', maxHeight: '520px', objectFit: 'contain' }} />
             </div>
           </Section>
-        </>
-      )}
-
-      {/* ── Overview ── */}
-      {project.overview && (
-        <>
-          <Divider />
-          <div style={{ background: C.bg2 }}>
-            <Section label="Project Overview">
-              <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px' }}>{project.overview}</p>
-            </Section>
-          </div>
         </>
       )}
 
@@ -215,6 +214,17 @@ const FoodLensDetail = ({ project, onBack }) => {
           <Divider />
           <div style={{ background: C.bg2 }}>
             <Section label="Dimensional Model">
+              {project.dimensionalModelDesc && (
+                <p style={{ fontSize: '0.9rem', color: C.muted, lineHeight: 1.8, marginBottom: '28px' }}>
+                  {project.dimensionalModelDesc}
+                </p>
+              )}
+              {project.erDiagramImg && (
+                <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden', marginBottom: '32px' }}>
+                  <img src={project.erDiagramImg} alt="Star schema ER diagram" style={{ width: '100%', display: 'block' }}
+                    onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} />
+                </div>
+              )}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '32px' }}>
                 {/* Dimensions */}
                 <div>
@@ -232,10 +242,10 @@ const FoodLensDetail = ({ project, onBack }) => {
                   </div>
                 </div>
 
-                {/* Facts + Score derivation */}
+                {/* Facts */}
                 <div>
                   <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, marginBottom: '12px' }}>Facts</p>
-                  <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden', marginBottom: '24px' }}>
+                  <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
                     {project.facts.map((f, i) => (
                       <div key={f.table} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', padding: '11px 16px', background: i % 2 === 0 ? C.bg : 'transparent', borderBottom: i < project.facts.length - 1 ? `1px solid ${C.border}` : 'none', alignItems: 'center' }}>
                         <div>
@@ -246,20 +256,6 @@ const FoodLensDetail = ({ project, onBack }) => {
                       </div>
                     ))}
                   </div>
-
-                  {project.scoreDerivation && (
-                    <>
-                      <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, marginBottom: '12px' }}>Chicago Score Derivation</p>
-                      <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
-                        {project.scoreDerivation.map((s, i) => (
-                          <div key={s.result} style={{ display: 'grid', gridTemplateColumns: '1fr auto', padding: '10px 16px', background: i % 2 === 0 ? C.bg : 'transparent', borderBottom: i < project.scoreDerivation.length - 1 ? `1px solid ${C.border}` : 'none' }}>
-                            <span style={{ fontSize: '0.78rem', color: C.muted }}>{s.result}</span>
-                            <span style={{ fontSize: '0.78rem', color: C.accent, fontWeight: 600 }}>{s.score}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
                 </div>
               </div>
             </Section>
@@ -271,19 +267,19 @@ const FoodLensDetail = ({ project, onBack }) => {
       {project.validationRules && (
         <>
           <Divider />
-          <Section label="Silver Validation Rules">
+          <Section label="Validation Rules">
             <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: `1px solid ${C.border}`, borderRadius: '3px' }}>
           <div style={{ minWidth: '420px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 80px', padding: '10px 16px', background: C.bg3, borderBottom: `1px solid ${C.border}` }}>
-                {['Rule', 'City', 'Level'].map((h) => (
+                {['Rule', 'City', 'Action'].map((h) => (
                   <span key={h} style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted }}>{h}</span>
                 ))}
               </div>
               {project.validationRules.map((r, i) => (
                 <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 100px 80px', padding: '11px 16px', background: i % 2 === 0 ? C.bg : 'transparent', borderBottom: i < project.validationRules.length - 1 ? `1px solid ${C.border}` : 'none', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.8rem', color: C.text }}>{r.rule}</span>
+                  <span style={{ fontSize: '0.78rem', color: C.text, fontFamily: 'monospace' }}>{r.rule}</span>
                   <span style={{ fontSize: '0.72rem', color: C.muted }}>{r.city}</span>
-                  <span style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: r.level === 'error' ? '#ff6b6b' : '#f5a623', background: r.level === 'error' ? 'rgba(255,107,107,0.1)' : 'rgba(245,166,35,0.1)', padding: '3px 8px', borderRadius: '2px', display: 'inline-block' }}>{r.level}</span>
+                  <span style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: r.action === 'drop' ? '#ff6b6b' : '#f5a623', background: r.action === 'drop' ? 'rgba(255,107,107,0.1)' : 'rgba(245,166,35,0.1)', padding: '3px 8px', borderRadius: '2px', display: 'inline-block' }}>{r.action || r.level}</span>
                 </div>
               ))}
           </div>
