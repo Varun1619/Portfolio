@@ -260,8 +260,101 @@ export const projects = [
     engineeringDecisions: [],
   },
   {
-    id: 'ai-doc-assistant',
+    id: 'crypto-pulse',
     num: '03',
+    name: 'Crypto Pulse',
+    tagline: 'Real-time BTC/USDT trading dashboard — live Binance WebSocket feed through Kafka into DuckDB, surfaced on a Streamlit dashboard refreshing every 2 seconds.',
+    desc: 'Real-time BTC/USDT pipeline: Binance WebSocket → Kafka → DuckDB → Streamlit dashboard with candlesticks, VWAP, and 3 moving averages refreshing every 2 seconds.',
+    stack: ['Python', 'Apache Kafka', 'DuckDB', 'Streamlit', 'Plotly', 'Docker Compose'],
+    tags: ['Data Engineering', 'Real-Time'],
+    date: '2026',
+    video: '/videos/crypto-pulse.mp4',
+    github: 'https://github.com/Varun1619/crypto-pulse',
+
+    metrics: [
+      { label: 'Feed speed', value: '5–30 msg/s', color: '#00e87b' },
+      { label: 'Dashboard refresh', value: 'Every 2s', color: '#4fc3f7' },
+      { label: 'Moving averages', value: '3 (5/20/50)', color: '#f0f0f0' },
+      { label: 'Candle interval', value: '15 seconds', color: '#f5a623' },
+    ],
+
+    pipeline: [
+      { layer: 'SOURCE', label: 'Binance WS', sub: 'Live BTC/USDT public feed', color: '#f5a623' },
+      { layer: 'QUEUE', label: 'Kafka', sub: 'Producer → topic → consumer', color: '#4fc3f7' },
+      { layer: 'STORE', label: 'DuckDB', sub: 'Write-and-release lock', color: '#00e87b' },
+      { layer: 'SERVE', label: 'Streamlit', sub: 'Candlestick + VWAP + MAs', color: '#a78bfa' },
+    ],
+
+    overview: "Crypto Pulse is a real-time data pipeline that tracks live BTC/USDT trades and surfaces them on a trading dashboard that updates every 2 seconds. Binance's public WebSocket stream pushes trade events at roughly 5 to 30 messages per second — no API key, no rate limits, just a raw JSON feed anyone can connect to. Each stage is a separate process: if the dashboard crashes, the consumer keeps writing; if the consumer restarts, Kafka holds the messages until it catches up. That separation is the point.",
+
+    architectureNotes: [
+      {
+        title: 'Why Kafka for something this small',
+        body: "Kafka is overkill for one trading pair. But the architecture question was: what happens when this isn't small? With 10 trading pairs, 3 consumers doing different things with the same feed, and one of them down for 20 minutes — direct writes fall apart immediately. Kafka persists messages to disk with configurable retention, tracks each consumer's offset independently, and lets a restarted consumer pick up exactly where it left off.",
+      },
+      {
+        title: 'Why kafka-python and not Faust or Spark Streaming',
+        body: "The processing here is dead simple: parse five fields, insert a row. The overhead of a Spark cluster or an async Faust application for a parse + insert loop would have been genuinely silly. kafka-python is the right tool for the scope.",
+      },
+      {
+        title: 'Why DuckDB over SQLite or PostgreSQL',
+        body: "Every query on this dashboard is an aggregation — average price over a rolling window, OHLCV per 15-second bucket, moving averages via window functions. SQLite is row-oriented: it reads every column to compute aggregates. DuckDB is column-oriented, so SELECT AVG(price) reads only the price column off disk. time_bucket() and arg_max() are also DuckDB-native aggregates that would need to be emulated in SQLite.",
+      },
+    ],
+
+    sqlHighlights: [
+      {
+        title: 'OHLCV Candlestick Query',
+        description: "time_bucket rounds each timestamp to the nearest 15-second boundary. arg_min(price, trade_time) returns the price at the earliest row within the group — the open. arg_max gives the close. Neither exists in standard SQL; they're DuckDB-specific aggregates.",
+        code: `SELECT
+    time_bucket(INTERVAL '15 seconds', trade_time) AS bucket,
+    arg_min(price, trade_time)                      AS open,
+    max(price)                                      AS high,
+    min(price)                                      AS low,
+    arg_max(price, trade_time)                      AS close,
+    sum(quantity)                                   AS volume
+FROM trades
+WHERE trade_time >= CURRENT_TIMESTAMP - INTERVAL '300 seconds'
+GROUP BY bucket
+ORDER BY bucket`,
+      },
+      {
+        title: 'Sliding Window Moving Averages',
+        description: 'For each row, average the current price and the N rows before it. No GROUP BY, no subquery, no self-join. The first few rows get averaged over fewer points since there is no preceding history — expected behavior for MAs at the start of a dataset.',
+        code: `avg(price) OVER (
+    ORDER BY trade_time
+    ROWS BETWEEN 5 PRECEDING AND CURRENT ROW
+) AS ma_fast`,
+      },
+      {
+        title: 'VWAP Calculation',
+        description: 'Simple average weights every trade equally — a 0.001 BTC trade and a 2 BTC trade both contribute the same amount. VWAP weights by quantity, so large trades pull the average proportionally. If price sits above VWAP, buyers have been more aggressive than sellers during the session.',
+        code: `SUM(price * quantity) / SUM(quantity) AS vwap`,
+      },
+    ],
+
+    engineeringDecisions: [
+      {
+        title: 'The Windows file lock bug',
+        body: "DuckDB uses an exclusive write lock on the .duckdb file. On Linux and Mac, file locks are advisory. On Windows they're mandatory — the kernel enforces them. The original consumer held a persistent connection from startup, so the dashboard crashed immediately with 'file in use'. The fix: open a connection, insert the row, close it. Every message. The lock is held for ~2ms. The dashboard connects in the gap.",
+      },
+      {
+        title: 'Retry logic for Windows Defender',
+        body: "Windows Defender sometimes scans newly written files before releasing them, extending the effective lock window unpredictably. Added 8 retries at 150ms spacing in both writer and reader. In practice the retries almost never trigger, but without them the dashboard would occasionally freeze on startup. This is the kind of thing that doesn't show up in tutorials because most tutorials run on Mac.",
+      },
+      {
+        title: 'Mock pipeline for development',
+        body: 'Running the full pipeline to test a dashboard change requires Docker, 15 seconds for Kafka to become healthy, two other terminal processes, then the dashboard — for a CSS tweak. mock_pipeline.py is a random walk price generator that writes directly to DuckDB with no Kafka or Docker. One terminal, realistic trade pacing. It\'s also what makes the Streamlit Cloud deploy work since a cloud deployment can\'t reach a local Kafka broker.',
+      },
+      {
+        title: 'What to improve next',
+        body: 'The consumer opens and closes a DuckDB connection per message — 20 cycles/second on a 20 msg/s feed. The better solution: buffer 50 messages in memory, batch-insert, close. The dashboard also re-runs the entire Python script on each 2s refresh. For a 150-line script this is imperceptible, but a proper async update model would be worth it at scale.',
+      },
+    ],
+  },
+  {
+    id: 'ai-doc-assistant',
+    num: '04',
     name: 'AI Document Assistant',
     tagline: 'GenAI-powered RAG system achieving 90% relevance accuracy over custom document collections with optimized retrieval and evaluation metrics.',
     desc: 'GenAI powered RAG system achieving 90% relevance accuracy over custom document collections with optimized retrieval and evaluation metrics.',
@@ -276,7 +369,7 @@ export const projects = [
   },
   {
     id: 'object-detection',
-    num: '04',
+    num: '05',
     name: 'Object & Distance Detection',
     tagline: 'Assistive system for visually impaired using SSD with 98% detection accuracy. Published research findings in IRJMETS.',
     desc: 'Assistive system for visually impaired using SSD with 98% detection accuracy. Published research findings in IRJMETS.',

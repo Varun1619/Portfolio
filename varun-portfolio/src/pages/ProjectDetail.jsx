@@ -632,10 +632,220 @@ const ChinookDetail = ({ project, onBack }) => {
   );
 };
 
+// ─── Crypto Pulse detail ─────────────────────────────────────────────────────
+const CryptoPulseDetail = ({ project, onBack }) => {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    const t = setTimeout(() => setVisible(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
+  const fade = (delay = '0s') => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateY(0)' : 'translateY(20px)',
+    transition: `opacity 0.55s ease ${delay}, transform 0.55s ease ${delay}`,
+  });
+
+  const pipelineAccent = { SOURCE: '#f5a623', QUEUE: '#4fc3f7', STORE: '#00e87b', SERVE: '#a78bfa' };
+
+  return (
+    <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
+
+      {/* ── Hero ── */}
+      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
+          <BackButton onClick={onBack} />
+
+          <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
+            {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
+            {project.date && <span style={tagStyleDark}>{project.date}</span>}
+          </div>
+
+          <h1 style={{ ...fade('0.1s'), fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.text, marginBottom: '14px' }}>
+            {project.name}
+          </h1>
+
+          <p style={{ ...fade('0.15s'), fontSize: '1rem', color: C.muted, lineHeight: 1.65, maxWidth: '680px', marginBottom: '28px' }}>
+            {project.tagline}
+          </p>
+
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noopener noreferrer"
+              style={{ ...actionBtnStyle, ...fade('0.2s') }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
+              View on GitHub
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* ── Metrics ── */}
+      <Divider />
+      <div style={{ background: C.bg }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '2px' }}>
+          {project.metrics.map((m, i) => (
+            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
+              <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '2rem', fontWeight: 700, color: m.color || C.text, lineHeight: 1 }}>{m.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Pipeline ── */}
+      <Divider />
+      <div style={{ background: C.bg2 }}>
+        <Section label="Pipeline Architecture">
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px` }}>
+              {project.pipeline.map((stage, i) => (
+                <div key={i} style={{ position: 'relative', padding: '28px 16px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: pipelineAccent[stage.layer] || stage.color || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.95rem', fontWeight: 600, color: C.text, marginBottom: '5px' }}>{stage.label}</div>
+                  <div style={{ fontSize: '0.7rem', color: pipelineAccent[stage.layer] || stage.color || C.muted }}>{stage.sub}</div>
+                  {i < project.pipeline.length - 1 && (
+                    <div style={{ position: 'absolute', right: '-10px', top: '50%', transform: 'translateY(-50%)', zIndex: 2, color: C.muted, fontSize: '1.1rem' }}>›</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+      </div>
+
+      {/* ── Video ── */}
+      {project.video && (
+        <>
+          <Divider />
+          <Section label="Demo">
+            <div style={{ borderRadius: '4px', overflow: 'hidden', border: `1px solid ${C.border}`, background: '#000' }}>
+              <video src={project.video} controls autoPlay muted loop style={{ width: '100%', display: 'block', maxHeight: '520px', objectFit: 'contain' }} />
+            </div>
+          </Section>
+        </>
+      )}
+
+      {/* ── Overview ── */}
+      {project.overview && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg2 }}>
+            <Section label="Project Overview">
+              <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px' }}>{project.overview}</p>
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Architecture Notes ── */}
+      {project.architectureNotes?.length > 0 && (
+        <>
+          <Divider />
+          <Section label="Architecture">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {project.architectureNotes.map((note, i) => (
+                <div key={i}
+                  style={{ padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
+                >
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.92rem', fontWeight: 600, color: C.text, marginBottom: '10px' }}>{note.title}</div>
+                  <div style={{ fontSize: '0.82rem', color: C.muted, lineHeight: 1.7 }}>{note.body}</div>
+                </div>
+              ))}
+            </div>
+          </Section>
+        </>
+      )}
+
+      {/* ── SQL Highlights ── */}
+      {project.sqlHighlights?.length > 0 && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg2 }}>
+            <Section label="SQL Highlights">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {project.sqlHighlights.map((s, i) => (
+                  <div key={i} style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
+                    <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}`, background: C.bg3 }}>
+                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.92rem', fontWeight: 600, color: C.text, marginBottom: '6px' }}>{s.title}</div>
+                      <div style={{ fontSize: '0.8rem', color: C.muted, lineHeight: 1.65 }}>{s.description}</div>
+                    </div>
+                    <pre style={{ margin: 0, padding: '18px 20px', background: '#0d0d0d', overflowX: 'auto', fontSize: '0.75rem', lineHeight: 1.75, color: C.accent, fontFamily: "'JetBrains Mono', 'Fira Code', monospace", WebkitOverflowScrolling: 'touch' }}>
+                      <code>{s.code}</code>
+                    </pre>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Engineering Decisions ── */}
+      {project.engineeringDecisions?.length > 0 && (
+        <>
+          <Divider />
+          <Section label="Engineering Decisions">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: '16px' }}>
+              {project.engineeringDecisions.map((d, i) => (
+                <div key={i}
+                  style={{ padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
+                >
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.92rem', fontWeight: 600, color: C.text, marginBottom: '10px' }}>{d.title}</div>
+                  <div style={{ fontSize: '0.8rem', color: C.muted, lineHeight: 1.65 }}>{d.body}</div>
+                </div>
+              ))}
+            </div>
+          </Section>
+        </>
+      )}
+
+      {/* ── Stack ── */}
+      <Divider />
+      <div style={{ background: C.bg2 }}>
+        <Section label="Tech Stack">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {project.stack.map((tech) => (
+              <span key={tech}
+                style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg, transition: 'all 0.2s', cursor: 'default' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
+              >{tech}</span>
+            ))}
+          </div>
+        </Section>
+      </div>
+
+      {/* ── Footer ── */}
+      <Divider />
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(24px, 5vw, 40px)' }}>
+        <p style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '16px' }}>Personal project · No cloud accounts needed to run locally</p>
+        {project.github && (
+          <a href={project.github} target="_blank" rel="noopener noreferrer" style={actionBtnStyle}
+            onMouseEnter={(e) => { e.currentTarget.style.background = C.accent; e.currentTarget.style.color = '#000'; e.currentTarget.style.borderColor = C.accent; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = C.text; e.currentTarget.style.borderColor = C.border; }}
+          >
+            View on GitHub ↗
+          </a>
+        )}
+      </div>
+
+    </div>
+  );
+};
+
 // ─── Router ───────────────────────────────────────────────────────────────────
 const ProjectDetail = ({ project, onBack }) => {
   if (project.id === 'foodlens') return <FoodLensDetail project={project} onBack={onBack} />;
   if (project.id === 'chinook') return <ChinookDetail project={project} onBack={onBack} />;
+  if (project.id === 'crypto-pulse') return <CryptoPulseDetail project={project} onBack={onBack} />;
   return <GenericDetail project={project} onBack={onBack} />;
 };
 
