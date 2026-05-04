@@ -126,36 +126,88 @@ const FoodLensFlowchart = () => {
 };
 
 const FoodLensERDiagram = () => {
-  const tables = [
-    { name: 'dim_date', color: '#f5a623', cols: [{ t: 'int', n: 'date_key', k: 'PK' }, { t: 'date', n: 'full_date' }, { t: 'int', n: 'year' }, { t: 'int', n: 'quarter' }, { t: 'int', n: 'month' }, { t: 'string', n: 'day_of_week' }] },
-    { name: 'dim_establishment', color: '#4fc3f7', cols: [{ t: 'int', n: 'establishment_key', k: 'PK' }, { t: 'string', n: 'dba_name' }, { t: 'string', n: 'aka_name' }, { t: 'string', n: 'license_number' }, { t: 'string', n: 'facility_type' }, { t: 'string', n: 'risk_category' }, { t: 'date', n: 'eff_start_date' }, { t: 'date', n: 'eff_end_date' }, { t: 'string', n: 'is_current' }, { t: 'string', n: 'row_hash' }] },
-    { name: 'dim_location', color: '#00e87b', cols: [{ t: 'int', n: 'location_key', k: 'PK' }, { t: 'string', n: 'address' }, { t: 'string', n: 'city' }, { t: 'string', n: 'state' }, { t: 'string', n: 'zip_code' }, { t: 'double', n: 'latitude' }, { t: 'double', n: 'longitude' }] },
-    { name: 'dim_inspection_type', color: '#a78bfa', cols: [{ t: 'int', n: 'inspection_type_key', k: 'PK' }, { t: 'string', n: 'inspection_type_name' }, { t: 'string', n: 'city_source' }] },
-    { name: 'dim_result', color: '#ff6b6b', cols: [{ t: 'int', n: 'result_key', k: 'PK' }, { t: 'string', n: 'result_description' }, { t: 'int', n: 'derived_score' }, { t: 'string', n: 'city_source' }] },
-    { name: 'dim_risk_category', color: '#eab308', cols: [{ t: 'int', n: 'risk_key', k: 'PK' }, { t: 'string', n: 'risk_description' }, { t: 'string', n: 'city_source' }] },
-    { name: 'dim_violation', color: '#c084fc', cols: [{ t: 'int', n: 'violation_key', k: 'PK' }, { t: 'string', n: 'violation_code' }, { t: 'string', n: 'violation_description' }, { t: 'string', n: 'city_source' }, { t: 'boolean', n: 'is_critical' }] },
-    { name: 'fact_inspection', color: '#f472b6', cols: [{ t: 'int', n: 'inspection_key', k: 'PK' }, { t: 'string', n: 'inspection_id' }, { t: 'int', n: 'establishment_key', k: 'FK' }, { t: 'int', n: 'date_key', k: 'FK' }, { t: 'int', n: 'location_key', k: 'FK' }, { t: 'int', n: 'inspection_type_key', k: 'FK' }, { t: 'int', n: 'result_key', k: 'FK' }, { t: 'int', n: 'risk_key', k: 'FK' }, { t: 'int', n: 'violation_score' }, { t: 'int', n: 'violation_count' }, { t: 'string', n: 'city_source' }] },
-    { name: 'fact_inspection_violation', color: '#4fc3f7', cols: [{ t: 'int', n: 'inspection_violation_key', k: 'PK' }, { t: 'int', n: 'inspection_key', k: 'FK' }, { t: 'int', n: 'violation_key', k: 'FK' }, { t: 'int', n: 'violation_points' }, { t: 'boolean', n: 'is_critical' }] },
+  const RH = 20, HH = 26;
+  const calcH = (cols) => HH + cols.length * RH;
+
+  const tdata = [
+    { id: 'dim_date',       x:   5, y: 15, w: 160, color: '#f5a623',
+      cols: [{ t:'int',n:'date_key',k:'PK'},{t:'date',n:'full_date'},{t:'int',n:'year'},{t:'int',n:'quarter'},{t:'int',n:'month'},{t:'string',n:'day_of_week'}] },
+    { id: 'dim_establishment', x: 182, y: 15, w: 190, color: '#4fc3f7',
+      cols: [{ t:'int',n:'establishment_key',k:'PK'},{t:'string',n:'dba_name'},{t:'string',n:'aka_name'},{t:'string',n:'license_number'},{t:'string',n:'facility_type'},{t:'string',n:'risk_category'},{t:'date',n:'eff_start_date'},{t:'date',n:'eff_end_date'},{t:'string',n:'is_current'},{t:'string',n:'row_hash'}] },
+    { id: 'dim_location',   x: 390, y: 15, w: 172, color: '#00e87b',
+      cols: [{ t:'int',n:'location_key',k:'PK'},{t:'string',n:'address'},{t:'string',n:'city'},{t:'string',n:'state'},{t:'string',n:'zip_code'},{t:'double',n:'latitude'},{t:'double',n:'longitude'}] },
+    { id: 'dim_inspection_type', x: 580, y: 15, w: 200, color: '#a78bfa',
+      cols: [{ t:'int',n:'inspection_type_key',k:'PK'},{t:'string',n:'inspection_type_name'},{t:'string',n:'city_source'}] },
+    { id: 'dim_result',     x: 800, y: 15, w: 168, color: '#ff6b6b',
+      cols: [{ t:'int',n:'result_key',k:'PK'},{t:'string',n:'result_description'},{t:'int',n:'derived_score'},{t:'string',n:'city_source'}] },
+    { id: 'dim_risk_category', x: 988, y: 15, w: 170, color: '#eab308',
+      cols: [{ t:'int',n:'risk_key',k:'PK'},{t:'string',n:'risk_description'},{t:'string',n:'city_source'}] },
+    { id: 'fact_inspection', x: 358, y: 282, w: 224, color: '#f472b6',
+      cols: [{ t:'int',n:'inspection_key',k:'PK'},{t:'string',n:'inspection_id'},{t:'int',n:'establishment_key',k:'FK'},{t:'int',n:'date_key',k:'FK'},{t:'int',n:'location_key',k:'FK'},{t:'int',n:'inspection_type_key',k:'FK'},{t:'int',n:'result_key',k:'FK'},{t:'int',n:'risk_key',k:'FK'},{t:'int',n:'violation_score'},{t:'int',n:'violation_count'},{t:'string',n:'city_source'}] },
+    { id: 'dim_violation',  x: 876, y: 298, w: 198, color: '#c084fc',
+      cols: [{ t:'int',n:'violation_key',k:'PK'},{t:'string',n:'violation_code'},{t:'string',n:'violation_description'},{t:'string',n:'city_source'},{t:'boolean',n:'is_critical'}] },
+    { id: 'fact_inspection_violation', x: 358, y: 556, w: 224, color: '#4fc3f7',
+      cols: [{ t:'int',n:'inspection_violation_key',k:'PK'},{t:'int',n:'inspection_key',k:'FK'},{t:'int',n:'violation_key',k:'FK'},{t:'int',n:'violation_points'},{t:'boolean',n:'is_critical'}] },
   ];
 
+  tdata.forEach(t => { t.h = calcH(t.cols); });
+  const gt = (id) => tdata.find(t => t.id === id);
+
+  // Connection lines: [x1,y1, x2,y2, color]
+  const fi = gt('fact_inspection'), dv = gt('dim_violation'), fiv = gt('fact_inspection_violation');
+  const topDims   = ['dim_date','dim_establishment','dim_location','dim_inspection_type','dim_result','dim_risk_category'];
+  const xFromFact = [396, 415, 440, 470, 506, 536];
+  const connections = [
+    ...topDims.map((id, i) => { const d = gt(id); return [xFromFact[i], fi.y, d.x + d.w/2, d.y + d.h, d.color]; }),
+    [fi.x + fi.w, fi.y + fi.h/2,       dv.x,        dv.y + dv.h/2,  dv.color],
+    [fi.x + fi.w/2, fi.y + fi.h,       fiv.x + fiv.w/2, fiv.y,      'rgba(255,255,255,0.25)'],
+    [fiv.x + fiv.w, fiv.y + fiv.h/2,   dv.x + dv.w/2,   dv.y + dv.h, dv.color],
+  ];
+
+  const renderTable = (t) => (
+    <g key={t.id}>
+      <rect x={t.x} y={t.y} width={t.w} height={t.h} rx="3" fill="#0d0d0d" stroke={t.color} strokeWidth="1" strokeOpacity="0.65" />
+      <rect x={t.x} y={t.y} width={t.w} height={HH} rx="3" fill={`${t.color}18`} />
+      <rect x={t.x} y={t.y + HH - 1} width={t.w} height="1" fill={t.color} fillOpacity="0.3" />
+      <text x={t.x + t.w / 2} y={t.y + 17} textAnchor="middle" fill={t.color} fontSize="11" fontWeight="700" fontFamily="'Space Grotesk',sans-serif">{t.id}</text>
+      {t.cols.map((col, i) => {
+        const ry = t.y + HH + i * RH;
+        return (
+          <g key={col.n}>
+            {i % 2 === 0 && <rect x={t.x} y={ry} width={t.w} height={RH} fill="rgba(255,255,255,0.014)" />}
+            <line x1={t.x} y1={ry} x2={t.x + t.w} y2={ry} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+            <text x={t.x + 6}  y={ry + 14} fill="#555" fontSize="9.5" fontFamily="'Courier New',monospace">{col.t}</text>
+            <text x={t.x + 50} y={ry + 14} fill={col.k ? '#f0f0f0' : '#999'} fontSize="10" fontFamily="'Courier New',monospace" fontWeight={col.k ? '600' : '400'}>{col.n}</text>
+            {col.k && (
+              <>
+                <rect x={t.x + t.w - 25} y={ry + 5} width={21} height={11} rx="2" fill={col.k === 'PK' ? 'rgba(245,166,35,0.22)' : 'rgba(79,195,247,0.22)'} />
+                <text x={t.x + t.w - 14} y={ry + 14} textAnchor="middle" fill={col.k === 'PK' ? '#f5a623' : '#4fc3f7'} fontSize="8.5" fontWeight="700" fontFamily="sans-serif">{col.k}</text>
+              </>
+            )}
+          </g>
+        );
+      })}
+    </g>
+  );
+
+  // viewBox: width = max right edge + 10 = 988+170+10 = 1168 ≈ 1180
+  //          height = fiv bottom + 16 = 556 + calcH(fiv.cols) + 16
+  const vbH = fiv.y + fiv.h + 20;
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(210px, 100%), 1fr))', gap: '10px' }}>
-      {tables.map((tbl) => (
-        <div key={tbl.name} style={{ border: `1px solid ${tbl.color}50`, borderRadius: '3px', overflow: 'hidden' }}>
-          <div style={{ padding: '7px 12px', background: `${tbl.color}14`, borderBottom: `1px solid ${tbl.color}40` }}>
-            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: tbl.color, fontFamily: 'monospace' }}>{tbl.name}</span>
-          </div>
-          {tbl.cols.map((col, i) => (
-            <div key={col.n} style={{ display: 'grid', gridTemplateColumns: '50px 1fr auto', gap: '6px', padding: '4px 12px', background: i % 2 === 0 ? C.bg : 'transparent', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.58rem', color: C.muted, fontFamily: 'monospace' }}>{col.t}</span>
-              <span style={{ fontSize: '0.68rem', color: col.k ? C.text : '#aaa', fontFamily: 'monospace', fontWeight: col.k ? 500 : 400 }}>{col.n}</span>
-              {col.k && (
-                <span style={{ fontSize: '0.52rem', fontWeight: 700, color: col.k === 'PK' ? '#f5a623' : '#4fc3f7', background: col.k === 'PK' ? 'rgba(245,166,35,0.12)' : 'rgba(79,195,247,0.12)', padding: '1px 5px', borderRadius: '2px', whiteSpace: 'nowrap' }}>{col.k}</span>
-              )}
-            </div>
-          ))}
-        </div>
-      ))}
+    <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '4px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+      <svg viewBox={`0 0 1180 ${vbH}`} style={{ display: 'block', minWidth: '620px', width: '100%' }} xmlns="http://www.w3.org/2000/svg">
+        <rect width="1180" height={vbH} fill="#0a0a0a" />
+        {/* Connections behind tables */}
+        {connections.map(([x1,y1,x2,y2,col], i) => (
+          <g key={i}>
+            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={col} strokeWidth="1" strokeOpacity="0.38" strokeDasharray="5,4" />
+            <circle cx={x1} cy={y1} r="2.8" fill={col} fillOpacity="0.55" />
+            <circle cx={x2} cy={y2} r="2.8" fill={col} fillOpacity="0.55" />
+          </g>
+        ))}
+        {tdata.map(renderTable)}
+      </svg>
     </div>
   );
 };
