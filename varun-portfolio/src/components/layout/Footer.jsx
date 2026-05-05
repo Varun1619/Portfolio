@@ -114,8 +114,9 @@ const Footer = () => {
                 transition: 'all 0.3s',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#0a0a0a';
-                e.currentTarget.style.borderColor = '#00e87b';
+                const isGH = link.label === 'GitHub';
+                e.currentTarget.style.color = isGH ? '#ffffff' : '#0a0a0a';
+                e.currentTarget.style.borderColor = isGH ? '#9b4ff5' : '#00e87b';
                 e.currentTarget.querySelector('.fill').style.height = '100%';
               }}
               onMouseLeave={(e) => {
@@ -133,7 +134,7 @@ const Footer = () => {
                   left: 0,
                   width: '100%',
                   height: '0',
-                  background: '#00e87b',
+                  background: link.label === 'GitHub' ? '#8534F3' : '#00e87b',
                   transition: 'height 0.3s',
                   zIndex: 0,
                 }}

@@ -270,7 +270,7 @@ const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
             fontWeight: 600,
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            color: hovered ? C.accent : C.muted,
+            color: hovered ? '#9b4ff5' : C.muted,
             textDecoration: 'none',
             transition: 'color 0.3s',
           }}
