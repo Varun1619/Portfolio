@@ -140,7 +140,7 @@ export const projects = [
     course: 'INFO 7374 · Northeastern',
     date: 'Spring 2026',
     video: '/videos/chinook.mp4',
-    github: null,
+    github: 'https://github.com/Varun1619/Chinook-DataLoad',
 
     metrics: [
       { label: 'Source tables', value: '11', color: '#00e87b' },
