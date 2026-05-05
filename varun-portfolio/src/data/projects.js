@@ -159,6 +159,10 @@ export const projects = [
 
     overview: 'End-to-end metadata-driven pipeline over the Chinook music store dataset. The pipeline reads from Azure SQL via Connection Manager, stages Parquet files in Databricks Volumes with dated paths, loads Bronze Delta tables, applies DQX profiling and quarantine logic through Silver, and builds a fully typed Gold dimensional model orchestrated via Databricks Workflows.',
 
+    architectureDesc: 'Five notebooks move data from Azure SQL through Raw Parquet, Bronze, Silver, and Gold Delta layers. A pipeline_control table drives which tables are extracted on each run, and execution_log records row counts and load status after each step. DQX handles profiling and quarantine at the Silver layer. Databricks Workflows orchestrates the full sequence end to end.',
+
+    schemaDesc: 'Star schema centered on fact_sales, one row per invoice line item. dim_customer uses SCD Type 2 to capture customer profile changes over time. dim_track bridges the track hierarchy (album, artist, genre, media type) directly to the fact table. fact_sales_customer_agg pre-aggregates total spend and purchase counts per customer as a Gold-layer convenience table.',
+
     notebooks: [
       {
         num: '01',

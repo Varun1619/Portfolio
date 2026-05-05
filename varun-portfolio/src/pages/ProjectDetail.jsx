@@ -558,6 +558,161 @@ const GenericDetail = ({ project, onBack }) => {
 // ─── SCD badge colours ────────────────────────────────────────────────────────
 const scdColor = { SCD1: '#00e87b', SCD2: '#f5a623', Fact: '#4fc3f7', Aggregate: '#a78bfa' };
 
+// ─── Chinook inline diagrams ──────────────────────────────────────────────────
+const ChinookFlowchart = () => {
+  const Arrow = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
+      <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
+      </div>
+    </div>
+  );
+  const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
+    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '4px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
+      {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
+    </div>
+  );
+  const Row = ({ children }) => (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
+  );
+  return (
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
+      <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Row>
+          <Node label="Azure SQL" sub="11 source tables" borderColor="#4fc3f7" bg="rgba(79,195,247,0.07)" />
+          <Node label="pipeline_control" sub="Active tables metadata" borderColor="#888" bg="rgba(136,136,136,0.07)" />
+        </Row>
+        <Arrow />
+        <Node label="Notebook 01: extract_from_source" sub="Loops over active tables via Connection Manager" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" minW="300px" />
+        <Arrow />
+        <Node label="Parquet Volume" sub="Databricks Volume · dated paths" borderColor="#c8c8c8" bg="rgba(200,200,200,0.05)" />
+        <Arrow />
+        <Node label="execution_log" sub="Row counts + load status per table" borderColor="#888" bg="rgba(136,136,136,0.07)" />
+        <Arrow />
+        <Row>
+          <Node label="Notebook 02: load_raw" sub="Writes Parquet to Volume" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" minW="185px" />
+          <Node label="Notebook 03: raw_to_bronze" sub="Delta · overwrite per run" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" minW="185px" />
+        </Row>
+        <Arrow />
+        <Node label="Bronze Delta Tables" sub="11 tables · exact copy of source" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" />
+        <Arrow />
+        <Node label="Notebook 04: bronze_to_silver" sub="DQX profiling · nulls · duplicates · ranges" borderColor="#c8c8c8" bg="rgba(200,200,200,0.05)" />
+        <Arrow />
+        <Row>
+          <Node label="Silver Tables" sub="Clean rows promoted" borderColor="#00e87b" bg="rgba(0,232,123,0.07)" minW="150px" />
+          <Node label="Quarantine Tables" sub="Bad rows with _errors" borderColor="#ff6b6b" bg="rgba(255,107,107,0.1)" minW="150px" />
+        </Row>
+        <Arrow />
+        <Node label="Notebook 05: silver_to_gold" sub="7 dims + 2 fact tables" borderColor="#00e87b" bg="rgba(0,232,123,0.07)" />
+        <Arrow />
+        <Row>
+          <Node label="6 SCD1 dims" sub="artist · album · genre · media_type · employee · track" minW="200px" />
+          <Node label="dim_customer" sub="SCD Type 2" borderColor="#a78bfa" bg="rgba(167,139,250,0.07)" minW="130px" />
+          <Node label="fact_sales + agg" sub="2 fact tables" borderColor="#f472b6" bg="rgba(244,114,182,0.07)" minW="130px" />
+        </Row>
+        <Arrow />
+        <Node label="Databricks Workflows" sub="Job orchestration · execution log" borderColor="#4fc3f7" bg="rgba(79,195,247,0.07)" minW="230px" />
+      </div>
+    </div>
+  );
+};
+
+const ChinookERDiagram = () => {
+  const RH = 20, HH = 26;
+  const calcH = (cols) => HH + cols.length * RH;
+
+  const tdata = [
+    { id: 'dim_artist',     x: 10,  y: 15,  w: 155, color: '#f5a623',
+      cols: [{t:'int',n:'artist_key',k:'PK'},{t:'int',n:'artist_id'},{t:'string',n:'name'}] },
+    { id: 'dim_album',      x: 185, y: 15,  w: 175, color: '#c084fc',
+      cols: [{t:'int',n:'album_key',k:'PK'},{t:'int',n:'album_id'},{t:'string',n:'title'},{t:'int',n:'artist_key',k:'FK'}] },
+    { id: 'dim_genre',      x: 410, y: 15,  w: 150, color: '#00e87b',
+      cols: [{t:'int',n:'genre_key',k:'PK'},{t:'int',n:'genre_id'},{t:'string',n:'name'}] },
+    { id: 'dim_media_type', x: 580, y: 15,  w: 175, color: '#4fc3f7',
+      cols: [{t:'int',n:'media_type_key',k:'PK'},{t:'int',n:'media_type_id'},{t:'string',n:'name'}] },
+    { id: 'dim_employee',   x: 775, y: 15,  w: 185, color: '#ff6b6b',
+      cols: [{t:'int',n:'employee_key',k:'PK'},{t:'int',n:'employee_id'},{t:'string',n:'first_name'},{t:'string',n:'last_name'},{t:'string',n:'title'},{t:'string',n:'city'},{t:'string',n:'country'}] },
+    { id: 'dim_customer',   x: 10,  y: 240, w: 200, color: '#a78bfa',
+      cols: [{t:'int',n:'customer_key',k:'PK'},{t:'int',n:'customer_id'},{t:'string',n:'first_name'},{t:'string',n:'last_name'},{t:'string',n:'email'},{t:'string',n:'city'},{t:'string',n:'country'},{t:'date',n:'eff_start_date'},{t:'date',n:'eff_end_date'},{t:'string',n:'is_current'},{t:'string',n:'row_hash'}] },
+    { id: 'fact_sales',     x: 340, y: 240, w: 215, color: '#f472b6',
+      cols: [{t:'int',n:'sales_key',k:'PK'},{t:'int',n:'invoice_id'},{t:'int',n:'track_key',k:'FK'},{t:'int',n:'customer_key',k:'FK'},{t:'int',n:'employee_key',k:'FK'},{t:'double',n:'unit_price'},{t:'int',n:'quantity'},{t:'double',n:'extended_price'},{t:'date',n:'invoice_date'}] },
+    { id: 'dim_track',      x: 340, y: 520, w: 215, color: '#eab308',
+      cols: [{t:'int',n:'track_key',k:'PK'},{t:'int',n:'track_id'},{t:'string',n:'track_name'},{t:'int',n:'album_key',k:'FK'},{t:'int',n:'genre_key',k:'FK'},{t:'int',n:'media_type_key',k:'FK'},{t:'string',n:'composer'},{t:'double',n:'unit_price'}] },
+    { id: 'fact_sales_customer_agg', x: 625, y: 520, w: 215, color: '#38bdf8',
+      cols: [{t:'int',n:'agg_key',k:'PK'},{t:'int',n:'customer_key',k:'FK'},{t:'double',n:'total_spent'},{t:'int',n:'invoice_count'},{t:'int',n:'track_count'},{t:'date',n:'first_purchase'},{t:'date',n:'last_purchase'}] },
+  ];
+
+  tdata.forEach(t => { t.h = calcH(t.cols); });
+  const gt = (id) => tdata.find(t => t.id === id);
+
+  const fs  = gt('fact_sales');
+  const dt  = gt('dim_track');
+  const dc  = gt('dim_customer');
+  const de  = gt('dim_employee');
+  const da  = gt('dim_album');
+  const dar = gt('dim_artist');
+  const dg  = gt('dim_genre');
+  const dmt = gt('dim_media_type');
+  const fsa = gt('fact_sales_customer_agg');
+
+  const connections = [
+    [fs.x,                          fs.y + Math.round(fs.h / 2),       dc.x + dc.w,                    dc.y + Math.round(dc.h / 2),      dc.color],
+    [fs.x + Math.round(fs.w / 2),   fs.y,                              de.x + Math.round(de.w / 2),    de.y + de.h,                      de.color],
+    [fs.x + Math.round(fs.w / 2),   fs.y + fs.h,                       dt.x + Math.round(dt.w / 2),    dt.y,                             dt.color],
+    [fs.x + fs.w,                   fs.y + Math.round(fs.h * 0.7),     fsa.x,                          fsa.y + Math.round(fsa.h * 0.2),  fsa.color],
+    [dt.x + Math.round(dt.w * 0.3), dt.y,                              da.x + Math.round(da.w / 2),    da.y + da.h,                      da.color],
+    [dt.x + Math.round(dt.w * 0.5), dt.y,                              dg.x + Math.round(dg.w / 2),    dg.y + dg.h,                      dg.color],
+    [dt.x + Math.round(dt.w * 0.7), dt.y,                              dmt.x + Math.round(dmt.w / 2),  dmt.y + dmt.h,                    dmt.color],
+    [da.x,                          da.y + Math.round(da.h / 2),       dar.x + dar.w,                  dar.y + Math.round(dar.h / 2),    dar.color],
+  ];
+
+  const vbW = de.x + de.w + 10;
+  const vbH = Math.max(dt.y + dt.h, fsa.y + fsa.h) + 20;
+
+  const renderTable = (t) => (
+    <g key={t.id}>
+      <rect x={t.x} y={t.y} width={t.w} height={t.h} rx="3" fill="#0d0d0d" stroke={t.color} strokeWidth="1" strokeOpacity="0.65" />
+      <rect x={t.x} y={t.y} width={t.w} height={HH} rx="3" fill={`${t.color}18`} />
+      <rect x={t.x} y={t.y + HH - 1} width={t.w} height="1" fill={t.color} fillOpacity="0.3" />
+      <text x={t.x + t.w / 2} y={t.y + 17} textAnchor="middle" fill={t.color} fontSize="11" fontWeight="700" fontFamily="'Space Grotesk',sans-serif">{t.id}</text>
+      {t.cols.map((col, i) => {
+        const ry = t.y + HH + i * RH;
+        return (
+          <g key={col.n}>
+            {i % 2 === 0 && <rect x={t.x} y={ry} width={t.w} height={RH} fill="rgba(255,255,255,0.014)" />}
+            <line x1={t.x} y1={ry} x2={t.x + t.w} y2={ry} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+            <text x={t.x + 6}  y={ry + 14} fill="#555" fontSize="9.5" fontFamily="'Courier New',monospace">{col.t}</text>
+            <text x={t.x + 50} y={ry + 14} fill={col.k ? '#f0f0f0' : '#999'} fontSize="10" fontFamily="'Courier New',monospace" fontWeight={col.k ? '600' : '400'}>{col.n}</text>
+            {col.k && (
+              <>
+                <rect x={t.x + t.w - 25} y={ry + 5} width={21} height={11} rx="2" fill={col.k === 'PK' ? 'rgba(245,166,35,0.22)' : 'rgba(79,195,247,0.22)'} />
+                <text x={t.x + t.w - 14} y={ry + 14} textAnchor="middle" fill={col.k === 'PK' ? '#f5a623' : '#4fc3f7'} fontSize="8.5" fontWeight="700" fontFamily="sans-serif">{col.k}</text>
+              </>
+            )}
+          </g>
+        );
+      })}
+    </g>
+  );
+
+  return (
+    <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '4px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+      <svg viewBox={`0 0 ${vbW} ${vbH}`} style={{ display: 'block', minWidth: '620px', width: '100%' }} xmlns="http://www.w3.org/2000/svg">
+        <rect width={vbW} height={vbH} fill="#0a0a0a" />
+        {connections.map(([x1,y1,x2,y2,col], i) => (
+          <g key={i}>
+            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={col} strokeWidth="1" strokeOpacity="0.38" strokeDasharray="5,4" />
+            <circle cx={x1} cy={y1} r="2.8" fill={col} fillOpacity="0.55" />
+            <circle cx={x2} cy={y2} r="2.8" fill={col} fillOpacity="0.55" />
+          </g>
+        ))}
+        {tdata.map(renderTable)}
+      </svg>
+    </div>
+  );
+};
+
 // ─── Chinook detail ───────────────────────────────────────────────────────────
 const ChinookDetail = ({ project, onBack }) => {
   const [visible, setVisible] = useState(false);
@@ -634,6 +789,21 @@ const ChinookDetail = ({ project, onBack }) => {
         </Section>
       </div>
 
+      {/* ── Architecture ── */}
+      {project.architectureDesc && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg }}>
+            <Section label="Architecture">
+              <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px', marginBottom: '28px' }}>
+                {project.architectureDesc}
+              </p>
+              <ChinookFlowchart />
+            </Section>
+          </div>
+        </>
+      )}
+
       {/* ── Overview ── */}
       {project.overview && (
         <>
@@ -695,6 +865,21 @@ const ChinookDetail = ({ project, onBack }) => {
                   </div>
                 ))}
               </div>
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Schema Design ── */}
+      {project.schemaDesc && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg }}>
+            <Section label="Schema Design">
+              <p style={{ fontSize: '0.9rem', color: C.muted, lineHeight: 1.8, marginBottom: '28px' }}>
+                {project.schemaDesc}
+              </p>
+              <ChinookERDiagram />
             </Section>
           </div>
         </>
