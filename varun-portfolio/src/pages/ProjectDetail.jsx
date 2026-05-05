@@ -932,6 +932,52 @@ const ChinookDetail = ({ project, onBack }) => {
   );
 };
 
+// ─── Crypto Pulse architecture diagram ───────────────────────────────────────
+const CryptoPulseArchitecture = () => {
+  const Arrow = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
+      <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
+      </div>
+    </div>
+  );
+  const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
+    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '4px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
+      {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
+    </div>
+  );
+  const Row = ({ children }) => (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
+  );
+  return (
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
+      <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Node label="Binance WebSocket API" sub="BTC/USDT public feed · 5–30 msg/s · no API key required" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" minW="300px" />
+        <Arrow />
+        <Node label="Kafka Producer" sub="producer.py · serializes JSON trade events to topic" borderColor="#4fc3f7" bg="rgba(79,195,247,0.07)" />
+        <Arrow />
+        <Node label="Kafka Topic: btcusdt-trades" sub="Messages persisted to disk · each consumer tracks its own offset" borderColor="#4fc3f7" bg="rgba(79,195,247,0.05)" />
+        <Arrow />
+        <Node label="Kafka Consumer" sub="consumer.py · write-and-release DuckDB lock per message (~2ms hold)" borderColor="#4fc3f7" bg="rgba(79,195,247,0.07)" />
+        <Arrow />
+        <Row>
+          <Node label="DuckDB · trades table" sub="Columnar · optimised for window aggregations" borderColor="#00e87b" bg="rgba(0,232,123,0.07)" minW="200px" />
+          <Node label="mock_pipeline.py" sub="Dev mode · random walk · no Kafka or Docker needed" borderColor="#888" bg="rgba(136,136,136,0.07)" minW="200px" />
+        </Row>
+        <Arrow />
+        <Node label="Streamlit dashboard.py" sub="Queries DuckDB every 2 seconds · renders charts via Plotly" borderColor="#a78bfa" bg="rgba(167,139,250,0.07)" />
+        <Arrow />
+        <Row>
+          <Node label="Candlestick (OHLCV)" sub="15-second buckets" minW="148px" />
+          <Node label="VWAP" sub="Volume-weighted price" minW="148px" />
+          <Node label="MA 5 · 20 · 50" sub="Sliding window averages" minW="148px" />
+        </Row>
+      </div>
+    </div>
+  );
+};
+
 // ─── Crypto Pulse detail ─────────────────────────────────────────────────────
 const CryptoPulseDetail = ({ project, onBack }) => {
   const [visible, setVisible] = useState(false);
@@ -1034,6 +1080,9 @@ const CryptoPulseDetail = ({ project, onBack }) => {
         <>
           <Divider />
           <Section label="Architecture">
+            <div style={{ marginBottom: '32px' }}>
+              <CryptoPulseArchitecture />
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {project.architectureNotes.map((note, i) => (
                 <div key={i}
