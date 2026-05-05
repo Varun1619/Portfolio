@@ -2,7 +2,7 @@ export const projects = [
   {
     id: 'foodlens',
     num: '01',
-    name: 'FoodLens — Food Inspection Analytics',
+    name: 'FoodLens',
     tagline: 'Medallion pipeline processing 387K food inspection records from Chicago and Dallas, validated through DQX, modelled into a star schema, and served to Power BI.',
     desc: 'End-to-end Medallion Architecture pipeline on Databricks processing 387K+ inspections across Chicago & Dallas. Star schema with SCD Type 2, 1.3M+ violation records, and Power BI dashboards.',
     stack: ['Databricks', 'PySpark', 'Delta Lake', 'DQX', 'Power BI', 'Navicat', 'Git', 'Python'],
@@ -27,9 +27,9 @@ export const projects = [
 
     overview: 'Medallion pipeline on Databricks processing 387K food inspection records from Chicago and Dallas, validated through DQX, modelled into a star schema, and served to Power BI.',
 
-    architectureDesc: 'Four notebooks move data from raw CSVs through Bronze (raw Delta), Silver (validated and cleansed), and Gold (star schema) into Power BI. Each layer writes to its own Unity Catalog schema. Bad rows don\'t disappear — they go to quarantine tables with a full audit trail of which rules they failed.',
+    architectureDesc: 'Four notebooks move data from raw CSVs through Bronze (raw Delta), Silver (validated and cleansed), and Gold (star schema) into Power BI. Each layer writes to its own Unity Catalog schema. Bad rows are quarantined with a full audit trail of which rules they failed.',
 
-    dimensionalModelDesc: 'Star schema with fact_inspection at the center (one row per inspection, 294K rows) connected to 7 dimensions. fact_inspection_violation is a bridge table handling the many-to-many between inspections and violations. Chicago uses text results (Pass/Fail), Dallas uses numeric scores — dim_result unifies both with a derived_score column.',
+    dimensionalModelDesc: 'Star schema with fact_inspection at the center (one row per inspection, 294K rows) connected to 7 dimensions. fact_inspection_violation is a bridge table handling the many-to-many between inspections and violations. Chicago uses text results (Pass/Fail), Dallas uses numeric scores. dim_result unifies both with a derived_score column.',
 
     notebooks: [
       {
@@ -39,7 +39,7 @@ export const projects = [
         bullets: [
           'Reads both CSVs with multiLine/escape options for embedded commas.',
           'Adds three metadata columns for lineage: _source_file, _load_timestamp, _source_city.',
-          'Writes to Delta with column mapping enabled — Chicago has names like "License #" and "DBA Name" that Delta rejects by default.',
+          'Writes to Delta with column mapping enabled. Chicago has names like "License #" and "DBA Name" that Delta rejects by default.',
           'Full overwrite each run since the source is static.',
         ],
       },
@@ -59,7 +59,7 @@ export const projects = [
         file: '03_Bronze_Silver.ipynb',
         bullets: [
           'Parses Chicago\'s pipe-delimited violation strings via regex.',
-          'Unpivots Dallas\'s 25 slots using SQL UNION ALL — PySpark\'s reduce(DataFrame.unionByName) throws a _jdf JVM error on serverless compute.',
+          'Unpivots Dallas\'s 25 slots using SQL UNION ALL. PySpark\'s reduce(DataFrame.unionByName) throws a _jdf JVM error on serverless compute.',
           'Generates SHA-256 inspection IDs for Dallas (no natural key). An earlier 16-char truncation had 118 collisions; full 64-char hash has zero.',
           'Derives Chicago scores from text results: Pass = 90, Fail = 70, Pass w/ Conditions = 80, No Entry = 0.',
           'Runs 17 DQX rules, quarantines bad rows with _errors column, deduplicates violations by content, trims Dallas to 3 violations for score ≥ 90.',
@@ -72,8 +72,8 @@ export const projects = [
         file: '04_Silver_to_Gold.ipynb',
         bullets: [
           'Builds 7 dimensions and 2 fact tables.',
-          'Implements SCD Type 2 on dim_establishment with SHA-256 row hashing for change detection — old records expire with eff_end_date, new versions insert with is_current = Y.',
-          'Validates referential integrity at the end — 0 orphan FKs.',
+          'Implements SCD Type 2 on dim_establishment with SHA-256 row hashing for change detection. Old records expire with eff_end_date, new versions insert with is_current = Y.',
+          'Validates referential integrity at the end. 0 orphan FKs.',
           'fact_inspection joins all 7 dimensions via surrogate keys; dim_risk_category is left null for Dallas rows since Dallas has no risk classification.',
         ],
       },
@@ -113,7 +113,7 @@ export const projects = [
       },
       {
         title: 'Synthetic inspection IDs for Dallas',
-        body: 'Dallas had no natural key. SHA-256 hashes from 5 fields (name, date, score, type, address) — full 64-character hash, zero collisions. An earlier version truncated to 16 characters and had 118 duplicates.',
+        body: 'Dallas had no natural key. SHA-256 hashes from 5 fields (name, date, score, type, address). Full 64-character hash, zero collisions. An earlier version truncated to 16 characters and had 118 duplicates.',
       },
       {
         title: 'DQX over manual filters',
@@ -121,7 +121,7 @@ export const projects = [
       },
       {
         title: 'SQL UNION ALL for Dallas unpivot',
-        body: "PySpark's reduce(DataFrame.unionByName) throws a _jdf JVM error on serverless compute. SQL UNION ALL runs through Spark SQL instead of the JVM directly — works on serverless without issues.",
+        body: "PySpark's reduce(DataFrame.unionByName) throws a _jdf JVM error on serverless compute. SQL UNION ALL runs through Spark SQL instead of the JVM directly and works on serverless without issues.",
       },
       {
         title: 'Cross-city schema harmonization',
@@ -133,8 +133,8 @@ export const projects = [
     id: 'chinook',
     num: '02',
     name: 'Chinook Data Pipeline',
-    tagline: 'End-to-end metadata-driven pipeline over the Chinook music store dataset — Raw Parquet through Bronze, Silver, and Gold Delta layers on Databricks, fully orchestrated via Databricks Workflows.',
-    desc: 'End-to-end metadata-driven pipeline over the Chinook music store dataset — Raw Parquet through Bronze, Silver, and Gold Delta layers on Databricks, fully orchestrated via Databricks Workflows.',
+    tagline: 'End-to-end metadata-driven pipeline over the Chinook music store dataset. Raw Parquet through Bronze, Silver, and Gold Delta layers on Databricks, fully orchestrated via Databricks Workflows.',
+    desc: 'End-to-end metadata-driven pipeline over the Chinook music store dataset. Raw Parquet through Bronze, Silver, and Gold Delta layers on Databricks, fully orchestrated via Databricks Workflows.',
     stack: ['Databricks', 'PySpark', 'Delta Lake', 'Databricks DQX', 'Databricks Workflows', 'Unity Catalog', 'Azure SQL'],
     tags: ['Data Engineering'],
     course: 'INFO 7374 · Northeastern',
@@ -234,7 +234,7 @@ export const projects = [
     id: 'crypto-pulse',
     num: '03',
     name: 'Crypto Pulse',
-    tagline: 'Real-time BTC/USDT trading dashboard — live Binance WebSocket feed through Kafka into DuckDB, surfaced on a Streamlit dashboard refreshing every 2 seconds.',
+    tagline: 'Real-time BTC/USDT trading dashboard. Live Binance WebSocket feed through Kafka into DuckDB, surfaced on a Streamlit dashboard refreshing every 2 seconds.',
     desc: 'Real-time BTC/USDT pipeline: Binance WebSocket → Kafka → DuckDB → Streamlit dashboard with candlesticks, VWAP, and 3 moving averages refreshing every 2 seconds.',
     stack: ['Python', 'Apache Kafka', 'DuckDB', 'Streamlit', 'Plotly', 'Docker Compose'],
     tags: ['Data Engineering', 'Real-Time'],
@@ -256,12 +256,12 @@ export const projects = [
       { layer: 'SERVE', label: 'Streamlit', sub: 'Candlestick + VWAP + MAs', color: '#a78bfa' },
     ],
 
-    overview: "Crypto Pulse is a real-time data pipeline that tracks live BTC/USDT trades and surfaces them on a trading dashboard that updates every 2 seconds. Binance's public WebSocket stream pushes trade events at roughly 5 to 30 messages per second — no API key, no rate limits, just a raw JSON feed anyone can connect to. Each stage is a separate process: if the dashboard crashes, the consumer keeps writing; if the consumer restarts, Kafka holds the messages until it catches up. That separation is the point.",
+    overview: "Crypto Pulse is a real-time data pipeline that tracks live BTC/USDT trades and surfaces them on a trading dashboard that updates every 2 seconds. Binance's public WebSocket stream pushes trade events at roughly 5 to 30 messages per second. No API key, no rate limits, just a raw JSON feed anyone can connect to. Each stage is a separate process: if the dashboard crashes, the consumer keeps writing; if the consumer restarts, Kafka holds the messages until it catches up. That separation is the point.",
 
     architectureNotes: [
       {
         title: 'Why Kafka for something this small',
-        body: "Kafka is overkill for one trading pair. But the architecture question was: what happens when this isn't small? With 10 trading pairs, 3 consumers doing different things with the same feed, and one of them down for 20 minutes — direct writes fall apart immediately. Kafka persists messages to disk with configurable retention, tracks each consumer's offset independently, and lets a restarted consumer pick up exactly where it left off.",
+        body: "Kafka is overkill for one trading pair. But the architecture question was: what happens when this isn't small? With 10 trading pairs, 3 consumers doing different things with the same feed, and one of them down for 20 minutes, direct writes fall apart immediately. Kafka persists messages to disk with configurable retention, tracks each consumer's offset independently, and lets a restarted consumer pick up exactly where it left off.",
       },
       {
         title: 'Why kafka-python and not Faust or Spark Streaming',
@@ -269,14 +269,14 @@ export const projects = [
       },
       {
         title: 'Why DuckDB over SQLite or PostgreSQL',
-        body: "Every query on this dashboard is an aggregation — average price over a rolling window, OHLCV per 15-second bucket, moving averages via window functions. SQLite is row-oriented: it reads every column to compute aggregates. DuckDB is column-oriented, so SELECT AVG(price) reads only the price column off disk. time_bucket() and arg_max() are also DuckDB-native aggregates that would need to be emulated in SQLite.",
+        body: "Every query on this dashboard is an aggregation: average price over a rolling window, OHLCV per 15-second bucket, moving averages via window functions. SQLite is row-oriented and reads every column to compute aggregates. DuckDB is column-oriented, so SELECT AVG(price) reads only the price column off disk. time_bucket() and arg_max() are also DuckDB-native aggregates that would need to be emulated in SQLite.",
       },
     ],
 
     sqlHighlights: [
       {
         title: 'OHLCV Candlestick Query',
-        description: "time_bucket rounds each timestamp to the nearest 15-second boundary. arg_min(price, trade_time) returns the price at the earliest row within the group — the open. arg_max gives the close. Neither exists in standard SQL; they're DuckDB-specific aggregates.",
+        description: "time_bucket rounds each timestamp to the nearest 15-second boundary. arg_min(price, trade_time) returns the price at the earliest row within the group (the open). arg_max gives the close. Neither exists in standard SQL; they're DuckDB-specific aggregates.",
         code: `SELECT
     time_bucket(INTERVAL '15 seconds', trade_time) AS bucket,
     arg_min(price, trade_time)                      AS open,
@@ -291,7 +291,7 @@ ORDER BY bucket`,
       },
       {
         title: 'Sliding Window Moving Averages',
-        description: 'For each row, average the current price and the N rows before it. No GROUP BY, no subquery, no self-join. The first few rows get averaged over fewer points since there is no preceding history — expected behavior for MAs at the start of a dataset.',
+        description: 'For each row, average the current price and the N rows before it. No GROUP BY, no subquery, no self-join. The first few rows get averaged over fewer points since there is no preceding history. This is expected behavior for MAs at the start of a dataset.',
         code: `avg(price) OVER (
     ORDER BY trade_time
     ROWS BETWEEN 5 PRECEDING AND CURRENT ROW
@@ -299,7 +299,7 @@ ORDER BY bucket`,
       },
       {
         title: 'VWAP Calculation',
-        description: 'Simple average weights every trade equally — a 0.001 BTC trade and a 2 BTC trade both contribute the same amount. VWAP weights by quantity, so large trades pull the average proportionally. If price sits above VWAP, buyers have been more aggressive than sellers during the session.',
+        description: 'Simple average weights every trade equally. A 0.001 BTC trade and a 2 BTC trade both contribute the same amount. VWAP weights by quantity, so large trades pull the average proportionally. If price sits above VWAP, buyers have been more aggressive than sellers during the session.',
         code: `SUM(price * quantity) / SUM(quantity) AS vwap`,
       },
     ],
@@ -307,7 +307,7 @@ ORDER BY bucket`,
     engineeringDecisions: [
       {
         title: 'The Windows file lock bug',
-        body: "DuckDB uses an exclusive write lock on the .duckdb file. On Linux and Mac, file locks are advisory. On Windows they're mandatory — the kernel enforces them. The original consumer held a persistent connection from startup, so the dashboard crashed immediately with 'file in use'. The fix: open a connection, insert the row, close it. Every message. The lock is held for ~2ms. The dashboard connects in the gap.",
+        body: "DuckDB uses an exclusive write lock on the .duckdb file. On Linux and Mac, file locks are advisory. On Windows they're mandatory and the kernel enforces them. The original consumer held a persistent connection from startup, so the dashboard crashed immediately with 'file in use'. The fix: open a connection, insert the row, close it. Every message. The lock is held for ~2ms. The dashboard connects in the gap.",
       },
       {
         title: 'Retry logic for Windows Defender',
@@ -315,11 +315,11 @@ ORDER BY bucket`,
       },
       {
         title: 'Mock pipeline for development',
-        body: 'Running the full pipeline to test a dashboard change requires Docker, 15 seconds for Kafka to become healthy, two other terminal processes, then the dashboard — for a CSS tweak. mock_pipeline.py is a random walk price generator that writes directly to DuckDB with no Kafka or Docker. One terminal, realistic trade pacing. It\'s also what makes the Streamlit Cloud deploy work since a cloud deployment can\'t reach a local Kafka broker.',
+        body: 'Running the full pipeline to test a dashboard change requires Docker, 15 seconds for Kafka to become healthy, two other terminal processes, then the dashboard. mock_pipeline.py is a random walk price generator that writes directly to DuckDB with no Kafka or Docker. One terminal, realistic trade pacing. It\'s also what makes the Streamlit Cloud deploy work since a cloud deployment can\'t reach a local Kafka broker.',
       },
       {
         title: 'What to improve next',
-        body: 'The consumer opens and closes a DuckDB connection per message — 20 cycles/second on a 20 msg/s feed. The better solution: buffer 50 messages in memory, batch-insert, close. The dashboard also re-runs the entire Python script on each 2s refresh. For a 150-line script this is imperceptible, but a proper async update model would be worth it at scale.',
+        body: 'The consumer opens and closes a DuckDB connection per message. That is 20 cycles/second on a 20 msg/s feed. The better solution: buffer 50 messages in memory, batch-insert, close. The dashboard also re-runs the entire Python script on each 2s refresh. For a 150-line script this is imperceptible, but a proper async update model would be worth it at scale.',
       },
     ],
   },

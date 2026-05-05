@@ -313,18 +313,6 @@ const FoodLensDetail = ({ project, onBack }) => {
         </>
       )}
 
-      {/* ── Video ── */}
-      {project.video && (
-        <>
-          <Divider />
-          <Section label="Demo">
-            <div style={{ borderRadius: '4px', overflow: 'hidden', border: `1px solid ${C.border}`, background: '#000' }}>
-              <video src={project.video} controls autoPlay muted loop style={{ width: '100%', display: 'block', maxHeight: '520px', objectFit: 'contain' }} />
-            </div>
-          </Section>
-        </>
-      )}
-
       {/* ── Notebooks ── */}
       {project.notebooks && (
         <>
@@ -515,7 +503,7 @@ const FoodLensDetail = ({ project, onBack }) => {
       {/* ── Footer ── */}
       <Divider />
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(24px, 5vw, 40px)' }}>
-        <p style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '16px' }}>Northeastern University — Data Engineering Final Project — Spring 2026</p>
+        <p style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '16px' }}>Northeastern University · Data Engineering Final Project · Spring 2026</p>
         {project.github && (
           <a href={project.github} target="_blank" rel="noopener noreferrer" style={actionBtnStyle}
             onMouseEnter={(e) => { e.currentTarget.style.background = C.accent; e.currentTarget.style.color = '#000'; e.currentTarget.style.borderColor = C.accent; }}
@@ -645,18 +633,6 @@ const ChinookDetail = ({ project, onBack }) => {
           </div>
         </Section>
       </div>
-
-      {/* ── Video ── */}
-      {project.video && (
-        <>
-          <Divider />
-          <Section label="Demo">
-            <div style={{ borderRadius: '4px', overflow: 'hidden', border: `1px solid ${C.border}`, background: '#000' }}>
-              <video src={project.video} controls autoPlay muted loop style={{ width: '100%', display: 'block', maxHeight: '520px', objectFit: 'contain' }} />
-            </div>
-          </Section>
-        </>
-      )}
 
       {/* ── Overview ── */}
       {project.overview && (
@@ -855,18 +831,6 @@ const CryptoPulseDetail = ({ project, onBack }) => {
           </div>
         </Section>
       </div>
-
-      {/* ── Video ── */}
-      {project.video && (
-        <>
-          <Divider />
-          <Section label="Demo">
-            <div style={{ borderRadius: '4px', overflow: 'hidden', border: `1px solid ${C.border}`, background: '#000' }}>
-              <video src={project.video} controls autoPlay muted loop style={{ width: '100%', display: 'block', maxHeight: '520px', objectFit: 'contain' }} />
-            </div>
-          </Section>
-        </>
-      )}
 
       {/* ── Overview ── */}
       {project.overview && (
