@@ -17,6 +17,7 @@ const projects = allProjects.map((p) => ({
   stack: p.stack,
   link: p.github || null,
   id: p.id,
+  video: p.video || null,
 }));
 
 const Projects = ({ onViewAll = null, onProjectSelect = null }) => {
@@ -160,7 +161,18 @@ const Projects = ({ onViewAll = null, onProjectSelect = null }) => {
 // ===== Project Card =====
 const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
   const [hovered, setHovered] = useState(false);
+  const videoRef = useRef(null);
   const handleClick = onProjectSelect ? () => onProjectSelect(project) : (onViewAll || undefined);
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (hovered) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  }, [hovered]);
 
   return (
     <div
@@ -173,7 +185,6 @@ const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
         width: 'clamp(280px, 80vw, 420px)',
         background: C.bg,
         border: `1px solid ${hovered ? C.accent : C.border}`,
-        padding: 'clamp(20px, 4vw, 40px)',
         borderRadius: '2px',
         transition: 'all 0.4s',
         position: 'relative',
@@ -193,94 +204,123 @@ const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
           background: 'linear-gradient(135deg, rgba(0,232,123,0.15) 0%, transparent 60%)',
           transition: 'all 0.4s',
           pointerEvents: 'none',
+          zIndex: 1,
         }}
       />
 
-      {/* Number */}
-      <div
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: '4rem',
-          fontWeight: 800,
-          color: 'rgba(255,255,255,0.04)',
-          lineHeight: 1,
-          marginBottom: '16px',
-        }}
-      >
-        {project.num}
-      </div>
-
-      {/* Name */}
-      <div
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: '1.3rem',
-          fontWeight: 700,
-          color: C.text,
-          marginBottom: '12px',
-        }}
-      >
-        {project.name}
-      </div>
-
-      {/* Description */}
-      <div
-        style={{
-          fontSize: '0.85rem',
-          color: C.muted,
-          lineHeight: 1.6,
-          marginBottom: '20px',
-        }}
-      >
-        {project.desc}
-      </div>
-
-      {/* Tech stack */}
-      <div className="flex flex-wrap gap-1.5" style={{ marginBottom: project.link ? '20px' : 0 }}>
-        {project.stack.map((tech) => (
-          <span
-            key={tech}
+      {/* Media cover */}
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#0d0d0d', overflow: 'hidden' }}>
+        {project.video ? (
+          <video
+            ref={videoRef}
+            src={project.video}
+            muted
+            loop
+            playsInline
             style={{
-              fontSize: '0.65rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: C.accent,
-              fontWeight: 500,
-              background: C.accentDim,
-              padding: '3px 8px',
-              borderRadius: '2px',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: hovered ? 1 : 0.65,
+              transition: 'opacity 0.4s',
             }}
-          >
-            {tech}
-          </span>
-        ))}
+          />
+        ) : (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #0d0d0d 0%, #161616 100%)',
+          }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: '4rem',
+              fontWeight: 800,
+              color: 'rgba(255,255,255,0.06)',
+              userSelect: 'none',
+            }}>
+              {project.num}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* GitHub link */}
-      {project.link && (
-        <a
-          href={project.link}
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* Card body */}
+      <div style={{ padding: 'clamp(16px, 3vw, 28px)' }}>
+        {/* Name */}
+        <div
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: hovered ? '#9b4ff5' : C.muted,
-            textDecoration: 'none',
-            transition: 'color 0.3s',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: '1.15rem',
+            fontWeight: 700,
+            color: C.text,
+            marginBottom: '8px',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-          </svg>
-          View on GitHub
-        </a>
-      )}
+          {project.name}
+        </div>
+
+        {/* Description */}
+        <div
+          style={{
+            fontSize: '0.82rem',
+            color: C.muted,
+            lineHeight: 1.6,
+            marginBottom: '16px',
+          }}
+        >
+          {project.desc}
+        </div>
+
+        {/* Tech stack */}
+        <div className="flex flex-wrap gap-1.5" style={{ marginBottom: project.link ? '16px' : 0 }}>
+          {project.stack.map((tech) => (
+            <span
+              key={tech}
+              style={{
+                fontSize: '0.65rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: C.accent,
+                fontWeight: 500,
+                background: C.accentDim,
+                padding: '3px 8px',
+                borderRadius: '2px',
+              }}
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+
+        {/* GitHub link */}
+        {project.link && (
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: hovered ? '#9b4ff5' : C.muted,
+              textDecoration: 'none',
+              transition: 'color 0.3s',
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+            </svg>
+            View on GitHub
+          </a>
+        )}
+      </div>
     </div>
   );
 };
