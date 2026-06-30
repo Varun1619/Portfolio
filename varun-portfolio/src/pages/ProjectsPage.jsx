@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { projects } from '../data/projects';
 
 const C = {
@@ -13,17 +13,6 @@ const C = {
 
 const ProjectCard = ({ project, onClick }) => {
   const [hovered, setHovered] = useState(false);
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (!videoRef.current) return;
-    if (hovered) {
-      videoRef.current.play().catch(() => {});
-    } else {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-  }, [hovered]);
 
   return (
     <div
@@ -53,40 +42,7 @@ const ProjectCard = ({ project, onClick }) => {
           overflow: 'hidden',
         }}
       >
-        {project.video ? (
-          <>
-            {project.image && (
-              <img
-                src={project.image}
-                alt={project.name}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  opacity: hovered ? 0 : 0.85,
-                  transition: 'opacity 0.4s',
-                  pointerEvents: 'none',
-                }}
-              />
-            )}
-            <video
-              ref={videoRef}
-              src={project.video}
-              muted
-              loop
-              playsInline
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                opacity: hovered ? 1 : 0,
-                transition: 'opacity 0.4s',
-              }}
-            />
-          </>
-        ) : project.image ? (
+        {project.image ? (
           <img
             src={project.image}
             alt={project.name}
@@ -94,8 +50,7 @@ const ProjectCard = ({ project, onClick }) => {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              opacity: hovered ? 1 : 0.85,
-              transition: 'opacity 0.4s',
+              opacity: 0.85,
             }}
           />
         ) : (
