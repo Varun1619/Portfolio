@@ -16,7 +16,7 @@ const C = {
 
 const stack = [
   'Python', 'DuckDB', 'dbt', 'Qdrant', 'Dagster',
-  'Streamlit', 'Pydantic', 'SEC EDGAR API', 'RAG',
+  'Streamlit', 'Pydantic', 'SEC EDGAR API', 'RAG', 'TF-IDF',
 ];
 
 const archSteps = [
@@ -100,6 +100,10 @@ const decisions = [
     q: 'Why is generation optional?',
     a: 'SEC_LLM_PROVIDER=none returns ranked chunks without generation. This keeps the pipeline runnable with no API key and makes retrieval quality independently measurable — decoupled from generation quality.',
   },
+  {
+    q: 'Why TF-IDF for the Streamlit demo instead of a neural embedder?',
+    a: 'fastembed (ONNX) and sentence-transformers both failed to install reliably on Streamlit Community Cloud due to binary dependency conflicts (onnxruntime, pyarrow). A scikit-learn TfidfVectorizer fitted at startup is guaranteed to work, has IDF weighting that downweights common financial boilerplate, and adds zero install-time dependencies. Company names are prepended to each indexed chunk so company-specific queries anchor correctly.',
+  },
 ];
 
 const SECFilingRAG = () => {
@@ -177,30 +181,57 @@ const SECFilingRAG = () => {
           VS<span style={{ color: C.accent }}>.</span>
         </span>
 
-        <a
-          href="https://github.com/Varun1619/sec-filing-rag-pipeline"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: C.muted,
-            textDecoration: 'none',
-            transition: 'color 0.3s',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = C.accent)}
-          onMouseLeave={(e) => (e.currentTarget.style.color = C.muted)}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-          </svg>
-          GitHub
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <a
+            href="https://sec-filing-rag-pipeline.streamlit.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: C.accent,
+              textDecoration: 'none',
+              transition: 'opacity 0.3s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4l3 3" />
+            </svg>
+            Live Demo
+          </a>
+          <a
+            href="https://github.com/Varun1619/sec-filing-rag-pipeline"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: C.muted,
+              textDecoration: 'none',
+              transition: 'color 0.3s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = C.accent)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = C.muted)}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+            </svg>
+            GitHub
+          </a>
+        </div>
       </div>
 
       {/* ── Hero ── */}
@@ -296,9 +327,9 @@ const SECFilingRAG = () => {
         {/* Stat row */}
         <div style={{ ...fade(0.5), display: 'flex', flexWrap: 'wrap', gap: '48px' }}>
           {[
-            { label: 'Pipeline stages', value: '3-Layer Medallion' },
-            { label: 'Embedding backends', value: '3 (offline → cloud)' },
-            { label: 'LLM providers', value: 'OpenAI · Anthropic · Groq' },
+            { label: 'Filings indexed', value: '20 (demo)' },
+            { label: 'Chunks', value: '2,342' },
+            { label: 'Embedding backends', value: '4 (offline → cloud)' },
             { label: 'API keys required', value: 'Zero (default)' },
           ].map((s) => (
             <div key={s.label}>
@@ -446,7 +477,7 @@ streamlit run app.py                    # dashboard`}
               </thead>
               <tbody>
                 {[
-                  { what: 'Embedder', variable: 'SEC_EMBEDDER', options: 'hashing (default, offline) · sentence_transformers · openai' },
+                  { what: 'Embedder', variable: 'SEC_EMBEDDER', options: 'hashing (default, offline) · fastembed (ONNX) · sentence_transformers · openai' },
                   { what: 'LLM', variable: 'SEC_LLM_PROVIDER', options: 'none (default) · openai · anthropic · groq' },
                   { what: 'Vector store', variable: 'SEC_QDRANT_LOCATION', options: './qdrant_data (default) · :memory: · http://localhost:6333' },
                   { what: 'Warehouse', variable: 'SEC_DUCKDB_PATH', options: './warehouse.duckdb · swap dbt profile for Snowflake' },
@@ -465,8 +496,41 @@ streamlit run app.py                    # dashboard`}
         </div>
       </section>
 
-      {/* ── Design Decisions ── */}
+      {/* ── Eval Results ── */}
       <section style={{ borderTop: `1px solid ${C.border}`, padding: '80px 40px' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.accent, marginBottom: '12px' }}>
+            Retrieval Evaluation
+          </p>
+          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '24px' }}>
+            Hit@k{' '}
+            <span style={{ WebkitTextStroke: '1px #f0f0f0', color: 'transparent' }}>Results</span>
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: C.muted, lineHeight: 1.7, maxWidth: '640px', marginBottom: '40px' }}>
+            TF-IDF retriever evaluated over a labeled QA set on the demo corpus (20 filings, 2,342 chunks). 100% Hit@k across all k values — note this is a self-recall benchmark; questions were derived from corpus text. A held-out human-written eval would give a truer signal on semantic quality.
+          </p>
+          <div style={{ display: 'flex', gap: '1px', background: C.border, border: `1px solid ${C.border}`, maxWidth: '560px' }}>
+            {[
+              { k: 1, hit: '100%', latency: '~500 ms' },
+              { k: 3, hit: '100%', latency: '~470 ms' },
+              { k: 5, hit: '100%', latency: '~480 ms' },
+              { k: 10, hit: '100%', latency: '~470 ms' },
+            ].map((row) => (
+              <div key={row.k} style={{ flex: 1, background: C.bg, padding: '24px 20px', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted, marginBottom: '8px' }}>top_{row.k}</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.5rem', fontWeight: 800, color: C.accent, marginBottom: '4px' }}>{row.hit}</div>
+                <div style={{ fontSize: '0.7rem', color: C.muted }}>{row.latency}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: '0.72rem', color: C.muted, marginTop: '16px', fontStyle: 'italic' }}>
+            20 questions · TF-IDF retriever · demo corpus
+          </p>
+        </div>
+      </section>
+
+      {/* ── Design Decisions ── */}
+      <section style={{ borderTop: `1px solid ${C.border}`, padding: '80px 40px', background: C.bg2 }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.accent, marginBottom: '12px' }}>
             Engineering Tradeoffs
@@ -490,40 +554,75 @@ streamlit run app.py                    # dashboard`}
       </section>
 
       {/* ── CTA ── */}
-      <section style={{ borderTop: `1px solid ${C.border}`, padding: '80px 40px', background: C.bg2, textAlign: 'center' }}>
+      <section style={{ borderTop: `1px solid ${C.border}`, padding: '80px 40px', background: C.bg, textAlign: 'center' }}>
         <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.accent, marginBottom: '16px' }}>
           Explore the Project
         </p>
-        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '32px' }}>
-          Check it out on GitHub
+        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '16px' }}>
+          Try it live or explore the source
         </h2>
-        <a
-          href="https://github.com/Varun1619/sec-filing-rag-pipeline"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '14px 32px',
-            background: C.accent,
-            color: '#000',
-            fontWeight: 700,
-            fontSize: '0.8rem',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            textDecoration: 'none',
-            borderRadius: '2px',
-            transition: 'opacity 0.3s',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-          </svg>
-          View on GitHub
-        </a>
+        <p style={{ fontSize: '0.9rem', color: C.muted, marginBottom: '40px' }}>
+          Ask natural-language questions across 20 SEC filings — no login required.
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <a
+            href="https://sec-filing-rag-pipeline.streamlit.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '14px 32px',
+              background: C.accent,
+              color: '#000',
+              fontWeight: 700,
+              fontSize: '0.8rem',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              borderRadius: '2px',
+              transition: 'opacity 0.3s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Live Demo
+          </a>
+          <a
+            href="https://github.com/Varun1619/sec-filing-rag-pipeline"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '14px 32px',
+              background: 'transparent',
+              color: C.text,
+              fontWeight: 700,
+              fontSize: '0.8rem',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              borderRadius: '2px',
+              border: `1px solid ${C.border}`,
+              transition: 'border-color 0.3s, color 0.3s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+            </svg>
+            View on GitHub
+          </a>
+        </div>
 
         <div style={{ marginTop: '40px' }}>
           <button

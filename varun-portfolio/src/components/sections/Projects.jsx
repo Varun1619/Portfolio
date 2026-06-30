@@ -162,18 +162,7 @@ const Projects = ({ onViewAll = null, onProjectSelect = null }) => {
 // ===== Project Card =====
 const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
   const [hovered, setHovered] = useState(false);
-  const videoRef = useRef(null);
   const handleClick = onProjectSelect ? () => onProjectSelect(project) : (onViewAll || undefined);
-
-  useEffect(() => {
-    if (!videoRef.current) return;
-    if (hovered) {
-      videoRef.current.play().catch(() => {});
-    } else {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-  }, [hovered]);
 
   return (
     <div
@@ -211,40 +200,7 @@ const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
 
       {/* Media cover */}
       <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#0d0d0d', overflow: 'hidden' }}>
-        {project.video ? (
-          <>
-            {project.image && (
-              <img
-                src={project.image}
-                alt={project.name}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  opacity: hovered ? 0 : 0.85,
-                  transition: 'opacity 0.4s',
-                  pointerEvents: 'none',
-                }}
-              />
-            )}
-            <video
-              ref={videoRef}
-              src={project.video}
-              muted
-              loop
-              playsInline
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                opacity: hovered ? 1 : 0,
-                transition: 'opacity 0.4s',
-              }}
-            />
-          </>
-        ) : project.image ? (
+        {project.image ? (
           <img
             src={project.image}
             alt={project.name}
@@ -252,8 +208,7 @@ const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              opacity: hovered ? 1 : 0.85,
-              transition: 'opacity 0.4s',
+              opacity: 0.85,
             }}
           />
         ) : (
