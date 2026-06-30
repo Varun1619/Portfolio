@@ -7,7 +7,12 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "Bash(where gh *)",
-      "Read(//usr/local/bin/**)"
+      "Read(//usr/local/bin/**)",
+      "Bash(mkdir -p /home/user/Portfolio/varun-portfolio/public/images/recommendations)",
+      "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/0cd3bf5b-IMG_3045.jpeg /home/user/Portfolio/varun-portfolio/public/images/recommendations/pietro.jpeg)",
+      "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/7fac6ee9-IMG_3046.png /home/user/Portfolio/varun-portfolio/public/images/recommendations/alphonse.png)",
+      "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/63eaa349-IMG_3047.png /home/user/Portfolio/varun-portfolio/public/images/recommendations/john.png)",
+      "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/bcf0597d-IMG_3048.png /home/user/Portfolio/varun-portfolio/public/images/recommendations/gabe.png)"
     ]
   }
 }
