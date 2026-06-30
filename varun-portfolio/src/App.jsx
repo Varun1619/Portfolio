@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useScrollPosition, useIntersectionObserver, usePreloader } from './hooks';
 
 // Layout components
@@ -15,9 +14,12 @@ import Projects from './components/sections/Projects';
 import Skills from './components/sections/Skills';
 import CustomCursor from './components/common/CustomCursor';
 
-// Project pages
-import SECFilingRAG from './pages/SECFilingRAG';
+// Pages
+import ProjectsPage from './pages/ProjectsPage';
+import ProjectDetail from './pages/ProjectDetail';
+import { projects as allProjects } from './data/projects';
 
+// Preloader component
 const Preloader = ({ loaded }) => (
   <div
     className={`fixed inset-0 z-50 bg-white flex items-center justify-center transition-all duration-700 ${
@@ -30,10 +32,49 @@ const Preloader = ({ loaded }) => (
   </div>
 );
 
-function Home() {
+// Simple hash-based router — no extra dependencies
+function useRouter() {
+  const [route, setRoute] = useState(() => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#/projects/')) return { page: 'project-detail', id: hash.slice(11) };
+    if (hash === '#/projects') return { page: 'projects', id: null };
+    return { page: 'home', id: null };
+  });
+
+  const navigate = (page, id = null) => {
+    if (page === 'home') {
+      window.location.hash = '';
+    } else if (page === 'projects') {
+      window.location.hash = '/projects';
+    } else if (page === 'project-detail') {
+      window.location.hash = `/projects/${id}`;
+    }
+    setRoute({ page, id });
+  };
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#/projects/')) {
+        setRoute({ page: 'project-detail', id: hash.slice(11) });
+      } else if (hash === '#/projects') {
+        setRoute({ page: 'projects', id: null });
+      } else {
+        setRoute({ page: 'home', id: null });
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  return { route, navigate };
+}
+
+function App() {
   const loaded = usePreloader(100);
   const scrollY = useScrollPosition();
   const visibleSections = useIntersectionObserver();
+  const { route, navigate } = useRouter();
 
   const getSectionClass = (sectionId) => {
     const baseClass = 'transition-all duration-1000 ease-out';
@@ -43,32 +84,72 @@ function Home() {
     return `${baseClass} ${visibleClass}`;
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white text-slate-800 overflow-x-hidden">
-      <CustomCursor />
-      <Preloader loaded={loaded} />
-      <Navbar scrollY={scrollY} />
+  // Scroll to top when leaving home
+  useEffect(() => {
+    if (route.page !== 'home') {
+      window.scrollTo({ top: 0 });
+    }
+  }, [route.page]);
+
+  const renderPage = () => {
+    if (route.page === 'projects') {
+      return (
+        <ProjectsPage
+          onProjectSelect={(project) => navigate('project-detail', project.id)}
+          onBack={() => navigate('home')}
+        />
+      );
+    }
+
+    if (route.page === 'project-detail') {
+      const project = allProjects.find((p) => p.id === route.id);
+      if (!project) {
+        return (
+          <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
+            Project not found.{' '}
+            <button onClick={() => navigate('projects')} style={{ color: '#00e87b', background: 'none', border: 'none', cursor: 'pointer', marginLeft: '8px' }}>
+              Back to projects
+            </button>
+          </div>
+        );
+      }
+      return (
+        <ProjectDetail
+          project={project}
+          onBack={() => navigate('projects')}
+        />
+      );
+    }
+
+    // Default: home
+    return (
       <main>
         <Hero loaded={loaded} />
         <About sectionClass={getSectionClass('about')} />
         <Experience sectionClass={getSectionClass('experience')} />
-        <Projects sectionClass={getSectionClass('projects')} />
+        <Projects
+          sectionClass={getSectionClass('projects')}
+          onViewAll={() => navigate('projects')}
+          onProjectSelect={(project) => navigate('project-detail', project.id)}
+        />
         <Playground sectionClass={getSectionClass('playground')} />
         <Skills sectionClass={getSectionClass('skills')} />
       </main>
-      <Footer />
-    </div>
-  );
-}
+    );
+  };
 
-function App() {
+  const isHome = route.page === 'home';
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects/sec-filing-rag" element={<SECFilingRAG />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white text-slate-800 overflow-x-hidden">
+      <CustomCursor />
+      <Preloader loaded={loaded} />
+      <Navbar scrollY={scrollY} route={route} navigate={navigate} />
+
+      {renderPage()}
+
+      {isHome && <Footer />}
+    </div>
   );
 }
 

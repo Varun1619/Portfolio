@@ -29,7 +29,7 @@ const Footer = () => {
       {/* Main CTA area */}
       <div
         className="relative overflow-hidden flex flex-col items-center justify-center text-center"
-        style={{ minHeight: '60vh', padding: '80px 40px' }}
+        style={{ minHeight: '60vh', padding: 'clamp(48px, 8vw, 80px) clamp(16px, 5vw, 40px)' }}
       >
         {/* Large background text */}
         <div
@@ -114,8 +114,9 @@ const Footer = () => {
                 transition: 'all 0.3s',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#0a0a0a';
-                e.currentTarget.style.borderColor = '#00e87b';
+                const isGH = link.label === 'GitHub';
+                e.currentTarget.style.color = isGH ? '#ffffff' : '#0a0a0a';
+                e.currentTarget.style.borderColor = isGH ? '#9b4ff5' : '#00e87b';
                 e.currentTarget.querySelector('.fill').style.height = '100%';
               }}
               onMouseLeave={(e) => {
@@ -133,7 +134,7 @@ const Footer = () => {
                   left: 0,
                   width: '100%',
                   height: '0',
-                  background: '#00e87b',
+                  background: link.label === 'GitHub' ? '#8534F3' : '#00e87b',
                   transition: 'height 0.3s',
                   zIndex: 0,
                 }}
@@ -147,7 +148,7 @@ const Footer = () => {
       <div
         className="flex flex-wrap items-center justify-between"
         style={{
-          padding: '24px 40px',
+          padding: '24px clamp(16px, 5vw, 40px)',
           borderTop: '1px solid rgba(255,255,255,0.08)',
           gap: '16px',
         }}

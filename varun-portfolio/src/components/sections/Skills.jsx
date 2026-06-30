@@ -38,7 +38,7 @@ const Skills = () => {
     <section
       ref={sectionRef}
       id="skills"
-      style={{ padding: '120px 40px', background: C.bg }}
+      style={{ padding: 'clamp(60px, 10vw, 120px) clamp(16px, 5vw, 40px)', background: C.bg }}
     >
       {/* Header */}
       <div
@@ -80,7 +80,7 @@ const Skills = () => {
         className={`transition-all duration-[800ms] ease-out ${reveal}`}
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
           gap: '2px',
           transitionDelay: '0.25s',
         }}
@@ -103,7 +103,7 @@ const SkillGroup = ({ title, tags }) => {
       onMouseLeave={() => setHovered(false)}
       style={{
         background: hovered ? 'rgba(0,232,123,0.02)' : C.bg2,
-        padding: '40px',
+        padding: 'clamp(20px, 4vw, 40px)',
         border: `1px solid ${hovered ? C.accentDim : C.border}`,
         transition: 'all 0.4s',
       }}
