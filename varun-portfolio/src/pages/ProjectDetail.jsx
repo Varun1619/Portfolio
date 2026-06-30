@@ -1178,11 +1178,252 @@ const CryptoPulseDetail = ({ project, onBack }) => {
   );
 };
 
+// ─── SEC Filing RAG flowchart ─────────────────────────────────────────────────
+const SECFlowchart = () => {
+  const Arrow = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
+      <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
+      </div>
+    </div>
+  );
+  const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
+    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '4px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
+      {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
+    </div>
+  );
+  const Row = ({ children }) => (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
+  );
+  return (
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
+      <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Node label="SEC EDGAR API" sub="Rate-limited · accession-level dedup" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" minW="260px" />
+        <Arrow />
+        <Node label="Bronze Layer" sub="Raw HTML/PDF filings · watermark tracks last filed_date" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" minW="320px" />
+        <Arrow />
+        <Node label="HTML/PDF Parser + Chunker" sub="Fixed-window with overlap" borderColor="#c8c8c8" bg="rgba(200,200,200,0.05)" />
+        <Arrow />
+        <Node label="NER Entity Extractor" sub="Company · ticker · date · amount" borderColor="#c8c8c8" bg="rgba(200,200,200,0.05)" />
+        <Arrow />
+        <Row>
+          <Node label="Embedder" sub="Hashing (default) · SBERT · OpenAI" borderColor="#4fc3f7" bg="rgba(79,195,247,0.07)" minW="185px" />
+          <Node label="Silver Layer" sub="Chunks + metadata in DuckDB" borderColor="#c8c8c8" bg="rgba(200,200,200,0.05)" minW="185px" />
+        </Row>
+        <Arrow />
+        <Row>
+          <Node label="Qdrant" sub="Vector store · upsert chunks" borderColor="#a78bfa" bg="rgba(167,139,250,0.07)" minW="155px" />
+          <Node label="dbt" sub="Staging → Gold star schema" borderColor="#00e87b" bg="rgba(0,232,123,0.07)" minW="155px" />
+        </Row>
+        <Arrow />
+        <Node label="Gold Layer · DuckDB" sub="fact_chunks · dim_company · dim_filing · schema tests" borderColor="#00e87b" bg="rgba(0,232,123,0.07)" minW="340px" />
+        <Arrow />
+        <Row>
+          <Node label="RAG Query Pipeline" sub="Retrieve top-k · optional LLM" borderColor="#a78bfa" bg="rgba(167,139,250,0.07)" minW="185px" />
+          <Node label="Eval Harness" sub="Hit@k sweep · RAGAS wiring" borderColor="#4fc3f7" bg="rgba(79,195,247,0.07)" minW="185px" />
+        </Row>
+        <Arrow />
+        <Node label="Streamlit Dashboard" sub="Analytics · natural-language Q&A" borderColor="#a78bfa" bg="rgba(167,139,250,0.07)" minW="260px" />
+      </div>
+    </div>
+  );
+};
+
+// ─── SEC Filing RAG detail ────────────────────────────────────────────────────
+const SECFilingRAGDetail = ({ project, onBack }) => {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    const t = setTimeout(() => setVisible(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
+  const fade = (delay = '0s') => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateY(0)' : 'translateY(20px)',
+    transition: `opacity 0.55s ease ${delay}, transform 0.55s ease ${delay}`,
+  });
+
+  return (
+    <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
+
+      {/* ── Hero ── */}
+      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
+          <BackButton onClick={onBack} />
+          <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
+            {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
+            {project.date && <span style={tagStyleDark}>{project.date}</span>}
+          </div>
+          <h1 style={{ ...fade('0.1s'), fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.text, marginBottom: '14px' }}>
+            {project.name}
+          </h1>
+          <p style={{ ...fade('0.15s'), fontSize: '1rem', color: C.muted, lineHeight: 1.65, maxWidth: '680px', marginBottom: '28px' }}>
+            {project.tagline}
+          </p>
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noopener noreferrer"
+              style={{ ...actionBtnStyle, ...fade('0.2s') }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
+              View on GitHub
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* ── Metrics ── */}
+      <Divider />
+      <div style={{ background: C.bg }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '2px' }}>
+          {project.metrics.map((m, i) => (
+            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
+              <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.6rem', fontWeight: 700, color: m.color || C.text, lineHeight: 1 }}>{m.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Pipeline ── */}
+      <Divider />
+      <div style={{ background: C.bg2 }}>
+        <Section label="Pipeline Architecture">
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px` }}>
+              {project.pipeline.map((stage, i) => (
+                <div key={i} style={{ position: 'relative', padding: '28px 16px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: stage.color || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.95rem', fontWeight: 600, color: C.text, marginBottom: '5px' }}>{stage.label}</div>
+                  <div style={{ fontSize: '0.7rem', color: stage.color || C.muted }}>{stage.sub}</div>
+                  {i < project.pipeline.length - 1 && (
+                    <div style={{ position: 'absolute', right: '-10px', top: '50%', transform: 'translateY(-50%)', zIndex: 2, color: C.muted, fontSize: '1.1rem' }}>›</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+      </div>
+
+      {/* ── Architecture ── */}
+      {project.architectureDesc && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg }}>
+            <Section label="Architecture">
+              <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px', marginBottom: '28px' }}>
+                {project.architectureDesc}
+              </p>
+              <SECFlowchart />
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Overview ── */}
+      {project.overview && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg2 }}>
+            <Section label="Project Overview">
+              <p style={{ fontSize: '0.95rem', color: C.text, lineHeight: 1.85, maxWidth: '740px' }}>{project.overview}</p>
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Backend config table ── */}
+      {project.backendsTable && (
+        <>
+          <Divider />
+          <Section label="Switching Backends via .env">
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: `1px solid ${C.border}`, borderRadius: '3px' }}>
+              <div style={{ minWidth: '480px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '130px 220px 1fr', padding: '10px 16px', background: C.bg3, borderBottom: `1px solid ${C.border}` }}>
+                  {['What', 'Variable', 'Options'].map((h) => (
+                    <span key={h} style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted }}>{h}</span>
+                  ))}
+                </div>
+                {project.backendsTable.map((row, i) => (
+                  <div key={row.what} style={{ display: 'grid', gridTemplateColumns: '130px 220px 1fr', padding: '13px 16px', background: i % 2 === 0 ? C.bg : 'transparent', borderBottom: i < project.backendsTable.length - 1 ? `1px solid ${C.border}` : 'none', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.82rem', color: C.text, fontWeight: 600 }}>{row.what}</span>
+                    <code style={{ fontSize: '0.75rem', color: '#00e87b', fontFamily: 'monospace', background: 'rgba(0,232,123,0.08)', padding: '2px 8px', borderRadius: '2px', display: 'inline-block' }}>{row.variable}</code>
+                    <span style={{ fontSize: '0.78rem', color: C.muted }}>{row.options}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Section>
+        </>
+      )}
+
+      {/* ── Engineering Decisions ── */}
+      {project.engineeringDecisions?.length > 0 && (
+        <>
+          <Divider />
+          <div style={{ background: C.bg2 }}>
+            <Section label="Engineering Decisions">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: '16px' }}>
+                {project.engineeringDecisions.map((d, i) => (
+                  <div key={i}
+                    style={{ padding: '24px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
+                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
+                  >
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.92rem', fontWeight: 600, color: C.text, marginBottom: '10px' }}>{d.title}</div>
+                    <div style={{ fontSize: '0.8rem', color: C.muted, lineHeight: 1.65 }}>{d.body}</div>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          </div>
+        </>
+      )}
+
+      {/* ── Stack ── */}
+      <Divider />
+      <div style={{ background: C.bg2 }}>
+        <Section label="Tech Stack">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {project.stack.map((tech) => (
+              <span key={tech}
+                style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg, transition: 'all 0.2s', cursor: 'default' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
+              >{tech}</span>
+            ))}
+          </div>
+        </Section>
+      </div>
+
+      {/* ── Footer ── */}
+      <Divider />
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(24px, 5vw, 40px)' }}>
+        <p style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '16px' }}>Personal project · Runs fully offline with zero API keys</p>
+        {project.github && (
+          <a href={project.github} target="_blank" rel="noopener noreferrer" style={actionBtnStyle}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
+          >
+            View on GitHub ↗
+          </a>
+        )}
+      </div>
+
+    </div>
+  );
+};
+
 // ─── Router ───────────────────────────────────────────────────────────────────
 const ProjectDetail = ({ project, onBack }) => {
   if (project.id === 'foodlens') return <FoodLensDetail project={project} onBack={onBack} />;
   if (project.id === 'chinook') return <ChinookDetail project={project} onBack={onBack} />;
   if (project.id === 'crypto-pulse') return <CryptoPulseDetail project={project} onBack={onBack} />;
+  if (project.id === 'sec-filing-rag') return <SECFilingRAGDetail project={project} onBack={onBack} />;
   return <GenericDetail project={project} onBack={onBack} />;
 };
 
