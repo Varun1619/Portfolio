@@ -357,4 +357,63 @@ ORDER BY bucket`,
     overview: 'Assistive system for visually impaired using SSD with 98% detection accuracy. Published research findings in IRJMETS.',
     engineeringDecisions: [],
   },
+  {
+    id: 'sec-filing-rag',
+    num: '06',
+    name: 'SEC Filing RAG Pipeline',
+    tagline: 'Production-grade pipeline ingesting SEC EDGAR HTML/PDF filings — parsed, chunked, entity-enriched, embedded, and made queryable in natural language. Runs fully offline with zero API keys by default.',
+    desc: 'Production-grade data engineering pipeline ingesting SEC EDGAR filings — parses, chunks, entity extraction, pluggable embeddings, Qdrant vector store, dbt gold layer, Dagster orchestration, eval harness, and Streamlit dashboard. Zero API keys by default.',
+    stack: ['Python', 'DuckDB', 'dbt', 'Qdrant', 'Dagster', 'Streamlit', 'Pydantic', 'SEC EDGAR API'],
+    tags: ['Data Engineering', 'AI/ML'],
+    date: '2026',
+    video: null,
+    github: 'https://github.com/Varun1619/sec-filing-rag-pipeline',
+    metrics: [
+      { label: 'Architecture', value: 'Medallion', color: '#00e87b' },
+      { label: 'Embedding backends', value: '3', color: '#4fc3f7' },
+      { label: 'LLM providers', value: 'OpenAI · Anthropic · Groq', color: '#f0f0f0' },
+      { label: 'API keys to run', value: 'Zero', color: '#f5a623' },
+    ],
+    pipeline: [
+      { layer: 'EDGAR', label: 'Ingest', sub: 'Rate-limited · idempotent', color: '#f5a623' },
+      { layer: 'BRONZE', label: 'Raw filings', sub: 'Watermark · dedup', color: '#c8a84b' },
+      { layer: 'SILVER', label: 'Chunks + embed', sub: 'Parse → chunk → NER → embed', color: '#c8c8c8' },
+      { layer: 'GOLD', label: 'Star schema', sub: 'dbt · schema tests', color: '#00e87b' },
+      { layer: 'RAG', label: 'Query', sub: 'Qdrant retrieve + optional LLM', color: '#a78bfa' },
+    ],
+    overview: 'A production-grade data engineering pipeline that ingests messy SEC EDGAR HTML/PDF filings, parses and chunks them, enriches with entity extraction, embeds with pluggable backends (hashing / SBERT / OpenAI), and indexes them in Qdrant. A dbt semantic layer builds a star schema in DuckDB, Dagster orchestrates the pipeline as software-defined assets, an evaluation harness measures Hit@k retrieval quality, and a Streamlit dashboard surfaces everything. The default configuration uses a HashingVectorizer (offline, no model download) and skips LLM generation entirely — making the full pipeline runnable with zero API keys.',
+    architectureDesc: 'Four pipeline stages move data from the EDGAR API through Bronze (raw filings), Silver (parsed chunks with embeddings in Qdrant), and Gold (dbt star schema in DuckDB) to the RAG query layer. Dagster software-defined assets model the full dependency graph. Every stage is idempotent — re-runs skip already-processed accessions. A watermark file tracks the last-ingested filing date so incremental runs only fetch new filings.',
+    engineeringDecisions: [
+      {
+        title: 'DuckDB over Snowflake',
+        body: 'DuckDB runs locally with zero infrastructure and handles millions of rows at speed. The dbt profile is the only change needed to point at Snowflake — the SQL models are identical standard SQL. Great for development; swap for production.',
+      },
+      {
+        title: 'Embedded Qdrant over Qdrant Cloud',
+        body: "qdrant-client's embedded persistent mode (path=./qdrant_data) needs no server process. Application code is identical to Docker/Cloud mode — swap SEC_QDRANT_LOCATION and you're done.",
+      },
+      {
+        title: 'HashingVectorizer as default embedder',
+        body: 'Zero cold-start, no model download, fully offline, deterministic. It has no semantic meaning but makes the pipeline runnable in under a minute. Switch SEC_EMBEDDER=sentence_transformers for real retrieval quality.',
+      },
+      {
+        title: 'Generation is optional',
+        body: 'SEC_LLM_PROVIDER=none (the default) returns ranked chunks without calling any LLM. This keeps the pipeline runnable with no API key and makes retrieval quality independently measurable — decoupled from generation quality.',
+      },
+      {
+        title: 'Idempotent ingestion + watermark',
+        body: 'Re-running ingest skips already-downloaded accession numbers checked by local directory. A watermark file persists the last-seen filed_date so only newer filings are fetched on subsequent runs — safe to run nightly.',
+      },
+      {
+        title: 'Dagster software-defined assets',
+        body: 'Bronze, Silver, and Gold are modelled as a dependency graph. Asset materialisation is idempotent; partial failures resume from the last successful step without re-running upstream work.',
+      },
+    ],
+    backendsTable: [
+      { what: 'Embedder', variable: 'SEC_EMBEDDER', options: 'hashing (default, offline) · sentence_transformers · openai' },
+      { what: 'LLM', variable: 'SEC_LLM_PROVIDER', options: 'none (default) · openai · anthropic · groq' },
+      { what: 'Vector store', variable: 'SEC_QDRANT_LOCATION', options: './qdrant_data (default) · :memory: · http://localhost:6333' },
+      { what: 'Warehouse', variable: 'SEC_DUCKDB_PATH', options: './warehouse.duckdb · swap dbt profile for Snowflake' },
+    ],
+  },
 ];
