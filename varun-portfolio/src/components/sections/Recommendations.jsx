@@ -70,26 +70,38 @@ const RecommendationCard = ({ rec, index, isVisible }) => {
 
       {/* Author header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-        {/* Initials avatar */}
+        {/* Avatar */}
         <div
           style={{
-            width: '44px',
-            height: '44px',
+            width: '48px',
+            height: '48px',
             borderRadius: '50%',
-            background: C.accentDim,
             border: `1px solid rgba(0,232,123,0.25)`,
+            flexShrink: 0,
+            overflow: 'hidden',
+            background: C.accentDim,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexShrink: 0,
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: '0.8rem',
-            fontWeight: 700,
-            color: C.accent,
-            letterSpacing: '0.05em',
           }}
         >
-          {rec.initials}
+          {rec.avatar ? (
+            <img
+              src={rec.avatar}
+              alt={rec.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : (
+            <span style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: '0.8rem',
+              fontWeight: 700,
+              color: C.accent,
+              letterSpacing: '0.05em',
+            }}>
+              {rec.initials}
+            </span>
+          )}
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
