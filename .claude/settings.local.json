@@ -10,7 +10,9 @@
       "Read(//usr/local/bin/**)",
       "Bash(mkdir -p /home/user/Portfolio/varun-portfolio/public/images)",
       "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/54e080ef-C9079080F72448428CD610E9C1A9346C.png /home/user/Portfolio/varun-portfolio/public/images/foodlens.png)",
-      "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/18d6a1e3-0869429C76EA440B80B460A8A3064D18.png /home/user/Portfolio/varun-portfolio/public/images/sec-filing-rag.png)"
+      "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/18d6a1e3-0869429C76EA440B80B460A8A3064D18.png /home/user/Portfolio/varun-portfolio/public/images/sec-filing-rag.png)",
+      "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/fe8d34bb-8EFBF723883F428886DC0A819C24C918.png /home/user/Portfolio/varun-portfolio/public/images/crypto-pulse.png)",
+      "Bash(cp /root/.claude/uploads/b0a65b84-adbb-590a-baf3-b35685309b93/c220d9b9-6251008DB0364E889AA7FF950B487866.png /home/user/Portfolio/varun-portfolio/public/images/chinook.png)"
     ]
   }
 }
