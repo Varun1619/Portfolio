@@ -55,6 +55,22 @@ const ProjectCard = ({ project, onClick }) => {
       >
         {project.video ? (
           <>
+            {project.image && (
+              <img
+                src={project.image}
+                alt={project.name}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: hovered ? 0 : 0.85,
+                  transition: 'opacity 0.4s',
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
             <video
               ref={videoRef}
               src={project.video}
@@ -65,13 +81,24 @@ const ProjectCard = ({ project, onClick }) => {
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                opacity: hovered ? 1 : 0.7,
+                opacity: hovered ? 1 : 0,
                 transition: 'opacity 0.4s',
               }}
             />
           </>
+        ) : project.image ? (
+          <img
+            src={project.image}
+            alt={project.name}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: hovered ? 1 : 0.85,
+              transition: 'opacity 0.4s',
+            }}
+          />
         ) : (
-          /* Placeholder for projects without video */
           <div
             style={{
               width: '100%',
@@ -318,7 +345,7 @@ const ProjectsPage = ({ onProjectSelect, onBack }) => {
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: '0 40px',
+          padding: '0 clamp(16px, 5vw, 40px)',
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(min(360px, 100%), 1fr))',
           gap: '28px',

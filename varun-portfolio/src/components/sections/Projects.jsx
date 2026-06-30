@@ -18,6 +18,7 @@ const projects = allProjects.map((p) => ({
   link: p.github || null,
   id: p.id,
   video: p.video || null,
+  image: p.image || null,
 }));
 
 const Projects = ({ onViewAll = null, onProjectSelect = null }) => {
@@ -211,17 +212,47 @@ const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
       {/* Media cover */}
       <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#0d0d0d', overflow: 'hidden' }}>
         {project.video ? (
-          <video
-            ref={videoRef}
-            src={project.video}
-            muted
-            loop
-            playsInline
+          <>
+            {project.image && (
+              <img
+                src={project.image}
+                alt={project.name}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: hovered ? 0 : 0.85,
+                  transition: 'opacity 0.4s',
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+            <video
+              ref={videoRef}
+              src={project.video}
+              muted
+              loop
+              playsInline
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                opacity: hovered ? 1 : 0,
+                transition: 'opacity 0.4s',
+              }}
+            />
+          </>
+        ) : project.image ? (
+          <img
+            src={project.image}
+            alt={project.name}
             style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              opacity: hovered ? 1 : 0.65,
+              opacity: hovered ? 1 : 0.85,
               transition: 'opacity 0.4s',
             }}
           />
