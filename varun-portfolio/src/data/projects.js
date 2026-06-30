@@ -9,6 +9,7 @@ export const projects = [
     tags: ['Data Engineering', 'Business Intelligence'],
     course: 'DAMG 7370 · Northeastern',
     date: 'Spring 2026',
+    image: '/images/foodlens.png',
     video: '/videos/foodlens.mp4',
     github: 'https://github.com/Varun1619/foodlens-data-engineering',
     metrics: [
@@ -366,6 +367,7 @@ ORDER BY bucket`,
     stack: ['Python', 'DuckDB', 'dbt', 'Qdrant', 'Dagster', 'Streamlit', 'Pydantic', 'SEC EDGAR API'],
     tags: ['Data Engineering', 'AI/ML'],
     date: '2026',
+    image: '/images/sec-filing-rag.png',
     video: null,
     github: 'https://github.com/Varun1619/sec-filing-rag-pipeline',
     metrics: [
