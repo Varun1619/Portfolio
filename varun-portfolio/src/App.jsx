@@ -12,6 +12,7 @@ import Playground from './components/sections/Playground';
 import Experience from './components/sections/Experience';
 import Projects from './components/sections/Projects';
 import Skills from './components/sections/Skills';
+import Recommendations from './components/sections/Recommendations';
 import CustomCursor from './components/common/CustomCursor';
 
 // Pages
@@ -134,6 +135,7 @@ function App() {
         />
         <Playground sectionClass={getSectionClass('playground')} />
         <Skills sectionClass={getSectionClass('skills')} />
+        <Recommendations />
       </main>
     );
   };
