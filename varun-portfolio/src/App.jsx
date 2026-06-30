@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useScrollPosition, useIntersectionObserver, usePreloader } from './hooks';
 
 // Layout components
@@ -14,7 +15,9 @@ import Projects from './components/sections/Projects';
 import Skills from './components/sections/Skills';
 import CustomCursor from './components/common/CustomCursor';
 
-// Preloader component
+// Project pages
+import SECFilingRAG from './pages/SECFilingRAG';
+
 const Preloader = ({ loaded }) => (
   <div
     className={`fixed inset-0 z-50 bg-white flex items-center justify-center transition-all duration-700 ${
@@ -27,12 +30,11 @@ const Preloader = ({ loaded }) => (
   </div>
 );
 
-function App() {
+function Home() {
   const loaded = usePreloader(100);
   const scrollY = useScrollPosition();
   const visibleSections = useIntersectionObserver();
 
-  // Helper function for section animation classes
   const getSectionClass = (sectionId) => {
     const baseClass = 'transition-all duration-1000 ease-out';
     const visibleClass = visibleSections[sectionId]
@@ -43,44 +45,30 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white text-slate-800 overflow-x-hidden">
-
       <CustomCursor />
-
-      {/* Preloader */}
       <Preloader loaded={loaded} />
-
-      {/* Navigation */}
       <Navbar scrollY={scrollY} />
-
-      {/* Main Content */}
       <main>
         <Hero loaded={loaded} />
-        
-        <About 
-          sectionClass={getSectionClass('about')} 
-        />
-
-        <Experience 
-          sectionClass={getSectionClass('experience')} 
-        />
-        
-        <Projects 
-          sectionClass={getSectionClass('projects')} 
-        />
-
-        <Playground 
-          sectionClass={getSectionClass('playground')} 
-        />
-
-        <Skills 
-          sectionClass={getSectionClass('skills')} 
-        />
-      
+        <About sectionClass={getSectionClass('about')} />
+        <Experience sectionClass={getSectionClass('experience')} />
+        <Projects sectionClass={getSectionClass('projects')} />
+        <Playground sectionClass={getSectionClass('playground')} />
+        <Skills sectionClass={getSectionClass('skills')} />
       </main>
-
-      {/* Footer */}
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/projects/sec-filing-rag" element={<SECFilingRAG />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
