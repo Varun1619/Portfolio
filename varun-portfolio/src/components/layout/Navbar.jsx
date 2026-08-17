@@ -17,6 +17,7 @@ const Navbar = ({ route, navigate }) => {
         { label: 'Experience', href: '#experience' },
         { label: 'ETL Sim', href: '#etl' },
         { label: 'Skills', href: '#skills' },
+        { label: 'Resume', href: '#resume' },
         { label: 'Contact', href: '#contact' },
       ]
     : [];

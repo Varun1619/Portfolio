@@ -7,6 +7,7 @@ const Footer = () => {
     { label: 'Projects', href: '#projects' },
     { label: 'ETL Sim', href: '#etl' },
     { label: 'Skills', href: '#skills' },
+    { label: 'Resume', href: '#resume' },
   ];
 
   const socialLinks = [
