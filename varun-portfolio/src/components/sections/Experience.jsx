@@ -3,35 +3,33 @@ import { useEffect, useRef, useState } from 'react';
 
 const experiences = [
   {
+    role: 'Data & Automation Analyst, Study Space Operations',
+    company: 'Northeastern University',
+    period: 'Jan 2026 — Present',
+    tech: ['MS Fabric', 'Delta Lake', 'PySpark', 'Dataverse', 'Power BI', 'DAX'],
+    details: [
+      'Built an hourly Fabric Data Pipeline ingesting 112 daily submissions from 4 station sources through Dataverse into a Delta Lake, standardizing inconsistent schemas with PySpark.',
+      'Modeled booking, utilization, footfall, and rounds coverage into 7 fact and dimension tables, loaded through Dataflow Gen2 into a Power BI semantic layer.',
+    ],
+  },
+  {
     role: 'Digital Data Engineer Intern',
     company: 'Mass General Brigham',
     period: 'Jun 2025 — Dec 2025',
-    tech: ['MS Fabric', 'PySpark', 'Power BI', 'Power Apps'],
+    tech: ['MS Fabric', 'Fabric Data Pipelines', 'PySpark', 'MySQL', 'ServiceNow', 'Power BI'],
     details: [
-      'Architected distributed data pipelines with built in observability to consolidate multi source data into a centralized cloud Data Lake, reducing manual intervention by 50%.',
-      'Built scalable cloud based data applications processing 140K+ records per batch with 99%+ SLA compliance for downstream analytics.',
-      'Designed reusable data ingestion frameworks using PySpark, reducing new pipeline development time by 40%.',
+      'Consolidated ServiceNow data from MySQL into an analytics-ready Fabric model through a scheduled data pipeline, joining and cleaning multiple source tables for 3 clinical operations teams.',
+      'Anonymized patient PHI across 100,000+ records with PySpark, joining demographic and clinical tables to feed an AI model extracting key findings from doctor prescriptions.',
     ],
   },
   {
     role: 'Software Engineer',
-    company: 'LTI Mindtree',
+    company: 'LTM Limited (formerly LTIMindtree)',
     period: 'Sep 2022 — Jul 2024',
-    tech: ['Apache Kafka', 'Spark', 'Java', 'MySQL', 'PostgreSQL'],
+    tech: ['Python', 'Java', 'Kafka', 'Spark', 'Airflow', 'AWS S3', 'Glue Data Catalog'],
     details: [
-      'Engineered high throughput distributed ETL applications using Java, Apache Spark, and Apache Kafka with 25% improved data accessibility.',
-      'Optimized Spark jobs through partition tuning and broadcast joins, reducing batch processing time by 40%.',
-      'Trained 48+ engineers; recognized with Best Manager Award for technical mentorship.',
-    ],
-  },
-  {
-    role: 'Data Analyst Intern',
-    company: 'Nismotek',
-    period: 'Nov 2020 — Apr 2021',
-    tech: ['Python', 'PySpark', 'MySQL'],
-    details: [
-      'Designed normalized data models and validation frameworks ensuring data integrity for operational reporting.',
-      'Built automation mechanisms cutting data entry effort by 60%.',
+      'Engineered 3 streaming Kafka and Spark pipelines in Python and Java, landing 5 ServiceNow sources as partitioned Parquet on S3 at 1,500 records per minute, orchestrated as Airflow DAGs with retries, SLA alerts, and backfills.',
+      'Designed a modular validation layer of schema rules, type checks, and deduplication over Glue Data Catalog tables, failing the DAG before publish and cutting data incidents 45%, from 11 to 6 a month.',
     ],
   },
 ];
