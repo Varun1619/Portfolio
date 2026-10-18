@@ -21,9 +21,9 @@ const RecommendationCard = ({ rec }) => {
       ref={ref}
       className={`flex flex-col rounded-[22px] bg-canvas-light p-7 md:p-10 ${revealClass(visible)}`}
     >
-      <blockquote className="flex-1 space-y-4 font-sans text-[1.0625rem] leading-relaxed text-ink-dark">
+      <blockquote className="space-y-4 font-sans text-[1.0625rem] leading-relaxed text-ink-dark">
         {shown.map((p, i) => (
-          <p key={i}>
+          <p key={i} className={expanded ? undefined : 'line-clamp-4'}>
             {i === 0 && '“'}
             {p}
             {i === paragraphs.length - 1 && '”'}
@@ -42,20 +42,26 @@ const RecommendationCard = ({ rec }) => {
         </button>
       )}
 
-      <figcaption className="mt-8 flex items-center gap-3 border-t border-black/10 pt-6">
+      {/* Spacer keeps captions aligned at the bottom of equal-height cards */}
+      <div aria-hidden="true" className="min-h-8 flex-1" />
+
+      <figcaption className="flex items-center gap-3 border-t border-black/10 pt-6">
         <span
           aria-hidden="true"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-canvas-white font-display text-[0.8rem] font-bold text-ink-dark"
         >
           {rec.initials}
         </span>
-        <span className="min-w-0">
+        <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2 font-sans text-[0.95rem] font-semibold text-ink-dark">
             {rec.name}
             <LinkedInIcon />
           </span>
+          <span className="block font-sans text-[0.85rem] lg:truncate leading-snug text-ink-dark-muted" title={rec.title}>
+            {rec.title}
+          </span>
           <span className="block font-sans text-[0.85rem] leading-snug text-ink-dark-muted">
-            {rec.title} · {rec.relationship} · {rec.date}
+            {rec.relationship} · {rec.date}
           </span>
         </span>
       </figcaption>
@@ -77,7 +83,7 @@ const Recommendations = () => {
           </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 items-start gap-3 md:mt-16 lg:grid-cols-2">
+        <div className="mt-12 grid grid-cols-1 gap-3 md:mt-16 lg:grid-cols-2">
           {recommendations.map((rec) => (
             <RecommendationCard key={rec.id} rec={rec} />
           ))}
