@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { projects } from '../../data/projects';
 import { useReveal, revealClass } from '../../hooks/useReveal';
+import { useScrollScrub, easeOut } from '../../hooks/useScrollScrub';
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
@@ -27,8 +28,8 @@ const Projects = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {projects.map((project, i) => (
-            <ProjectTile key={project.id} project={project} delay={(i % 2) * 0.12} />
+          {projects.map((project) => (
+            <ProjectTile key={project.id} project={project} />
           ))}
         </div>
       </div>
@@ -37,8 +38,19 @@ const Projects = () => {
 };
 
 // ===== Project Tile =====
-export const ProjectTile = ({ project, delay }) => {
-  const [tileRef, visible] = useReveal(0.2);
+export const ProjectTile = ({ project }) => {
+  const tileRef = useRef(null);
+
+  // Scale up into place as the tile scrolls in.
+  useScrollScrub(
+    tileRef,
+    (p) => {
+      const e = easeOut(p);
+      tileRef.current.style.transform = `scale(${0.9 + 0.1 * e})`;
+      tileRef.current.style.opacity = String(0.35 + 0.65 * e);
+    },
+    { start: 1, end: 0.45 }
+  );
   const videoRef = useRef(null);
   const hasVideo = Boolean(project.video) && !prefersReducedMotion();
 
@@ -63,8 +75,7 @@ export const ProjectTile = ({ project, delay }) => {
   return (
     <article
       ref={tileRef}
-      className={`group relative flex min-h-[560px] flex-col overflow-hidden rounded-[28px] bg-canvas-raised md:min-h-[640px] ${revealClass(visible)}`}
-      style={{ transitionDelay: `${delay}s` }}
+      className="group relative flex min-h-[560px] flex-col overflow-hidden rounded-[28px] bg-canvas-raised will-change-transform md:min-h-[640px]"
     >
       <div className="px-6 pt-12 text-center sm:px-10 md:pt-14">
         <p className="font-sans text-eyebrow font-semibold text-ink-muted">
