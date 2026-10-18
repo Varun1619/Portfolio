@@ -1,313 +1,158 @@
 // Projects.jsx
 import { useEffect, useRef, useState } from 'react';
-import { projects as allProjects } from '../../data/projects';
+import { projects } from '../../data/projects';
 
-const C = {
-  bg: '#0a0a0a', bg2: '#111111',
-  text: '#f0f0f0', muted: '#888',
-  accent: '#00e87b', accentDim: 'rgba(0,232,123,0.15)',
-  border: 'rgba(255,255,255,0.08)',
-};
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// Shape the imported data to match the carousel card expectations
-const projects = allProjects.map((p) => ({
-  num: p.num,
-  name: p.name,
-  desc: p.desc,
-  stack: p.stack,
-  link: p.github || null,
-  id: p.id,
-  video: p.video || null,
-  image: p.image || null,
-}));
-
-const Projects = ({ onViewAll = null, onProjectSelect = null }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
+// Reveal once when the element first scrolls into view.
+function useReveal(threshold = 0.15) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setIsVisible(true); },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold, rootMargin: '0px 0px -60px 0px' }
     );
-    if (sectionRef.current) obs.observe(sectionRef.current);
+    if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, []);
+  }, [threshold]);
 
-  const reveal = isVisible
-    ? 'opacity-100 translate-y-0'
-    : 'opacity-0 translate-y-[60px]';
+  return [ref, visible];
+}
 
-  // Duplicate for infinite scroll
-  const carouselProjects = [...projects, ...projects];
+const revealClass = (visible) =>
+  `transition-all duration-[900ms] ease-[cubic-bezier(0.28,0.11,0.32,1)] ${
+    visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+  }`;
+
+const Projects = () => {
+  const [headerRef, headerVisible] = useReveal();
 
   return (
-    <div
-      ref={sectionRef}
-      id="projects"
-      style={{
-        overflow: 'hidden',
-        borderTop: `1px solid ${C.border}`,
-        borderBottom: `1px solid ${C.border}`,
-        padding: 'clamp(48px, 8vw, 80px) 0',
-        background: C.bg2,
-      }}
+    <section id="projects" className="bg-canvas px-3 py-24 sm:px-4 md:py-32">
+      <div className="mx-auto max-w-wide">
+        <div
+          ref={headerRef}
+          className={`mb-12 flex flex-wrap items-end justify-between gap-4 px-2 md:mb-16 ${revealClass(headerVisible)}`}
+        >
+          <h2 className="font-display text-headline font-bold text-ink">Selected work.</h2>
+          <a
+            href="#/projects"
+            className="font-sans text-body-lg font-medium text-accent no-underline hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+          >
+            View all projects <span aria-hidden="true">›</span>
+          </a>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {projects.map((project, i) => (
+            <ProjectTile key={project.id} project={project} delay={(i % 2) * 0.12} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ===== Project Tile =====
+const ProjectTile = ({ project, delay }) => {
+  const [tileRef, visible] = useReveal(0.2);
+  const videoRef = useRef(null);
+  const hasVideo = Boolean(project.video) && !prefersReducedMotion();
+
+  // Play only while the tile is on screen.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.35 }
+    );
+    obs.observe(video);
+    return () => obs.disconnect();
+  }, [hasVideo]);
+
+  return (
+    <article
+      ref={tileRef}
+      className={`group relative flex min-h-[560px] flex-col overflow-hidden rounded-[28px] bg-canvas-raised md:min-h-[640px] ${revealClass(visible)}`}
+      style={{ transitionDelay: `${delay}s` }}
     >
-      {/* Header */}
-      <div
-        className={`transition-all duration-[800ms] ease-out ${reveal}`}
-        style={{ padding: '0 clamp(16px, 5vw, 40px)', marginBottom: '48px', transitionDelay: '0.1s' }}
-      >
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-          <div>
-            <p
-              style={{
-                fontSize: '0.65rem',
-                fontWeight: 600,
-                letterSpacing: '0.3em',
-                textTransform: 'uppercase',
-                color: C.accent,
-                marginBottom: '12px',
-              }}
+      <div className="px-6 pt-12 text-center sm:px-10 md:pt-14">
+        <p className="font-sans text-eyebrow font-semibold text-ink-muted">
+          {project.tags.join(' · ')}
+        </p>
+        <h3 className="mt-2 font-display text-[clamp(2rem,4vw,2.75rem)] font-bold leading-[1.08] tracking-[-0.02em] text-ink">
+          {project.name}
+        </h3>
+        <p className="mx-auto mt-3 max-w-[38ch] font-sans text-body-lg text-ink-muted">
+          {project.pitch ?? project.desc}
+        </p>
+
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
+          {/* Stretched link: the whole tile opens the project */}
+          <a
+            href={`#/projects/${project.id}`}
+            className="font-sans text-body-lg font-medium text-accent no-underline after:absolute after:inset-0 after:z-20 after:rounded-[28px] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+          >
+            Learn more <span aria-hidden="true">›</span>
+            <span className="sr-only"> about {project.name}</span>
+          </a>
+          {project.github && (
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-30 font-sans text-body-lg font-medium text-accent no-underline hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
-              Featured Work
-            </p>
-            <h2
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 'clamp(2rem, 5vw, 4rem)',
-                fontWeight: 700,
-                lineHeight: 1.1,
-                letterSpacing: '-0.02em',
-                color: C.text,
-              }}
-            >
-              Selected{' '}
-              <span style={{ WebkitTextStroke: '1.5px #f0f0f0', color: 'transparent' }}>
-                Projects
-              </span>
-            </h2>
-          </div>
-          {onViewAll && (
-            <button
-              onClick={onViewAll}
-              style={{
-                background: 'none',
-                border: `1px solid ${C.border}`,
-                borderRadius: '3px',
-                color: C.muted,
-                cursor: 'pointer',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                padding: '10px 20px',
-                transition: 'all 0.2s',
-                fontFamily: 'inherit',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = C.accent;
-                e.currentTarget.style.color = C.accent;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = C.border;
-                e.currentTarget.style.color = C.muted;
-              }}
-            >
-              View All
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
+              GitHub <span aria-hidden="true">›</span>
+              <span className="sr-only"> repository for {project.name} (opens in a new tab)</span>
+            </a>
           )}
         </div>
       </div>
 
-      {/* Scrolling track */}
-      <div
-        className={`transition-all duration-[800ms] ease-out ${reveal}`}
-        style={{ transitionDelay: '0.25s' }}
-      >
-        <div className="scroll-track">
-          {carouselProjects.map((project, idx) => (
-            <ProjectCard key={idx} project={project} onViewAll={onViewAll} onProjectSelect={onProjectSelect} />
-          ))}
+      <div className="relative mt-10 flex flex-1 items-end justify-center px-6 sm:px-10">
+        <div className="aspect-[3/2] w-full overflow-hidden rounded-t-2xl bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.45)] transition-transform duration-700 ease-[cubic-bezier(0.28,0.11,0.32,1)] group-hover:scale-[1.02]">
+          {hasVideo ? (
+            <video
+              ref={videoRef}
+              src={project.video}
+              poster={project.image || undefined}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              className="h-full w-full object-cover object-top"
+            />
+          ) : (
+            project.image && (
+              <img
+                src={project.image}
+                alt=""
+                loading="lazy"
+                className="h-full w-full object-cover object-top"
+              />
+            )
+          )}
         </div>
       </div>
-
-      <style>{`
-        .scroll-track {
-          display: flex;
-          gap: 24px;
-          padding: 0 clamp(16px, 5vw, 40px);
-          width: max-content;
-          animation: scrollProjects 25s linear infinite;
-        }
-        .scroll-track:hover {
-          animation-play-state: paused;
-        }
-        @keyframes scrollProjects {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
-    </div>
-  );
-};
-
-// ===== Project Card =====
-const ProjectCard = ({ project, onViewAll = null, onProjectSelect = null }) => {
-  const [hovered, setHovered] = useState(false);
-  const handleClick = onProjectSelect ? () => onProjectSelect(project) : (onViewAll || undefined);
-
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={handleClick}
-      style={{
-        cursor: (onProjectSelect || onViewAll) ? 'pointer' : 'default',
-        flexShrink: 0,
-        width: 'clamp(280px, 80vw, 420px)',
-        background: C.bg,
-        border: `1px solid ${hovered ? C.accent : C.border}`,
-        borderRadius: '2px',
-        transition: 'all 0.4s',
-        position: 'relative',
-        overflow: 'hidden',
-        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
-        boxShadow: hovered ? '0 20px 60px rgba(0,232,123,0.08)' : 'none',
-      }}
-    >
-      {/* Corner glow */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: hovered ? '100px' : '60px',
-          height: hovered ? '100px' : '60px',
-          background: 'linear-gradient(135deg, rgba(0,232,123,0.15) 0%, transparent 60%)',
-          transition: 'all 0.4s',
-          pointerEvents: 'none',
-          zIndex: 1,
-        }}
-      />
-
-      {/* Media cover */}
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#0d0d0d', overflow: 'hidden' }}>
-        {project.image ? (
-          <img
-            src={project.image}
-            alt={project.name}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              opacity: 0.85,
-            }}
-          />
-        ) : (
-          <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'linear-gradient(135deg, #0d0d0d 0%, #161616 100%)',
-          }}>
-            <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: '4rem',
-              fontWeight: 800,
-              color: 'rgba(255,255,255,0.06)',
-              userSelect: 'none',
-            }}>
-              {project.num}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Card body */}
-      <div style={{ padding: 'clamp(16px, 3vw, 28px)' }}>
-        {/* Name */}
-        <div
-          style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: '1.15rem',
-            fontWeight: 700,
-            color: C.text,
-            marginBottom: '8px',
-          }}
-        >
-          {project.name}
-        </div>
-
-        {/* Description */}
-        <div
-          style={{
-            fontSize: '0.82rem',
-            color: C.muted,
-            lineHeight: 1.6,
-            marginBottom: '16px',
-          }}
-        >
-          {project.desc}
-        </div>
-
-        {/* Tech stack */}
-        <div className="flex flex-wrap gap-1.5" style={{ marginBottom: project.link ? '16px' : 0 }}>
-          {project.stack.map((tech) => (
-            <span
-              key={tech}
-              style={{
-                fontSize: '0.65rem',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: C.accent,
-                fontWeight: 500,
-                background: C.accentDim,
-                padding: '3px 8px',
-                borderRadius: '2px',
-              }}
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
-
-        {/* GitHub link */}
-        {project.link && (
-          <a
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: hovered ? '#9b4ff5' : C.muted,
-              textDecoration: 'none',
-              transition: 'color 0.3s',
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-            </svg>
-            View on GitHub
-          </a>
-        )}
-      </div>
-    </div>
+    </article>
   );
 };
 
