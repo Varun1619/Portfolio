@@ -1,5 +1,6 @@
 // Hero.jsx
 import { useEffect, useRef, useState } from 'react';
+import { RESUME_URL } from '../../data/contact';
 
 const metaItems = [
   { label: 'Currently', value: 'MS @ Northeastern' },
@@ -119,6 +120,15 @@ const Hero = () => {
               className="font-sans text-[1.0625rem] font-medium text-accent no-underline hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
               Get in touch <span aria-hidden="true">›</span>
+            </a>
+            <a
+              href={RESUME_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-sans text-[1.0625rem] font-medium text-accent no-underline hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            >
+              Résumé <span aria-hidden="true">›</span>
+              <span className="sr-only"> (PDF, opens in a new tab)</span>
             </a>
           </div>
         </div>

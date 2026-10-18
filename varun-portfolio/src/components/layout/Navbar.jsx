@@ -1,5 +1,6 @@
 // Navbar.jsx — frosted bar that adapts to the light/dark section beneath it
 import { useEffect, useRef, useState } from 'react';
+import { RESUME_URL } from '../../data/contact';
 
 const NAV_HEIGHT = 52;
 
@@ -129,6 +130,12 @@ const Navbar = ({ route, navigate }) => {
               </a>
             </li>
           ))}
+          <li>
+            <a href={RESUME_URL} target="_blank" rel="noopener noreferrer" className={linkClass(false)}>
+              Résumé
+              <span className="sr-only"> (PDF, opens in a new tab)</span>
+            </a>
+          </li>
         </ul>
 
         {/* Mobile menu button */}
@@ -183,6 +190,18 @@ const Navbar = ({ route, navigate }) => {
               </a>
             </li>
           ))}
+          <li>
+            <a
+              href={RESUME_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMenuOpen(false)}
+              className="block py-2 font-display text-[1.75rem] font-bold text-ink no-underline"
+            >
+              Résumé
+              <span className="sr-only"> (PDF, opens in a new tab)</span>
+            </a>
+          </li>
         </ul>
       </div>
     </nav>

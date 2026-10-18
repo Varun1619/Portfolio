@@ -33,5 +33,5 @@ export const navLinks = [
 export const socialLinks = {
   linkedin: 'https://www.linkedin.com/in/varunsinghtech/',
   github: 'https://github.com/Varun1619',
-  email: 'varun1619singh@gmail.com',
+  email: 'varunsingh.dataengineer@gmail.com',
 };
