@@ -115,7 +115,7 @@ const Navbar = ({ route, navigate }) => {
         <ul className="hidden items-center gap-8 md:flex">
           <li>
             <a
-              href="#/projects"
+              href="/projects"
               onClick={goProjects}
               aria-current={onProjects ? 'page' : undefined}
               className={linkClass(onProjects)}
@@ -171,7 +171,7 @@ const Navbar = ({ route, navigate }) => {
         <ul className="space-y-1">
           <li>
             <a
-              href="#/projects"
+              href="/projects"
               onClick={goProjects}
               aria-current={onProjects ? 'page' : undefined}
               className="block py-2 font-display text-[1.75rem] font-bold text-ink no-underline"

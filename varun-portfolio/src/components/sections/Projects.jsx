@@ -20,7 +20,7 @@ const Projects = () => {
         >
           <h2 className="font-display text-headline font-bold text-ink">Selected work.</h2>
           <a
-            href="#/projects"
+            href="/projects"
             className="font-sans text-body-lg font-medium text-accent no-underline hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
             View all projects <span aria-hidden="true">›</span>
@@ -88,10 +88,23 @@ export const ProjectTile = ({ project }) => {
           {project.pitch ?? project.desc}
         </p>
 
+        {project.tileStats && (
+          <dl className="mt-5 flex justify-center gap-10">
+            {project.tileStats.map((stat) => (
+              <div key={stat.label} className="flex flex-col-reverse">
+                <dt className="font-sans text-[0.8rem] text-ink-muted">{stat.label}</dt>
+                <dd className="font-display text-[1.6rem] font-bold leading-tight tracking-[-0.02em] text-ink">
+                  {stat.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
           {/* Stretched link: the whole tile opens the project */}
           <a
-            href={`#/projects/${project.id}`}
+            href={`/projects/${project.id}`}
             className="font-sans text-body-lg font-medium text-accent no-underline after:absolute after:inset-0 after:z-20 after:rounded-[28px] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
             Learn more <span aria-hidden="true">›</span>
