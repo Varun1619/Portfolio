@@ -1,230 +1,189 @@
-// Navbar.jsx
-import { useState, useEffect } from 'react';
+// Navbar.jsx — frosted bar that adapts to the light/dark section beneath it
+import { useEffect, useRef, useState } from 'react';
 
-const Navbar = ({ route, navigate }) => {
-  const [scrolled, setScrolled] = useState(false);
+const NAV_HEIGHT = 52;
+
+const homeLinks = [
+  { label: 'Experience', href: '#experience' },
+  { label: 'ETL', href: '#etl' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Contact', href: '#contact' },
+];
+
+// Which theme is the content directly under the bar? Sections opt in with data-nav-theme="light".
+function useThemeUnderNav(navRef, route) {
+  const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const y = NAV_HEIGHT / 2;
+      const hit = document
+        .elementsFromPoint(window.innerWidth / 2, y)
+        .find((el) => !navRef.current?.contains(el));
+      setTheme(hit?.closest('[data-nav-theme]')?.dataset.navTheme === 'light' ? 'light' : 'dark');
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
 
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [navRef, route]);
+
+  return theme;
+}
+
+const Navbar = ({ route, navigate }) => {
+  const navRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const theme = useThemeUnderNav(navRef, route);
   const isHome = !route || route.page === 'home';
+  const onProjects = route?.page === 'projects' || route?.page === 'project-detail';
+  const light = theme === 'light' && !menuOpen;
 
-  const links = isHome
-    ? [
-        { label: 'Experience', href: '#experience' },
-        { label: 'ETL Sim', href: '#etl' },
-        { label: 'Skills', href: '#skills' },
-        { label: 'Contact', href: '#contact' },
-      ]
-    : [];
+  // Close the menu on Escape.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => e.key === 'Escape' && setMenuOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
 
-  const handleClick = (e, href) => {
+  const scrollToSection = (e, href) => {
     e.preventDefault();
-    if (!isHome) {
-      navigate && navigate('home');
-      setTimeout(() => {
-        const el = document.querySelector(href);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 300);
-      return;
+    setMenuOpen(false);
+    const go = () => document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (isHome) {
+      go();
+    } else {
+      navigate?.('home');
+      setTimeout(go, 300);
     }
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  const goHome = (e) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    if (isHome) window.scrollTo({ top: 0, behavior: 'smooth' });
+    else navigate?.('home');
+  };
+
+  const goProjects = (e) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    navigate?.('projects');
+  };
+
+  const linkClass = (active) =>
+    `font-sans text-[0.8125rem] no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 ${
+      light
+        ? `focus-visible:outline-accent-dark ${active ? 'text-ink-dark' : 'text-ink-dark/70 hover:text-ink-dark'}`
+        : `focus-visible:outline-accent ${active ? 'text-ink' : 'text-ink/70 hover:text-ink'}`
+    }`;
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between"
-      style={{
-        padding: '20px clamp(16px, 5vw, 40px)',
-        mixBlendMode: 'difference',
-        transition: 'all 0.3s',
-      }}
+      ref={navRef}
+      aria-label="Main"
+      className={`fixed inset-x-0 top-0 z-[1000] border-b backdrop-blur-xl backdrop-saturate-[1.8] transition-colors duration-300 ${
+        menuOpen ? 'border-white/10 bg-black/95' : light ? 'border-black/10 bg-canvas-light/75' : 'border-white/10 bg-black/70'
+      }`}
     >
-      {/* Logo */}
-      <a
-        href="#"
-        onClick={(e) => {
-          e.preventDefault();
-          if (navigate && !isHome) {
-            navigate('home');
-          } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        }}
-        className="no-underline"
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 700,
-          fontSize: '1.1rem',
-          letterSpacing: '0.05em',
-          color: '#f0f0f0',
-          textDecoration: 'none',
-        }}
+      <div
+        className="mx-auto flex max-w-wide items-center justify-between px-4 sm:px-6"
+        style={{ height: NAV_HEIGHT }}
       >
-        VS<span style={{ color: '#00e87b' }}>.</span>
-      </a>
-
-      {/* Nav Links */}
-      <div className="hidden md:flex items-center" style={{ gap: '28px' }}>
-        {/* Always show Projects page link */}
-        <button
-          onClick={() => navigate && navigate('projects')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: route?.page === 'projects' || route?.page === 'project-detail' ? '#00e87b' : '#888',
-            cursor: 'pointer',
-            fontSize: '0.75rem',
-            fontWeight: 500,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            transition: 'color 0.3s',
-            padding: 0,
-            fontFamily: 'inherit',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = '#00e87b')}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color =
-              route?.page === 'projects' || route?.page === 'project-detail' ? '#00e87b' : '#888';
-          }}
+        <a
+          href="#"
+          onClick={goHome}
+          aria-label="Varun Singh, home"
+          className={`font-display text-[1.05rem] font-bold tracking-[0.04em] no-underline ${light ? 'text-ink-dark' : 'text-ink'}`}
         >
-          Projects
-        </button>
-        {links.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            onClick={(e) => handleClick(e, link.href)}
-            className="nav-link"
-            style={{
-              color: '#888',
-              textDecoration: 'none',
-              fontSize: '0.75rem',
-              fontWeight: 500,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              transition: 'color 0.3s',
-              position: 'relative',
-              paddingBottom: '4px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#00e87b';
-              e.currentTarget.querySelector('.link-underline').style.width = '100%';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#888';
-              e.currentTarget.querySelector('.link-underline').style.width = '0';
-            }}
-          >
-            {link.label}
+          VS<span className={light ? 'text-accent-dark' : 'text-accent'}>.</span>
+        </a>
+
+        {/* Desktop links */}
+        <ul className="hidden items-center gap-8 md:flex">
+          <li>
+            <a
+              href="#/projects"
+              onClick={goProjects}
+              aria-current={onProjects ? 'page' : undefined}
+              className={linkClass(onProjects)}
+            >
+              Projects
+            </a>
+          </li>
+          {homeLinks.map((link) => (
+            <li key={link.href}>
+              <a href={link.href} onClick={(e) => scrollToSection(e, link.href)} className={linkClass(false)}>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        {/* Mobile menu button */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          className="relative h-10 w-10 md:hidden"
+        >
+          {[0, 1].map((i) => (
             <span
-              className="link-underline"
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                width: 0,
-                height: '1px',
-                background: '#00e87b',
-                transition: 'width 0.3s',
-              }}
+              key={i}
+              className={`absolute left-1/2 top-1/2 h-[1.5px] w-[18px] -translate-x-1/2 transition-all duration-300 ${
+                light ? 'bg-ink-dark' : 'bg-ink'
+              } ${
+                menuOpen
+                  ? i === 0 ? 'rotate-45' : '-rotate-45'
+                  : i === 0 ? '-translate-y-[4px]' : 'translate-y-[3px]'
+              }`}
             />
-          </a>
-        ))}
+          ))}
+        </button>
       </div>
 
-      {/* Mobile menu button */}
-      <button
-        className="md:hidden flex flex-col gap-[5px] bg-transparent border-none cursor-pointer p-1"
-        onClick={() => {
-          const menu = document.getElementById('mobileMenu');
-          if (menu) {
-            const isOpen = menu.style.opacity === '1';
-            menu.style.opacity = isOpen ? '0' : '1';
-            menu.style.visibility = isOpen ? 'hidden' : 'visible';
-            menu.style.transform = isOpen ? 'translateY(-10px)' : 'translateY(0)';
-          }
-        }}
-      >
-        <span style={{ width: '20px', height: '1.5px', background: '#f0f0f0' }} />
-        <span style={{ width: '14px', height: '1.5px', background: '#f0f0f0' }} />
-      </button>
-
-      {/* Mobile dropdown */}
+      {/* Mobile menu: full-width panel under the bar */}
       <div
-        id="mobileMenu"
-        className="md:hidden absolute right-6"
-        style={{
-          top: '70px',
-          background: '#161621',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '10px',
-          padding: '16px 24px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '14px',
-          opacity: 0,
-          visibility: 'hidden',
-          transform: 'translateY(-10px)',
-          transition: 'all 0.3s ease',
-        }}
+        id="mobile-menu"
+        hidden={!menuOpen}
+        className="h-[calc(100svh-52px)] overflow-y-auto px-8 pb-10 pt-6 md:hidden"
       >
-        {/* Projects page link in mobile */}
-        <button
-          onClick={() => {
-            navigate && navigate('projects');
-            const menu = document.getElementById('mobileMenu');
-            if (menu) { menu.style.opacity = '0'; menu.style.visibility = 'hidden'; menu.style.transform = 'translateY(-10px)'; }
-          }}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: route?.page === 'projects' || route?.page === 'project-detail' ? '#00e87b' : '#888',
-            cursor: 'pointer',
-            fontSize: '0.75rem',
-            fontWeight: 500,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            transition: 'color 0.3s',
-            padding: 0,
-            fontFamily: 'inherit',
-            textAlign: 'left',
-          }}
-        >
-          Projects
-        </button>
-        {links.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            onClick={(e) => {
-              handleClick(e, link.href);
-              const menu = document.getElementById('mobileMenu');
-              if (menu) {
-                menu.style.opacity = '0';
-                menu.style.visibility = 'hidden';
-                menu.style.transform = 'translateY(-10px)';
-              }
-            }}
-            style={{
-              color: '#888',
-              textDecoration: 'none',
-              fontSize: '0.75rem',
-              fontWeight: 500,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              transition: 'color 0.3s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#00e87b')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#888')}
-          >
-            {link.label}
-          </a>
-        ))}
+        <ul className="space-y-1">
+          <li>
+            <a
+              href="#/projects"
+              onClick={goProjects}
+              aria-current={onProjects ? 'page' : undefined}
+              className="block py-2 font-display text-[1.75rem] font-bold text-ink no-underline"
+            >
+              Projects
+            </a>
+          </li>
+          {homeLinks.map((link) => (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                onClick={(e) => scrollToSection(e, link.href)}
+                className="block py-2 font-display text-[1.75rem] font-bold text-ink no-underline"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </nav>
   );

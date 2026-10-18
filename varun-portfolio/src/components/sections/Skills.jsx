@@ -1,12 +1,5 @@
 // Skills.jsx
-import { useEffect, useRef, useState } from 'react';
-
-const C = {
-  bg: '#0a0a0a', bg2: '#111111',
-  text: '#f0f0f0', muted: '#888',
-  accent: '#00e87b', accentDim: 'rgba(0,232,123,0.15)',
-  border: 'rgba(255,255,255,0.08)',
-};
+import { useReveal, revealClass } from '../../hooks/useReveal';
 
 const skillGroups = [
   { title: 'Languages', tags: ['Java', 'Python', 'JavaScript', 'SQL', 'NoSQL', 'PL/SQL'] },
@@ -18,141 +11,41 @@ const skillGroups = [
 ];
 
 const Skills = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setIsVisible(true); },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    );
-    if (sectionRef.current) obs.observe(sectionRef.current);
-    return () => obs.disconnect();
-  }, []);
-
-  const reveal = isVisible
-    ? 'opacity-100 translate-y-0'
-    : 'opacity-0 translate-y-[60px]';
+  const [headRef, headVisible] = useReveal();
+  const [gridRef, gridVisible] = useReveal(0.1);
 
   return (
-    <section
-      ref={sectionRef}
-      id="skills"
-      style={{ padding: 'clamp(60px, 10vw, 120px) clamp(16px, 5vw, 40px)', background: C.bg }}
-    >
-      {/* Header */}
-      <div
-        className={`transition-all duration-[800ms] ease-out ${reveal}`}
-        style={{ transitionDelay: '0.1s' }}
-      >
-        <p
-          style={{
-            fontSize: '0.65rem',
-            fontWeight: 600,
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: C.accent,
-            marginBottom: '12px',
-          }}
-        >
-          Toolkit
-        </p>
-        <h2
-          style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 'clamp(2rem, 5vw, 4rem)',
-            fontWeight: 700,
-            lineHeight: 1.1,
-            letterSpacing: '-0.02em',
-            marginBottom: '40px',
-            color: C.text,
-          }}
-        >
-          Technical{' '}
-          <span style={{ WebkitTextStroke: '1.5px #f0f0f0', color: 'transparent' }}>
-            Skills
-          </span>
-        </h2>
-      </div>
+    <section id="skills" data-nav-theme="light" className="bg-canvas-light px-4 py-24 sm:px-6 md:py-36">
+      <div className="mx-auto max-w-wide">
+        <div ref={headRef} className={`text-center ${revealClass(headVisible)}`}>
+          <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">Skills</p>
+          <h2 className="mt-3 font-display text-headline font-bold text-ink-dark">The toolkit.</h2>
+        </div>
 
-      {/* Skills grid */}
-      <div
-        className={`transition-all duration-[800ms] ease-out ${reveal}`}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
-          gap: '2px',
-          transitionDelay: '0.25s',
-        }}
-      >
-        {skillGroups.map((group) => (
-          <SkillGroup key={group.title} title={group.title} tags={group.tags} />
-        ))}
+        <div
+          ref={gridRef}
+          className={`mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 md:mt-16 lg:grid-cols-3 ${revealClass(gridVisible)}`}
+        >
+          {skillGroups.map((group) => (
+            <div key={group.title} className="rounded-[22px] bg-canvas-white p-7 md:p-9">
+              <h3 className="font-display text-[1.375rem] font-bold tracking-[-0.01em] text-ink-dark">
+                {group.title}
+              </h3>
+              <ul className="mt-5 flex flex-wrap gap-2">
+                {group.tags.map((tag) => (
+                  <li
+                    key={tag}
+                    className="rounded-full bg-canvas-light px-3.5 py-1.5 font-sans text-[0.9rem] text-ink-dark"
+                  >
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
-  );
-};
-
-// ===== Skill Group =====
-const SkillGroup = ({ title, tags }) => {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? 'rgba(0,232,123,0.02)' : C.bg2,
-        padding: 'clamp(20px, 4vw, 40px)',
-        border: `1px solid ${hovered ? C.accentDim : C.border}`,
-        transition: 'all 0.4s',
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: '0.7rem',
-          fontWeight: 700,
-          letterSpacing: '0.25em',
-          textTransform: 'uppercase',
-          color: C.accent,
-          marginBottom: '20px',
-          paddingBottom: '12px',
-          borderBottom: `1px solid ${C.border}`,
-        }}
-      >
-        {title}
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <SkillTag key={tag} label={tag} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// ===== Skill Tag =====
-const SkillTag = ({ label }) => {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <span
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        fontSize: '0.8rem',
-        color: hovered ? C.accent : C.muted,
-        padding: '6px 14px',
-        border: `1px solid ${hovered ? C.accent : C.border}`,
-        borderRadius: '2px',
-        background: hovered ? C.accentDim : 'transparent',
-        transition: 'all 0.3s',
-        cursor: 'default',
-      }}
-    >
-      {label}
-    </span>
   );
 };
 

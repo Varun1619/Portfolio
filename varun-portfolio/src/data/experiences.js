@@ -16,7 +16,7 @@ export const experiences = [
   },
   {
     id: 2,
-    role: 'Software Engineer',
+    role: 'Data Engineer',
     company: 'LTI Mindtree',
     period: 'Sep 2022 – Jul 2024',
     location: 'India',

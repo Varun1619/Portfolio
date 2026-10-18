@@ -1,5 +1,5 @@
 // Experience.jsx
-import { useEffect, useRef, useState } from 'react';
+import { useReveal, revealClass } from '../../hooks/useReveal';
 
 const experiences = [
   {
@@ -14,7 +14,7 @@ const experiences = [
     ],
   },
   {
-    role: 'Software Engineer',
+    role: 'Data Engineer',
     company: 'LTI Mindtree',
     period: 'Sep 2022 — Jul 2024',
     tech: ['Apache Kafka', 'Spark', 'Java', 'MySQL', 'PostgreSQL'],
@@ -37,199 +37,55 @@ const experiences = [
 ];
 
 const Experience = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    );
-    if (sectionRef.current) obs.observe(sectionRef.current);
-    return () => obs.disconnect();
-  }, []);
-
-  const reveal = (delay = 0) =>
-    `transition-all duration-[800ms] ease-out ${
-      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[60px]'
-    }`;
+  const [headRef, headVisible] = useReveal();
 
   return (
-    <section
-      ref={sectionRef}
-      id="experience"
-      style={{ padding: 'clamp(60px, 10vw, 120px) clamp(16px, 5vw, 40px)', background: '#0a0a0a' }}
-    >
-      {/* Section header */}
-      <div className={reveal()} style={{ transitionDelay: '0.1s' }}>
-        <p
-          style={{
-            fontSize: '0.65rem',
-            fontWeight: 600,
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: '#00e87b',
-            marginBottom: '12px',
-          }}
-        >
-          Career
-        </p>
-        <h2
-          style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 'clamp(2rem, 5vw, 4rem)',
-            fontWeight: 700,
-            lineHeight: 1.1,
-            letterSpacing: '-0.02em',
-            marginBottom: '40px',
-            color: '#f0f0f0',
-          }}
-        >
-          Work{' '}
-          <span
-            style={{
-              WebkitTextStroke: '1.5px #f0f0f0',
-              color: 'transparent',
-            }}
-          >
-            Experience
-          </span>
-        </h2>
-      </div>
+    <section id="experience" data-nav-theme="light" className="bg-canvas-white px-4 py-24 sm:px-6 md:py-36">
+      <div className="mx-auto max-w-content">
+        <div ref={headRef} className={revealClass(headVisible)}>
+          <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">Experience</p>
+          <h2 className="mt-3 font-display text-headline font-bold text-ink-dark">Where I’ve worked.</h2>
+        </div>
 
-      {/* Experience cards */}
-      <div style={{ display: 'grid', gap: '2px' }}>
-        {experiences.map((exp, idx) => (
-          <ExperienceCard
-            key={idx}
-            experience={exp}
-            isVisible={isVisible}
-            delay={0.2 + idx * 0.15}
-          />
-        ))}
+        <ol className="mt-12 md:mt-16">
+          {experiences.map((exp) => (
+            <ExperienceRow key={exp.company} experience={exp} />
+          ))}
+        </ol>
       </div>
     </section>
   );
 };
 
-// ===== Card Component =====
-const ExperienceCard = ({ experience, isVisible, delay }) => {
-  const [hovered, setHovered] = useState(false);
+const ExperienceRow = ({ experience }) => {
+  const [ref, visible] = useReveal(0.2);
 
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className={`transition-all duration-[800ms] ease-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[60px]'
-      }`}
-      style={{
-        background: hovered ? 'rgba(0,232,123,0.03)' : '#111111',
-        padding: 'clamp(28px, 4vw, 48px)',
-        border: `1px solid ${hovered ? 'rgba(0,232,123,0.15)' : 'rgba(255,255,255,0.08)'}`,
-        borderRadius: '2px',
-        position: 'relative',
-        overflow: 'hidden',
-        transitionDelay: `${delay}s`,
-        transition: 'opacity 0.8s ease, transform 0.8s ease, background 0.5s, border-color 0.5s',
-      }}
+    <li
+      ref={ref}
+      className={`grid gap-4 border-t border-black/10 py-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-12 md:py-12 ${revealClass(visible)}`}
     >
-      {/* Left accent bar */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '3px',
-          height: hovered ? '100%' : '0%',
-          background: '#00e87b',
-          transition: 'height 0.5s ease',
-        }}
-      />
-
-      {/* Header row */}
-      <div
-        className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"
-        style={{ marginBottom: '20px' }}
-      >
-        <div>
-          <div
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(1.1rem, 2vw, 1.4rem)',
-              fontWeight: 700,
-              color: '#f0f0f0',
-            }}
-          >
-            {experience.role}
-          </div>
-          <div
-            style={{
-              color: '#00e87b',
-              fontWeight: 500,
-              fontSize: '1rem',
-              marginTop: '4px',
-            }}
-          >
-            {experience.company}
-          </div>
-        </div>
-        <div
-          style={{
-            fontSize: '0.75rem',
-            fontWeight: 500,
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: '#888',
-            background: 'rgba(0,232,123,0.15)',
-            padding: '6px 14px',
-            borderRadius: '2px',
-            whiteSpace: 'nowrap',
-            alignSelf: 'flex-start',
-          }}
-        >
-          {experience.period}
-        </div>
-      </div>
-
-      {/* Tech tags */}
-      <div className="flex flex-wrap gap-2" style={{ marginBottom: '20px' }}>
-        {experience.tech.map((t) => (
-          <span
-            key={t}
-            style={{
-              fontSize: '0.7rem',
-              fontWeight: 500,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: '#00e87b',
-              border: '1px solid rgba(0,232,123,0.15)',
-              padding: '4px 10px',
-              borderRadius: '2px',
-            }}
-          >
-            {t}
-          </span>
-        ))}
-      </div>
-
-      {/* Detail paragraphs */}
       <div>
-        {experience.details.map((detail, i) => (
-          <p
-            key={i}
-            style={{
-              color: '#888',
-              fontSize: '0.9rem',
-              lineHeight: 1.7,
-              marginBottom: i < experience.details.length - 1 ? '10px' : 0,
-            }}
-          >
-            {detail}
-          </p>
-        ))}
+        <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">{experience.period}</p>
+        <h3 className="mt-2 font-display text-[clamp(1.5rem,2.5vw,2rem)] font-bold leading-tight tracking-[-0.02em] text-ink-dark">
+          {experience.company}
+        </h3>
+        <p className="mt-1 font-sans text-[1.0625rem] text-ink-dark-muted">{experience.role}</p>
       </div>
-    </div>
+
+      <div>
+        <ul className="space-y-3">
+          {experience.details.map((detail) => (
+            <li key={detail} className="font-sans text-[1.0625rem] leading-relaxed text-ink-dark">
+              {detail}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-5 font-sans text-eyebrow font-semibold text-accent-dark">
+          {experience.tech.join(' · ')}
+        </p>
+      </div>
+    </li>
   );
 };
 

@@ -9,6 +9,7 @@ export default {
           DEFAULT: '#000000',
           raised: '#161617',
           light: '#f5f5f7',
+          white: '#ffffff',
         },
         ink: {
           DEFAULT: '#f5f5f7',
@@ -19,6 +20,8 @@ export default {
         accent: {
           DEFAULT: '#00e87b',
           hover: '#33ed95',
+          // Darker green for text on light panels (≥5:1 on white and #f5f5f7)
+          dark: '#007a3d',
         },
         dark: {
           950: '#0a0a0f',
