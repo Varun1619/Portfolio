@@ -1,24 +1,24 @@
 import { useState, useEffect } from 'react';
 
 const C = {
-  bg: '#0a0a0a',
-  bg2: '#111111',
-  bg3: '#161616',
-  text: '#f0f0f0',
-  muted: '#888',
+  bg: '#000000',
+  bg2: '#161617',
+  bg3: '#1d1d1f',
+  text: '#f5f5f7',
+  muted: '#86868b',
   accent: '#00e87b',
   accentDim: 'rgba(0,232,123,0.10)',
-  border: 'rgba(255,255,255,0.08)',
-  borderHover: 'rgba(255,255,255,0.14)',
+  border: 'rgba(255,255,255,0.1)',
+  borderHover: 'rgba(255,255,255,0.18)',
 };
 
 const pipelineColors = { BRONZE: '#f5a623', SILVER: '#c8c8c8', GOLD: '#00e87b', BI: '#4fc3f7' };
 
 // ─── Shared primitives ────────────────────────────────────────────────────────
 const SectionLabel = ({ children }) => (
-  <p style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: C.accent, marginBottom: '20px' }}>
+  <h2 className="mb-6 font-display text-[clamp(1.5rem,3vw,2.25rem)] font-bold leading-tight tracking-[-0.02em] text-ink">
     {children}
-  </p>
+  </h2>
 );
 
 const Divider = () => <div style={{ borderTop: `1px solid ${C.border}` }} />;
@@ -31,35 +31,92 @@ const Section = ({ label, children }) => (
 );
 
 const tagStyle = {
-  fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
-  background: 'rgba(255,255,255,0.06)', color: '#f0f0f0',
-  border: '1px solid rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: '2px',
-};
-
-const tagStyleDark = {
-  ...tagStyle, background: 'rgba(255,255,255,0.03)', color: '#888',
-  border: '1px solid rgba(255,255,255,0.06)',
+  fontSize: '0.8rem', fontWeight: 500, background: 'rgba(255,255,255,0.08)', color: C.text,
+  padding: '5px 12px', borderRadius: '999px',
 };
 
 const actionBtnStyle = {
-  display: 'inline-flex', alignItems: 'center', gap: '6px',
-  padding: '11px 22px', border: '1px solid #6d2bc9', borderRadius: '3px',
-  color: '#ffffff', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 600,
-  letterSpacing: '0.05em', background: '#8534F3', transition: 'all 0.2s',
-  cursor: 'pointer', fontFamily: 'inherit',
+  display: 'inline-flex', alignItems: 'center', gap: '8px',
+  padding: '12px 22px', border: 'none', borderRadius: '999px',
+  color: '#000000', textDecoration: 'none', fontSize: '1rem', fontWeight: 500,
+  background: C.accent, transition: 'background 0.2s', cursor: 'pointer', fontFamily: 'inherit',
 };
 
 const BackButton = ({ onClick }) => (
   <button
+    type="button"
     onClick={onClick}
-    style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: '0.72rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '32px', padding: 0, transition: 'color 0.2s' }}
-    onMouseEnter={(e) => (e.currentTarget.style.color = C.accent)}
-    onMouseLeave={(e) => (e.currentTarget.style.color = C.muted)}
+    className="mb-8 font-sans text-[0.95rem] text-accent hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
   >
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-    All Projects
+    <span aria-hidden="true">‹</span> All projects
   </button>
 );
+
+const GitHubIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
+);
+
+// ─── Shared hero ──────────────────────────────────────────────────────────────
+const ProjectHero = ({ project, onBack }) => {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
+  const reveal = (delay) => ({
+    className: `transition-all duration-[900ms] ease-[cubic-bezier(0.28,0.11,0.32,1)] ${
+      visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+    }`,
+    style: { transitionDelay: `${delay}s` },
+  });
+
+  const meta = [...project.tags, project.course, project.date].filter(Boolean);
+
+  return (
+    <header className="bg-canvas px-4 pb-16 pt-24 sm:px-6 md:pb-24 md:pt-28">
+      <div className="mx-auto max-w-content">
+        <BackButton onClick={onBack} />
+      </div>
+      <div className="mx-auto max-w-content text-center">
+        <p {...reveal(0.05)}>
+          <span className="block font-sans text-eyebrow font-semibold text-ink-muted">{meta.join(' · ')}</span>
+        </p>
+        <h1 {...reveal(0.12)}>
+          <span className="mt-3 block font-display text-headline font-bold text-ink">{project.name}</span>
+        </h1>
+        <p {...reveal(0.2)}>
+          <span className="mx-auto mt-5 block max-w-[46ch] font-sans text-subhead font-medium text-ink-muted">
+            {project.tagline}
+          </span>
+        </p>
+        {project.github && (
+          <div {...reveal(0.28)}>
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-sans text-[1.0625rem] font-medium text-black no-underline transition-colors duration-200 hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            >
+              <GitHubIcon />
+              View on GitHub
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </div>
+        )}
+      </div>
+      {project.image && (
+        <div {...reveal(0.36)}>
+          <img
+            src={project.image}
+            alt=""
+            className="mx-auto mt-14 block w-full max-w-content rounded-[22px] shadow-[0_30px_80px_rgba(0,0,0,0.5)] md:mt-20"
+          />
+        </div>
+      )}
+    </header>
+  );
+};
 
 // ─── FoodLens inline diagrams ────────────────────────────────────────────────
 const FoodLensFlowchart = () => {
@@ -214,53 +271,12 @@ const FoodLensERDiagram = () => {
 
 // ─── FoodLens detail ──────────────────────────────────────────────────────────
 const FoodLensDetail = ({ project, onBack }) => {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-    const t = setTimeout(() => setVisible(true), 60);
-    return () => clearTimeout(t);
-  }, []);
-
-  const fade = (delay = '0s') => ({
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : 'translateY(20px)',
-    transition: `opacity 0.55s ease ${delay}, transform 0.55s ease ${delay}`,
-  });
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
 
-      {/* ── Hero ── */}
-      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
-          <BackButton onClick={onBack} />
-
-          <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
-            {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
-            {project.course && <span style={tagStyleDark}>{project.course}</span>}
-            {project.date && <span style={tagStyleDark}>{project.date}</span>}
-          </div>
-
-          <h1 style={{ ...fade('0.1s'), fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.text, marginBottom: '14px' }}>
-            {project.name}
-          </h1>
-
-          <p style={{ ...fade('0.15s'), fontSize: '1rem', color: C.muted, lineHeight: 1.65, maxWidth: '680px', marginBottom: '28px' }}>
-            {project.tagline}
-          </p>
-
-          {project.github && (
-            <a href={project.github} target="_blank" rel="noopener noreferrer"
-              style={{ ...actionBtnStyle, ...fade('0.2s') }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
-              View on GitHub
-            </a>
-          )}
-        </div>
-      </div>
+      <ProjectHero project={project} onBack={onBack} />
 
       {/* ── Metrics ── */}
       <Divider />
@@ -506,8 +522,6 @@ const FoodLensDetail = ({ project, onBack }) => {
         <p style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '16px' }}>Northeastern University · Data Engineering Final Project · Spring 2026</p>
         {project.github && (
           <a href={project.github} target="_blank" rel="noopener noreferrer" style={actionBtnStyle}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
           >
             View on GitHub ↗
           </a>
@@ -534,8 +548,6 @@ const GenericDetail = ({ project, onBack }) => {
           <p style={{ fontSize: '1rem', color: C.muted, lineHeight: 1.65, maxWidth: '640px', marginBottom: '28px' }}>{project.tagline}</p>
           {project.github && (
             <a href={project.github} target="_blank" rel="noopener noreferrer" style={actionBtnStyle}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
             >View on GitHub ↗</a>
           )}
         </div>
@@ -715,45 +727,12 @@ const ChinookERDiagram = () => {
 
 // ─── Chinook detail ───────────────────────────────────────────────────────────
 const ChinookDetail = ({ project, onBack }) => {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-    const t = setTimeout(() => setVisible(true), 60);
-    return () => clearTimeout(t);
-  }, []);
-
-  const fade = (delay = '0s') => ({
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : 'translateY(20px)',
-    transition: `opacity 0.55s ease ${delay}, transform 0.55s ease ${delay}`,
-  });
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
 
-      {/* ── Hero ── */}
-      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
-          <BackButton onClick={onBack} />
-          <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
-            {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
-            {project.course && <span style={tagStyleDark}>{project.course}</span>}
-            {project.date && <span style={tagStyleDark}>{project.date}</span>}
-          </div>
-          <h1 style={{ ...fade('0.1s'), fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.text, marginBottom: '14px' }}>{project.name}</h1>
-          <p style={{ ...fade('0.15s'), fontSize: '1rem', color: C.muted, lineHeight: 1.65, maxWidth: '680px', marginBottom: '28px' }}>{project.tagline}</p>
-          {project.github && (
-            <a href={project.github} target="_blank" rel="noopener noreferrer"
-              style={{ ...actionBtnStyle, ...fade('0.2s') }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
-              View on GitHub
-            </a>
-          )}
-        </div>
-      </div>
+      <ProjectHero project={project} onBack={onBack} />
 
       {/* ── Metrics ── */}
       <Divider />
@@ -980,54 +959,14 @@ const CryptoPulseArchitecture = () => {
 
 // ─── Crypto Pulse detail ─────────────────────────────────────────────────────
 const CryptoPulseDetail = ({ project, onBack }) => {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-    const t = setTimeout(() => setVisible(true), 60);
-    return () => clearTimeout(t);
-  }, []);
-
-  const fade = (delay = '0s') => ({
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : 'translateY(20px)',
-    transition: `opacity 0.55s ease ${delay}, transform 0.55s ease ${delay}`,
-  });
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   const pipelineAccent = { SOURCE: '#f5a623', QUEUE: '#4fc3f7', STORE: '#00e87b', SERVE: '#a78bfa' };
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
 
-      {/* ── Hero ── */}
-      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
-          <BackButton onClick={onBack} />
-
-          <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
-            {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
-            {project.date && <span style={tagStyleDark}>{project.date}</span>}
-          </div>
-
-          <h1 style={{ ...fade('0.1s'), fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.text, marginBottom: '14px' }}>
-            {project.name}
-          </h1>
-
-          <p style={{ ...fade('0.15s'), fontSize: '1rem', color: C.muted, lineHeight: 1.65, maxWidth: '680px', marginBottom: '28px' }}>
-            {project.tagline}
-          </p>
-
-          {project.github && (
-            <a href={project.github} target="_blank" rel="noopener noreferrer"
-              style={{ ...actionBtnStyle, ...fade('0.2s') }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
-              View on GitHub
-            </a>
-          )}
-        </div>
-      </div>
+      <ProjectHero project={project} onBack={onBack} />
 
       {/* ── Metrics ── */}
       <Divider />
@@ -1166,8 +1105,6 @@ const CryptoPulseDetail = ({ project, onBack }) => {
         <p style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '16px' }}>Personal project · No cloud accounts needed to run locally</p>
         {project.github && (
           <a href={project.github} target="_blank" rel="noopener noreferrer" style={actionBtnStyle}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
           >
             View on GitHub ↗
           </a>
@@ -1232,48 +1169,12 @@ const SECFlowchart = () => {
 
 // ─── SEC Filing RAG detail ────────────────────────────────────────────────────
 const SECFilingRAGDetail = ({ project, onBack }) => {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-    const t = setTimeout(() => setVisible(true), 60);
-    return () => clearTimeout(t);
-  }, []);
-
-  const fade = (delay = '0s') => ({
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : 'translateY(20px)',
-    transition: `opacity 0.55s ease ${delay}, transform 0.55s ease ${delay}`,
-  });
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text }}>
 
-      {/* ── Hero ── */}
-      <div style={{ paddingTop: 'clamp(72px, 10vw, 100px)', paddingBottom: 'clamp(32px, 5vw, 56px)', borderBottom: `1px solid ${C.border}`, background: C.bg2 }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px)' }}>
-          <BackButton onClick={onBack} />
-          <div style={{ ...fade('0.05s'), display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
-            {project.tags.map((t) => <span key={t} style={tagStyle}>{t}</span>)}
-            {project.date && <span style={tagStyleDark}>{project.date}</span>}
-          </div>
-          <h1 style={{ ...fade('0.1s'), fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.text, marginBottom: '14px' }}>
-            {project.name}
-          </h1>
-          <p style={{ ...fade('0.15s'), fontSize: '1rem', color: C.muted, lineHeight: 1.65, maxWidth: '680px', marginBottom: '28px' }}>
-            {project.tagline}
-          </p>
-          {project.github && (
-            <a href={project.github} target="_blank" rel="noopener noreferrer"
-              style={{ ...actionBtnStyle, ...fade('0.2s') }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
-              View on GitHub
-            </a>
-          )}
-        </div>
-      </div>
+      <ProjectHero project={project} onBack={onBack} />
 
       {/* ── Metrics ── */}
       <Divider />
@@ -1406,8 +1307,6 @@ const SECFilingRAGDetail = ({ project, onBack }) => {
         <p style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '16px' }}>Personal project · Runs fully offline with zero API keys</p>
         {project.github && (
           <a href={project.github} target="_blank" rel="noopener noreferrer" style={actionBtnStyle}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#9b4ff5'; e.currentTarget.style.borderColor = '#9b4ff5'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = '#8534F3'; e.currentTarget.style.borderColor = '#6d2bc9'; e.currentTarget.style.color = '#ffffff'; }}
           >
             View on GitHub ↗
           </a>

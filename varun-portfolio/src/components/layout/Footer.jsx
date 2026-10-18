@@ -1,211 +1,96 @@
 // Footer.jsx
-import React from 'react';
+import { useReveal, revealClass } from '../../hooks/useReveal';
+
+const navLinks = [
+  { label: 'Experience', href: '#experience' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'ETL', href: '#etl' },
+  { label: 'Skills', href: '#skills' },
+];
+
+const EMAIL = 'singh.varun3@northeastern.edu';
 
 const Footer = () => {
-  const navLinks = [
-    { label: 'Experience', href: '#experience' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'ETL Sim', href: '#etl' },
-    { label: 'Skills', href: '#skills' },
-  ];
-
-  const socialLinks = [
-    { label: 'Email', href: 'mailto:singh.varun3@northeastern.edu' },
-    { label: 'LinkedIn', href: 'https://linkedin.com/in/varunsinghtech', external: true },
-    { label: 'GitHub', href: 'https://github.com/Varun1619', external: true },
-  ];
+  const [ref, visible] = useReveal(0.2);
 
   const handleNav = (e, href) => {
     e.preventDefault();
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const linkFocus = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent';
+
   return (
-    <footer
-      id="contact"
-      style={{ background: '#111111', borderTop: '1px solid rgba(255,255,255,0.08)' }}
-    >
-      {/* Main CTA area */}
-      <div
-        className="relative overflow-hidden flex flex-col items-center justify-center text-center"
-        style={{ minHeight: '60vh', padding: 'clamp(48px, 8vw, 80px) clamp(16px, 5vw, 40px)' }}
-      >
-        {/* Large background text */}
-        <div
-          className="absolute pointer-events-none select-none whitespace-nowrap"
-          style={{
-            bottom: '-5%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 'clamp(100px, 20vw, 350px)',
-            fontWeight: 900,
-            color: 'rgba(255,255,255,0.015)',
-          }}
-        >
-          CONNECT
-        </div>
-
-        {/* Section label */}
-        <p
-          style={{
-            fontSize: '0.65rem',
-            fontWeight: 600,
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: '#00e87b',
-            marginBottom: '12px',
-          }}
-        >
-          Get In Touch
-        </p>
-
-        {/* Heading */}
-        <h2
-          style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 'clamp(2rem, 5vw, 4rem)',
-            fontWeight: 700,
-            letterSpacing: '-0.02em',
-            color: '#f0f0f0',
-            marginBottom: '24px',
-          }}
-        >
-          Always building.{' '}
-          <span style={{ color: '#00e87b' }}>Let's connect.</span>
+    <footer id="contact" className="bg-canvas">
+      {/* Contact call to action */}
+      <div ref={ref} className={`px-4 py-28 text-center sm:px-6 md:py-40 ${revealClass(visible)}`}>
+        <p className="font-sans text-eyebrow font-semibold text-ink-muted">Contact</p>
+        <h2 className="mx-auto mt-3 max-w-[16ch] font-display text-headline font-bold text-ink">
+          Always building. <span className="text-accent">Let’s connect.</span>
         </h2>
-
-        {/* Subtitle */}
-        <p
-          style={{
-            color: '#888',
-            fontSize: '1rem',
-            marginBottom: '40px',
-            maxWidth: '500px',
-          }}
-        >
-          Open to data engineering, ML engineering, and automation roles. Currently based in
-          Boston, MA.
+        <p className="mx-auto mt-5 max-w-[40ch] font-sans text-subhead font-medium text-ink-muted">
+          Open to data engineering, ML engineering and automation roles in Boston, MA.
         </p>
 
-        {/* CTA buttons */}
-        <div className="flex flex-wrap justify-center" style={{ gap: '16px' }}>
-          {socialLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target={link.external ? '_blank' : undefined}
-              rel={link.external ? 'noopener noreferrer' : undefined}
-              className="footer-cta-link"
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-                color: '#f0f0f0',
-                textDecoration: 'none',
-                padding: '14px 32px',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '2px',
-                position: 'relative',
-                overflow: 'hidden',
-                display: 'inline-block',
-                transition: 'all 0.3s',
-              }}
-              onMouseEnter={(e) => {
-                const isGH = link.label === 'GitHub';
-                e.currentTarget.style.color = isGH ? '#ffffff' : '#0a0a0a';
-                e.currentTarget.style.borderColor = isGH ? '#9b4ff5' : '#00e87b';
-                e.currentTarget.querySelector('.fill').style.height = '100%';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#f0f0f0';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-                e.currentTarget.querySelector('.fill').style.height = '0';
-              }}
-            >
-              <span style={{ position: 'relative', zIndex: 1 }}>{link.label}</span>
-              <span
-                className="fill"
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '0',
-                  background: link.label === 'GitHub' ? '#8534F3' : '#00e87b',
-                  transition: 'height 0.3s',
-                  zIndex: 0,
-                }}
-              />
-            </a>
-          ))}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+          <a
+            href={`mailto:${EMAIL}`}
+            className={`rounded-full bg-accent px-6 py-3 font-sans text-[1.0625rem] font-medium text-black no-underline transition-colors duration-200 hover:bg-accent-hover ${linkFocus}`}
+          >
+            Email me
+          </a>
+          <a
+            href="https://linkedin.com/in/varunsinghtech"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`font-sans text-[1.0625rem] font-medium text-accent no-underline hover:underline ${linkFocus}`}
+          >
+            LinkedIn <span aria-hidden="true">›</span>
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+          <a
+            href="https://github.com/Varun1619"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`font-sans text-[1.0625rem] font-medium text-accent no-underline hover:underline ${linkFocus}`}
+          >
+            GitHub <span aria-hidden="true">›</span>
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div
-        className="flex flex-wrap items-center justify-between"
-        style={{
-          padding: '24px clamp(16px, 5vw, 40px)',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
-          gap: '16px',
-        }}
-      >
-        {/* Logo */}
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700,
-            fontSize: '1.1rem',
-            color: '#f0f0f0',
-            textDecoration: 'none',
-            letterSpacing: '0.05em',
-          }}
-        >
-          VS<span style={{ color: '#00e87b' }}>.</span>
-        </a>
+      <div className="border-t border-white/10 px-4 sm:px-6">
+        <div className="mx-auto flex max-w-wide flex-wrap items-center justify-between gap-4 py-6">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            aria-label="Back to top"
+            className={`font-display text-[1.05rem] font-bold tracking-[0.04em] text-ink no-underline ${linkFocus}`}
+          >
+            VS<span className="text-accent">.</span>
+          </a>
 
-        {/* Nav links */}
-        <div className="hidden sm:flex" style={{ gap: '24px' }}>
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={(e) => handleNav(e, link.href)}
-              style={{
-                color: '#888',
-                textDecoration: 'none',
-                fontSize: '0.7rem',
-                fontWeight: 500,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                transition: 'color 0.3s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#00e87b')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#888')}
-            >
-              {link.label}
-            </a>
-          ))}
+          <ul className="hidden gap-6 sm:flex">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  onClick={(e) => handleNav(e, link.href)}
+                  className={`font-sans text-[0.8125rem] text-ink-muted no-underline transition-colors duration-200 hover:text-ink ${linkFocus}`}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <p className="font-sans text-[0.8125rem] text-ink-muted">© 2026 Varun Vinod Singh</p>
         </div>
-
-        {/* Copyright */}
-        <p
-          style={{
-            fontSize: '0.7rem',
-            color: '#888',
-            letterSpacing: '0.1em',
-          }}
-        >
-          © 2026 Varun Vinod Singh
-        </p>
       </div>
     </footer>
   );

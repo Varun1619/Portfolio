@@ -3,6 +3,16 @@ import { useReveal, revealClass } from '../../hooks/useReveal';
 
 const experiences = [
   {
+    role: 'Data & Automation Analyst, Study Space Operations',
+    company: 'Northeastern University',
+    period: 'Jan 2026 — Present',
+    tech: ['Microsoft Fabric', 'Power BI', 'DAX', 'SQL', 'PySpark', 'Delta Lake', 'Fabric Data Pipeline', 'Dataverse'],
+    details: [
+      'Designed a Power BI semantic model on a 7-table star schema in Microsoft Fabric with 4 station teams, so every report draws on one consistent set of measures and definitions.',
+      'Built hourly Fabric pipelines curating 112 daily submissions from 4 sources into validated Delta Lake tables, so every semantic model refresh runs on clean, current data.',
+    ],
+  },
+  {
     role: 'Digital Data Engineer Intern',
     company: 'Mass General Brigham',
     period: 'Jun 2025 — Dec 2025',

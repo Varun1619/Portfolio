@@ -37,7 +37,7 @@ const Projects = () => {
 };
 
 // ===== Project Tile =====
-const ProjectTile = ({ project, delay }) => {
+export const ProjectTile = ({ project, delay }) => {
   const [tileRef, visible] = useReveal(0.2);
   const videoRef = useRef(null);
   const hasVideo = Boolean(project.video) && !prefersReducedMotion();
