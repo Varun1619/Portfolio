@@ -129,7 +129,7 @@ const FoodLensFlowchart = () => {
   );
 
   const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
-    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '4px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
       <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
       {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
     </div>
@@ -140,7 +140,7 @@ const FoodLensFlowchart = () => {
   );
 
   return (
-    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
       <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Row>
           <Node label="Chicago CSV" sub="308K rows, 20 cols" />
@@ -252,7 +252,7 @@ const FoodLensERDiagram = () => {
   const vbH = fiv.y + fiv.h + 20;
 
   return (
-    <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '4px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+    <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '18px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
       <svg viewBox={`0 0 1180 ${vbH}`} style={{ display: 'block', minWidth: '620px', width: '100%' }} xmlns="http://www.w3.org/2000/svg">
         <rect width="1180" height={vbH} fill="#0a0a0a" />
         {/* Connections behind tables */}
@@ -281,11 +281,11 @@ const FoodLensDetail = ({ project, onBack }) => {
       {/* ── Metrics ── */}
       <Divider />
       <div style={{ background: C.bg }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '2px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '12px' }}>
           {project.metrics.map((m, i) => (
-            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
+            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '18px' }}>
               <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '2rem', fontWeight: 700, color: m.color || C.text, lineHeight: 1 }}>{m.value}</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.35rem, 5.5vw, 2rem)', fontWeight: 700, color: m.color || C.text, lineHeight: 1.1, overflowWrap: 'anywhere' }}>{m.value}</div>
             </div>
           ))}
         </div>
@@ -296,7 +296,7 @@ const FoodLensDetail = ({ project, onBack }) => {
       <div style={{ background: C.bg2 }}>
         <Section label="Pipeline Architecture">
           <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', minWidth: '480px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', minWidth: '480px', borderRadius: '18px', overflow: 'hidden' }}>
             {project.pipeline.map((stage, i) => (
               <div key={i} style={{ position: 'relative', padding: '28px 20px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
                 <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: pipelineColors[stage.layer] || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
@@ -337,7 +337,7 @@ const FoodLensDetail = ({ project, onBack }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {project.notebooks.map((nb) => (
                 <div key={nb.num}
-                  style={{ display: 'grid', gridTemplateColumns: '48px 1fr', gap: '20px', padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                  style={{ display: 'grid', gridTemplateColumns: '48px 1fr', gap: '20px', padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '18px', transition: 'border-color 0.2s' }}
                   onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
                 >
@@ -376,7 +376,7 @@ const FoodLensDetail = ({ project, onBack }) => {
                 {/* Dimensions */}
                 <div>
                   <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, marginBottom: '12px' }}>Dimensions</p>
-                  <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ border: `1px solid ${C.border}`, borderRadius: '18px', overflow: 'hidden' }}>
                     {project.dimensions.map((d, i) => (
                       <div key={d.table} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', padding: '11px 16px', background: i % 2 === 0 ? C.bg : 'transparent', borderBottom: i < project.dimensions.length - 1 ? `1px solid ${C.border}` : 'none', alignItems: 'center' }}>
                         <div>
@@ -392,7 +392,7 @@ const FoodLensDetail = ({ project, onBack }) => {
                 {/* Facts */}
                 <div>
                   <p style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, marginBottom: '12px' }}>Facts</p>
-                  <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ border: `1px solid ${C.border}`, borderRadius: '18px', overflow: 'hidden' }}>
                     {project.facts.map((f, i) => (
                       <div key={f.table} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', padding: '11px 16px', background: i % 2 === 0 ? C.bg : 'transparent', borderBottom: i < project.facts.length - 1 ? `1px solid ${C.border}` : 'none', alignItems: 'center' }}>
                         <div>
@@ -415,7 +415,7 @@ const FoodLensDetail = ({ project, onBack }) => {
         <>
           <Divider />
           <Section label="Validation Rules">
-            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: `1px solid ${C.border}`, borderRadius: '3px' }}>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: `1px solid ${C.border}`, borderRadius: '18px' }}>
           <div style={{ minWidth: '420px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 80px', padding: '10px 16px', background: C.bg3, borderBottom: `1px solid ${C.border}` }}>
                 {['Rule', 'City', 'Action'].map((h) => (
@@ -426,7 +426,7 @@ const FoodLensDetail = ({ project, onBack }) => {
                 <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 100px 80px', padding: '11px 16px', background: i % 2 === 0 ? C.bg : 'transparent', borderBottom: i < project.validationRules.length - 1 ? `1px solid ${C.border}` : 'none', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.78rem', color: C.text, fontFamily: 'monospace' }}>{r.rule}</span>
                   <span style={{ fontSize: '0.72rem', color: C.muted }}>{r.city}</span>
-                  <span style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: r.action === 'drop' ? '#ff6b6b' : '#f5a623', background: r.action === 'drop' ? 'rgba(255,107,107,0.1)' : 'rgba(245,166,35,0.1)', padding: '3px 8px', borderRadius: '2px', display: 'inline-block' }}>{r.action || r.level}</span>
+                  <span style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: r.action === 'drop' ? '#ff6b6b' : '#f5a623', background: r.action === 'drop' ? 'rgba(255,107,107,0.1)' : 'rgba(245,166,35,0.1)', padding: '3px 8px', borderRadius: '6px', display: 'inline-block' }}>{r.action || r.level}</span>
                 </div>
               ))}
           </div>
@@ -444,7 +444,7 @@ const FoodLensDetail = ({ project, onBack }) => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: '16px' }}>
                 {project.engineeringDecisions.map((d, i) => (
                   <div key={i}
-                    style={{ padding: '24px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                    style={{ padding: '24px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', transition: 'border-color 0.2s' }}
                     onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
                   >
@@ -465,7 +465,7 @@ const FoodLensDetail = ({ project, onBack }) => {
           <Section label="Tools &amp; Stack">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '24px' }}>
               <div>
-                <div style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
+                <div style={{ border: `1px solid ${C.border}`, borderRadius: '18px', overflow: 'hidden' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', padding: '10px 16px', background: C.bg3, borderBottom: `1px solid ${C.border}` }}>
                     {['Tool', 'Purpose'].map((h) => (
                       <span key={h} style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted }}>{h}</span>
@@ -485,7 +485,7 @@ const FoodLensDetail = ({ project, onBack }) => {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {project.stack.map((tech) => (
                     <span key={tech}
-                      style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg2, transition: 'all 0.2s', cursor: 'default' }}
+                      style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '999px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg2, transition: 'all 0.2s', cursor: 'default' }}
                       onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
                       onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
                     >{tech}</span>
@@ -554,7 +554,7 @@ const GenericDetail = ({ project, onBack }) => {
       </div>
       <Section label="Stack">
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: project.overview ? '40px' : 0 }}>
-          {project.stack.map((tech) => <span key={tech} style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.8rem', color: C.text, background: C.bg2 }}>{tech}</span>)}
+          {project.stack.map((tech) => <span key={tech} style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '999px', fontSize: '0.8rem', color: C.text, background: C.bg2 }}>{tech}</span>)}
         </div>
         {project.overview && (
           <>
@@ -580,7 +580,7 @@ const ChinookFlowchart = () => {
     </div>
   );
   const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
-    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '4px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
       <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
       {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
     </div>
@@ -589,7 +589,7 @@ const ChinookFlowchart = () => {
     <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
   );
   return (
-    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
       <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Row>
           <Node label="Azure SQL" sub="11 source tables" borderColor="#4fc3f7" bg="rgba(79,195,247,0.07)" />
@@ -709,7 +709,7 @@ const ChinookERDiagram = () => {
   );
 
   return (
-    <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '4px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+    <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '18px', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
       <svg viewBox={`0 0 ${vbW} ${vbH}`} style={{ display: 'block', minWidth: '620px', width: '100%' }} xmlns="http://www.w3.org/2000/svg">
         <rect width={vbW} height={vbH} fill="#0a0a0a" />
         {connections.map(([x1,y1,x2,y2,col], i) => (
@@ -737,11 +737,11 @@ const ChinookDetail = ({ project, onBack }) => {
       {/* ── Metrics ── */}
       <Divider />
       <div style={{ background: C.bg }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '2px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '12px' }}>
           {project.metrics.map((m, i) => (
-            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
+            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '18px' }}>
               <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '2rem', fontWeight: 700, color: m.color || C.text, lineHeight: 1 }}>{m.value}</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.35rem, 5.5vw, 2rem)', fontWeight: 700, color: m.color || C.text, lineHeight: 1.1, overflowWrap: 'anywhere' }}>{m.value}</div>
             </div>
           ))}
         </div>
@@ -752,7 +752,7 @@ const ChinookDetail = ({ project, onBack }) => {
       <div style={{ background: C.bg2 }}>
         <Section label="Pipeline Architecture">
           <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px` }}>
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px`, borderRadius: '18px', overflow: 'hidden' }}>
             {project.pipeline.map((stage, i) => (
               <div key={i} style={{ position: 'relative', padding: '24px 16px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
                 <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: stage.color || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
@@ -803,7 +803,7 @@ const ChinookDetail = ({ project, onBack }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {project.notebooks.map((nb) => (
                 <div key={nb.num}
-                  style={{ display: 'grid', gridTemplateColumns: '48px 1fr', gap: '20px', padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                  style={{ display: 'grid', gridTemplateColumns: '48px 1fr', gap: '20px', padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '18px', transition: 'border-color 0.2s' }}
                   onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
                 >
@@ -832,11 +832,11 @@ const ChinookDetail = ({ project, onBack }) => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(300px, 100%), 1fr))', gap: '10px' }}>
                 {project.goldTables.map((t) => (
                   <div key={t.table}
-                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 18px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 18px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '12px', transition: 'border-color 0.2s' }}
                     onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
                   >
-                    <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.06em', padding: '3px 7px', borderRadius: '3px', background: `${scdColor[t.scd]}20`, color: scdColor[t.scd], border: `1px solid ${scdColor[t.scd]}40`, whiteSpace: 'nowrap' }}>{t.scd}</span>
+                    <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.06em', padding: '3px 7px', borderRadius: '6px', background: `${scdColor[t.scd]}20`, color: scdColor[t.scd], border: `1px solid ${scdColor[t.scd]}40`, whiteSpace: 'nowrap' }}>{t.scd}</span>
                     <div>
                       <code style={{ fontSize: '0.82rem', color: C.text, fontFamily: 'monospace', fontWeight: 500 }}>{t.table}</code>
                       <div style={{ fontSize: '0.7rem', color: C.muted, marginTop: '2px' }}>{t.source}</div>
@@ -870,7 +870,7 @@ const ChinookDetail = ({ project, onBack }) => {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {project.stack.map((tech) => (
             <span key={tech}
-              style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg2, transition: 'all 0.2s', cursor: 'default' }}
+              style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '999px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg2, transition: 'all 0.2s', cursor: 'default' }}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
             >{tech}</span>
@@ -921,7 +921,7 @@ const CryptoPulseArchitecture = () => {
     </div>
   );
   const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
-    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '4px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
       <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
       {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
     </div>
@@ -930,7 +930,7 @@ const CryptoPulseArchitecture = () => {
     <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
   );
   return (
-    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
       <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Node label="Binance WebSocket API" sub="BTC/USDT public feed · 5–30 msg/s · no API key required" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" minW="300px" />
         <Arrow />
@@ -971,11 +971,11 @@ const CryptoPulseDetail = ({ project, onBack }) => {
       {/* ── Metrics ── */}
       <Divider />
       <div style={{ background: C.bg }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '2px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '12px' }}>
           {project.metrics.map((m, i) => (
-            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
+            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '18px' }}>
               <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '2rem', fontWeight: 700, color: m.color || C.text, lineHeight: 1 }}>{m.value}</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.35rem, 5.5vw, 2rem)', fontWeight: 700, color: m.color || C.text, lineHeight: 1.1, overflowWrap: 'anywhere' }}>{m.value}</div>
             </div>
           ))}
         </div>
@@ -986,7 +986,7 @@ const CryptoPulseDetail = ({ project, onBack }) => {
       <div style={{ background: C.bg2 }}>
         <Section label="Pipeline Architecture">
           <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px` }}>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px`, borderRadius: '18px', overflow: 'hidden' }}>
               {project.pipeline.map((stage, i) => (
                 <div key={i} style={{ position: 'relative', padding: '28px 16px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
                   <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: pipelineAccent[stage.layer] || stage.color || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
@@ -1025,7 +1025,7 @@ const CryptoPulseDetail = ({ project, onBack }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {project.architectureNotes.map((note, i) => (
                 <div key={i}
-                  style={{ padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                  style={{ padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '18px', transition: 'border-color 0.2s' }}
                   onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
                 >
@@ -1046,7 +1046,7 @@ const CryptoPulseDetail = ({ project, onBack }) => {
             <Section label="SQL Highlights">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {project.sqlHighlights.map((s, i) => (
-                  <div key={i} style={{ border: `1px solid ${C.border}`, borderRadius: '3px', overflow: 'hidden' }}>
+                  <div key={i} style={{ border: `1px solid ${C.border}`, borderRadius: '18px', overflow: 'hidden' }}>
                     <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}`, background: C.bg3 }}>
                       <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.92rem', fontWeight: 600, color: C.text, marginBottom: '6px' }}>{s.title}</div>
                       <div style={{ fontSize: '0.8rem', color: C.muted, lineHeight: 1.65 }}>{s.description}</div>
@@ -1070,7 +1070,7 @@ const CryptoPulseDetail = ({ project, onBack }) => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: '16px' }}>
               {project.engineeringDecisions.map((d, i) => (
                 <div key={i}
-                  style={{ padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                  style={{ padding: '24px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '18px', transition: 'border-color 0.2s' }}
                   onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
                 >
@@ -1090,7 +1090,7 @@ const CryptoPulseDetail = ({ project, onBack }) => {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {project.stack.map((tech) => (
               <span key={tech}
-                style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg, transition: 'all 0.2s', cursor: 'default' }}
+                style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '999px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg, transition: 'all 0.2s', cursor: 'default' }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
               >{tech}</span>
@@ -1125,7 +1125,7 @@ const SECFlowchart = () => {
     </div>
   );
   const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
-    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '4px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
       <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
       {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
     </div>
@@ -1134,7 +1134,7 @@ const SECFlowchart = () => {
     <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
   );
   return (
-    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
       <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Node label="SEC EDGAR API" sub="Rate-limited · accession-level dedup" borderColor="#f5a623" bg="rgba(245,166,35,0.07)" minW="260px" />
         <Arrow />
@@ -1179,11 +1179,11 @@ const SECFilingRAGDetail = ({ project, onBack }) => {
       {/* ── Metrics ── */}
       <Divider />
       <div style={{ background: C.bg }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '2px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'clamp(20px, 4vw, 40px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: '12px' }}>
           {project.metrics.map((m, i) => (
-            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '2px' }}>
+            <div key={i} style={{ padding: '24px 28px', background: C.bg2, border: `1px solid ${C.border}`, borderRadius: '18px' }}>
               <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: '8px', letterSpacing: '0.04em' }}>{m.label}</div>
-              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.6rem', fontWeight: 700, color: m.color || C.text, lineHeight: 1 }}>{m.value}</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.25rem, 5vw, 1.6rem)', fontWeight: 700, color: m.color || C.text, lineHeight: 1.1, overflowWrap: 'anywhere' }}>{m.value}</div>
             </div>
           ))}
         </div>
@@ -1194,7 +1194,7 @@ const SECFilingRAGDetail = ({ project, onBack }) => {
       <div style={{ background: C.bg2 }}>
         <Section label="Pipeline Architecture">
           <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px` }}>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${project.pipeline.length}, 1fr)`, minWidth: `${project.pipeline.length * 120}px`, borderRadius: '18px', overflow: 'hidden' }}>
               {project.pipeline.map((stage, i) => (
                 <div key={i} style={{ position: 'relative', padding: '28px 16px', background: C.bg, border: `1px solid ${C.border}`, borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`, textAlign: 'center' }}>
                   <div style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: stage.color || C.muted, marginBottom: '8px' }}>{stage.layer}</div>
@@ -1242,7 +1242,7 @@ const SECFilingRAGDetail = ({ project, onBack }) => {
         <>
           <Divider />
           <Section label="Switching Backends via .env">
-            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: `1px solid ${C.border}`, borderRadius: '3px' }}>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', border: `1px solid ${C.border}`, borderRadius: '18px' }}>
               <div style={{ minWidth: '480px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '130px 220px 1fr', padding: '10px 16px', background: C.bg3, borderBottom: `1px solid ${C.border}` }}>
                   {['What', 'Variable', 'Options'].map((h) => (
@@ -1252,7 +1252,7 @@ const SECFilingRAGDetail = ({ project, onBack }) => {
                 {project.backendsTable.map((row, i) => (
                   <div key={row.what} style={{ display: 'grid', gridTemplateColumns: '130px 220px 1fr', padding: '13px 16px', background: i % 2 === 0 ? C.bg : 'transparent', borderBottom: i < project.backendsTable.length - 1 ? `1px solid ${C.border}` : 'none', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.82rem', color: C.text, fontWeight: 600 }}>{row.what}</span>
-                    <code style={{ fontSize: '0.75rem', color: '#00e87b', fontFamily: 'monospace', background: 'rgba(0,232,123,0.08)', padding: '2px 8px', borderRadius: '2px', display: 'inline-block' }}>{row.variable}</code>
+                    <code style={{ fontSize: '0.75rem', color: '#00e87b', fontFamily: 'monospace', background: 'rgba(0,232,123,0.08)', padding: '2px 8px', borderRadius: '6px', display: 'inline-block' }}>{row.variable}</code>
                     <span style={{ fontSize: '0.78rem', color: C.muted }}>{row.options}</span>
                   </div>
                 ))}
@@ -1271,7 +1271,7 @@ const SECFilingRAGDetail = ({ project, onBack }) => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: '16px' }}>
                 {project.engineeringDecisions.map((d, i) => (
                   <div key={i}
-                    style={{ padding: '24px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '3px', transition: 'border-color 0.2s' }}
+                    style={{ padding: '24px', background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', transition: 'border-color 0.2s' }}
                     onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHover)}
                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}
                   >
@@ -1292,7 +1292,7 @@ const SECFilingRAGDetail = ({ project, onBack }) => {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {project.stack.map((tech) => (
               <span key={tech}
-                style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '3px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg, transition: 'all 0.2s', cursor: 'default' }}
+                style={{ padding: '8px 16px', border: `1px solid ${C.border}`, borderRadius: '999px', fontSize: '0.78rem', fontWeight: 500, color: C.text, background: C.bg, transition: 'all 0.2s', cursor: 'default' }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.text; }}
               >{tech}</span>
