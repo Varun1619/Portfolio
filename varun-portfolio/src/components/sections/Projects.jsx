@@ -88,6 +88,19 @@ export const ProjectTile = ({ project }) => {
           {project.pitch ?? project.desc}
         </p>
 
+        {project.tileStats && (
+          <dl className="mt-5 flex justify-center gap-10">
+            {project.tileStats.map((stat) => (
+              <div key={stat.label} className="flex flex-col-reverse">
+                <dt className="font-sans text-[0.8rem] text-ink-muted">{stat.label}</dt>
+                <dd className="font-display text-[1.6rem] font-bold leading-tight tracking-[-0.02em] text-ink">
+                  {stat.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
           {/* Stretched link: the whole tile opens the project */}
           <a
