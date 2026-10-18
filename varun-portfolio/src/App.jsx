@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useScrollPosition, useIntersectionObserver } from './hooks';
 
 // Layout components
 import Navbar from './components/layout/Navbar';
@@ -58,17 +57,7 @@ function useRouter() {
 }
 
 function App() {
-  const scrollY = useScrollPosition();
-  const visibleSections = useIntersectionObserver();
   const { route, navigate } = useRouter();
-
-  const getSectionClass = (sectionId) => {
-    const baseClass = 'transition-all duration-1000 ease-out';
-    const visibleClass = visibleSections[sectionId]
-      ? 'translate-y-0 opacity-100'
-      : 'translate-y-16 opacity-0';
-    return `${baseClass} ${visibleClass}`;
-  };
 
   // Scroll to top when leaving home
   useEffect(() => {
@@ -111,11 +100,11 @@ function App() {
     return (
       <main>
         <Hero />
-        <About sectionClass={getSectionClass('about')} />
-        <Experience sectionClass={getSectionClass('experience')} />
+        <About />
+        <Experience />
         <Projects />
-        <Playground sectionClass={getSectionClass('playground')} />
-        <Skills sectionClass={getSectionClass('skills')} />
+        <Playground />
+        <Skills />
         <Recommendations />
       </main>
     );
@@ -125,7 +114,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-canvas text-ink overflow-x-clip">
-      <Navbar scrollY={scrollY} route={route} navigate={navigate} />
+      <Navbar route={route} navigate={navigate} />
 
       {renderPage()}
 
