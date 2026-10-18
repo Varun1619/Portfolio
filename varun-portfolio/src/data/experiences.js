@@ -1,5 +1,19 @@
 export const experiences = [
   {
+    id: 0,
+    role: 'Data & Automation Analyst, Study Space Operations',
+    company: 'Northeastern University',
+    period: 'Jan 2026 – Present',
+    location: 'Boston, MA',
+    type: 'Education',
+    tech: ['Microsoft Fabric', 'Power BI', 'DAX', 'SQL', 'PySpark', 'Delta Lake', 'Fabric Data Pipeline', 'Dataverse'],
+    color: '#00e87b',
+    highlights: [
+      'Designed a Power BI semantic model on a 7-table star schema in Microsoft Fabric with 4 station teams',
+      'Built hourly Fabric pipelines curating 112 daily submissions from 4 sources into validated Delta Lake tables',
+    ],
+  },
+  {
     id: 1,
     role: 'Digital Intern',
     company: 'Mass General Brigham',
