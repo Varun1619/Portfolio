@@ -113,7 +113,7 @@ const Hero = () => {
         <div {...reveal(0.5)}>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
             <a
-              href="#/projects"
+              href="/projects"
               className="rounded-full bg-accent px-6 py-3 font-sans text-[1.0625rem] font-medium text-black no-underline transition-colors duration-200 hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
               View projects

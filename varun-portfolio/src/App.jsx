@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 // Layout components
 import Navbar from './components/layout/Navbar';
@@ -18,40 +18,59 @@ import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetail from './pages/ProjectDetail';
 import { projects as allProjects } from './data/projects';
 
-// Simple hash-based router — no extra dependencies
+// Minimal path router: /, /projects and /projects/:id, using the History API.
+const parseRoute = (pathname) => {
+  const match = pathname.match(/^\/projects\/([^/]+)\/?$/);
+  if (match) return { page: 'project-detail', id: decodeURIComponent(match[1]) };
+  if (/^\/projects\/?$/.test(pathname)) return { page: 'projects', id: null };
+  return { page: 'home', id: null };
+};
+
+const pathFor = (page, id) =>
+  page === 'project-detail' ? `/projects/${encodeURIComponent(id)}` : page === 'projects' ? '/projects' : '/';
+
+// Old links used hashes (#/projects/foodlens); move them to the equivalent path.
+const legacyHashPath = () => {
+  const hash = window.location.hash;
+  return hash.startsWith('#/') ? hash.slice(1) : null;
+};
+
 function useRouter() {
   const [route, setRoute] = useState(() => {
-    const hash = window.location.hash;
-    if (hash.startsWith('#/projects/')) return { page: 'project-detail', id: hash.slice(11) };
-    if (hash === '#/projects') return { page: 'projects', id: null };
-    return { page: 'home', id: null };
+    const legacy = legacyHashPath();
+    if (legacy) window.history.replaceState(null, '', legacy);
+    return parseRoute(window.location.pathname);
   });
 
-  const navigate = (page, id = null) => {
-    if (page === 'home') {
-      window.location.hash = '';
-    } else if (page === 'projects') {
-      window.location.hash = '/projects';
-    } else if (page === 'project-detail') {
-      window.location.hash = `/projects/${id}`;
-    }
-    setRoute({ page, id });
-  };
+  const go = useCallback((path) => {
+    if (path !== window.location.pathname) window.history.pushState(null, '', path);
+    setRoute(parseRoute(path));
+  }, []);
+
+  const navigate = useCallback((page, id = null) => go(pathFor(page, id)), [go]);
 
   useEffect(() => {
-    const onHashChange = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith('#/projects/')) {
-        setRoute({ page: 'project-detail', id: hash.slice(11) });
-      } else if (hash === '#/projects') {
-        setRoute({ page: 'projects', id: null });
-      } else {
-        setRoute({ page: 'home', id: null });
-      }
+    const onPopState = () => setRoute(parseRoute(window.location.pathname));
+
+    // Handle plain <a href="/projects/..."> links inside the app without a full reload.
+    const onClick = (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest('a');
+      const href = a?.getAttribute('href');
+      if (!a || !href || href.startsWith('#') || a.target || a.hasAttribute('download')) return;
+      const url = new URL(a.href);
+      if (url.origin !== window.location.origin || !/^\/(projects(\/[^/.]+)?\/?)?$/.test(url.pathname)) return;
+      e.preventDefault();
+      go(url.pathname);
     };
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
-  }, []);
+
+    window.addEventListener('popstate', onPopState);
+    document.addEventListener('click', onClick);
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+      document.removeEventListener('click', onClick);
+    };
+  }, [go]);
 
   return { route, navigate };
 }
