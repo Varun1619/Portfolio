@@ -1,5 +1,6 @@
 // Footer.jsx
 import { useReveal, revealClass } from '../../hooks/useReveal';
+import { EMAIL, RESUME_URL, RESUME_FILENAME } from '../../data/contact';
 
 const navLinks = [
   { label: 'Experience', href: '#experience' },
@@ -7,8 +8,6 @@ const navLinks = [
   { label: 'ETL', href: '#etl' },
   { label: 'Skills', href: '#skills' },
 ];
-
-const EMAIL = 'singh.varun3@northeastern.edu';
 
 const Footer = () => {
   const [ref, visible] = useReveal(0.2);
@@ -40,6 +39,22 @@ const Footer = () => {
             Email me
           </a>
           <a
+            href={RESUME_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`rounded-full border border-white/25 px-6 py-3 font-sans text-[1.0625rem] font-medium text-ink no-underline transition-colors duration-200 hover:border-white/60 ${linkFocus}`}
+          >
+            View résumé
+            <span className="sr-only"> (PDF, opens in a new tab)</span>
+          </a>
+          <a
+            href={RESUME_URL}
+            download={RESUME_FILENAME}
+            className={`font-sans text-[1.0625rem] font-medium text-accent no-underline hover:underline ${linkFocus}`}
+          >
+            Download PDF <span aria-hidden="true">↓</span>
+          </a>
+          <a
             href="https://linkedin.com/in/varunsinghtech"
             target="_blank"
             rel="noopener noreferrer"
@@ -58,6 +73,12 @@ const Footer = () => {
             <span className="sr-only"> (opens in a new tab)</span>
           </a>
         </div>
+
+        <p className="mt-8 font-sans text-[0.95rem] text-ink-muted">
+          <a href={`mailto:${EMAIL}`} className={`text-ink-muted no-underline hover:text-ink hover:underline ${linkFocus}`}>
+            {EMAIL}
+          </a>
+        </p>
       </div>
 
       {/* Bottom bar */}
