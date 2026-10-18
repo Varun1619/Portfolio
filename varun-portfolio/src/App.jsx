@@ -124,7 +124,7 @@ function App() {
   const isHome = route.page === 'home';
 
   return (
-    <div className="min-h-screen bg-canvas text-ink overflow-x-hidden">
+    <div className="min-h-screen bg-canvas text-ink overflow-x-clip">
       <Navbar scrollY={scrollY} route={route} navigate={navigate} />
 
       {renderPage()}
