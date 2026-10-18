@@ -118,27 +118,28 @@ const ProjectHero = ({ project, onBack }) => {
   );
 };
 
+// ─── Flowchart building blocks (shared by every diagram) ─────────────────────
+const Arrow = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
+    <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
+      <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
+    </div>
+  </div>
+);
+
+const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
+  <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
+    <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
+    {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
+  </div>
+);
+
+const Row = ({ children }) => (
+  <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
+);
+
 // ─── FoodLens inline diagrams ────────────────────────────────────────────────
 const FoodLensFlowchart = () => {
-  const Arrow = () => (
-    <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
-      <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
-        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
-      </div>
-    </div>
-  );
-
-  const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
-    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
-      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
-      {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
-    </div>
-  );
-
-  const Row = ({ children }) => (
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
-  );
-
   return (
     <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
       <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -572,22 +573,6 @@ const scdColor = { SCD1: '#00e87b', SCD2: '#f5a623', Fact: '#4fc3f7', Aggregate:
 
 // ─── Chinook inline diagrams ──────────────────────────────────────────────────
 const ChinookFlowchart = () => {
-  const Arrow = () => (
-    <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
-      <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
-        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
-      </div>
-    </div>
-  );
-  const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
-    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
-      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
-      {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
-    </div>
-  );
-  const Row = ({ children }) => (
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
-  );
   return (
     <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
       <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -913,22 +898,6 @@ const ChinookDetail = ({ project, onBack }) => {
 
 // ─── Crypto Pulse architecture diagram ───────────────────────────────────────
 const CryptoPulseArchitecture = () => {
-  const Arrow = () => (
-    <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
-      <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
-        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
-      </div>
-    </div>
-  );
-  const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
-    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
-      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
-      {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
-    </div>
-  );
-  const Row = ({ children }) => (
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
-  );
   return (
     <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
       <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -1117,22 +1086,6 @@ const CryptoPulseDetail = ({ project, onBack }) => {
 
 // ─── SEC Filing RAG flowchart ─────────────────────────────────────────────────
 const SECFlowchart = () => {
-  const Arrow = () => (
-    <div style={{ display: 'flex', justifyContent: 'center', height: '28px', alignItems: 'center' }}>
-      <div style={{ width: '1px', height: '100%', background: 'rgba(255,255,255,0.15)', position: 'relative' }}>
-        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid rgba(255,255,255,0.25)' }} />
-      </div>
-    </div>
-  );
-  const Node = ({ label, sub, borderColor = 'rgba(255,255,255,0.15)', bg = 'transparent', minW = '170px' }) => (
-    <div style={{ border: `1px solid ${borderColor}`, borderRadius: '10px', padding: '9px 16px', background: bg, minWidth: minW, textAlign: 'center', flexShrink: 0 }}>
-      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: C.text, lineHeight: 1.3 }}>{label}</div>
-      {sub && <div style={{ fontSize: '0.68rem', color: C.muted, marginTop: '3px' }}>{sub}</div>}
-    </div>
-  );
-  const Row = ({ children }) => (
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%' }}>{children}</div>
-  );
   return (
     <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: '18px', padding: 'clamp(20px, 3vw, 36px)', overflowX: 'auto' }}>
       <div style={{ minWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
