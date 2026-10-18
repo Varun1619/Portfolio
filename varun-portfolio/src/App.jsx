@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useScrollPosition, useIntersectionObserver, usePreloader } from './hooks';
+import { useScrollPosition, useIntersectionObserver } from './hooks';
 
 // Layout components
 import Navbar from './components/layout/Navbar';
@@ -13,25 +13,11 @@ import Experience from './components/sections/Experience';
 import Projects from './components/sections/Projects';
 import Skills from './components/sections/Skills';
 import Recommendations from './components/sections/Recommendations';
-import CustomCursor from './components/common/CustomCursor';
 
 // Pages
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetail from './pages/ProjectDetail';
 import { projects as allProjects } from './data/projects';
-
-// Preloader component
-const Preloader = ({ loaded }) => (
-  <div
-    className={`fixed inset-0 z-50 bg-white flex items-center justify-center transition-all duration-700 ${
-      loaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
-    }`}
-  >
-    <div className="text-5xl font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent animate-pulse">
-      VS
-    </div>
-  </div>
-);
 
 // Simple hash-based router — no extra dependencies
 function useRouter() {
@@ -72,7 +58,6 @@ function useRouter() {
 }
 
 function App() {
-  const loaded = usePreloader(100);
   const scrollY = useScrollPosition();
   const visibleSections = useIntersectionObserver();
   const { route, navigate } = useRouter();
@@ -125,7 +110,7 @@ function App() {
     // Default: home
     return (
       <main>
-        <Hero loaded={loaded} />
+        <Hero />
         <About sectionClass={getSectionClass('about')} />
         <Experience sectionClass={getSectionClass('experience')} />
         <Projects
@@ -143,9 +128,7 @@ function App() {
   const isHome = route.page === 'home';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white text-slate-800 overflow-x-hidden">
-      <CustomCursor />
-      <Preloader loaded={loaded} />
+    <div className="min-h-screen bg-canvas text-ink overflow-x-hidden">
       <Navbar scrollY={scrollY} route={route} navigate={navigate} />
 
       {renderPage()}

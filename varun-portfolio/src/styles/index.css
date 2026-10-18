@@ -70,3 +70,23 @@ html {
   border-width: 3px;
   @apply border-violet-500 border-t-transparent rounded-full animate-spin;
 }
+/* Base surface so overscroll and gaps match the dark sections */
+body {
+  @apply bg-canvas text-ink font-sans antialiased;
+}
+
+/* Respect the OS "reduce motion" setting site-wide */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
