@@ -126,8 +126,8 @@ const ProjectTile = ({ project, delay }) => {
         </div>
       </div>
 
-      <div className="relative mt-10 flex flex-1 items-end justify-center px-6 sm:px-10">
-        <div className="aspect-[3/2] w-full overflow-hidden rounded-t-2xl bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.45)] transition-transform duration-700 ease-[cubic-bezier(0.28,0.11,0.32,1)] group-hover:scale-[1.02]">
+      <div className="relative mt-10 flex flex-1 items-end justify-center px-6 pb-6 sm:px-10 sm:pb-10">
+        <div className="aspect-[3/2] w-full overflow-hidden rounded-2xl bg-black shadow-[0_20px_60px_rgba(0,0,0,0.45)] transition-transform duration-700 ease-[cubic-bezier(0.28,0.11,0.32,1)] group-hover:scale-[1.02]">
           {hasVideo ? (
             <video
               ref={videoRef}
