@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { RESUME_URL } from '../../data/contact';
 
 const metaItems = [
-  { label: 'Currently', value: 'MS @ Northeastern' },
+  { label: 'Currently', value: 'Analyst @ Northeastern' },
   { label: 'Previously', value: 'Mass General Brigham' },
-  { label: 'Focus', value: 'Data & ML Engineering' },
+  { label: 'Studying', value: 'MS Information Systems' },
   { label: 'GPA', value: '3.85' },
 ];
 
@@ -88,7 +88,11 @@ const Hero = () => {
         style={contentStyle}
       >
         <p {...reveal(0.1)}>
-          <span className="block font-sans text-eyebrow font-semibold text-ink-muted">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 font-sans text-eyebrow font-semibold text-ink">
+            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />
+            Open to full-time roles · Graduating Dec 2026
+          </span>
+          <span className="mt-5 block font-sans text-eyebrow font-semibold text-ink-muted">
             Data Engineer · Boston, MA
           </span>
         </p>

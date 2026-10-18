@@ -4,10 +4,10 @@ import { useReveal, revealClass } from '../../hooks/useReveal';
 import { useScrollScrub } from '../../hooks/useScrollScrub';
 
 const stats = [
-  { value: '140K+', label: 'Records processed per batch' },
-  { value: '48+', label: 'Engineers trained' },
-  { value: '40%', label: 'Faster pipelines' },
-  { value: '99%', label: 'SLA compliance' },
+  { value: '~3 yrs', label: 'Building data systems' },
+  { value: '45%', label: 'Fewer data incidents' },
+  { value: '140K+', label: 'Records validated weekly' },
+  { value: '100K+', label: 'Records anonymized for AI' },
 ];
 
 // Headline words; the last one is highlighted in the accent colour.
