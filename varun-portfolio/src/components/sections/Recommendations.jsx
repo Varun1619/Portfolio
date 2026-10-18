@@ -67,7 +67,7 @@ const Recommendations = () => {
   const [headRef, headVisible] = useReveal();
 
   return (
-    <section id="recommendations" className="bg-canvas-white px-4 py-24 sm:px-6 md:py-36">
+    <section id="recommendations" data-nav-theme="light" className="bg-canvas-white px-4 py-24 sm:px-6 md:py-36">
       <div className="mx-auto max-w-wide">
         <div ref={headRef} className={`text-center ${revealClass(headVisible)}`}>
           <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">Recommendations</p>

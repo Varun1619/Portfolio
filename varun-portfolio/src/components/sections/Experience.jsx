@@ -14,7 +14,7 @@ const experiences = [
     ],
   },
   {
-    role: 'Software Engineer',
+    role: 'Data Engineer',
     company: 'LTI Mindtree',
     period: 'Sep 2022 — Jul 2024',
     tech: ['Apache Kafka', 'Spark', 'Java', 'MySQL', 'PostgreSQL'],
@@ -40,7 +40,7 @@ const Experience = () => {
   const [headRef, headVisible] = useReveal();
 
   return (
-    <section id="experience" className="bg-canvas-white px-4 py-24 sm:px-6 md:py-36">
+    <section id="experience" data-nav-theme="light" className="bg-canvas-white px-4 py-24 sm:px-6 md:py-36">
       <div className="mx-auto max-w-content">
         <div ref={headRef} className={revealClass(headVisible)}>
           <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">Experience</p>

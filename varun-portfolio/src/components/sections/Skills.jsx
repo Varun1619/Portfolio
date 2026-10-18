@@ -15,7 +15,7 @@ const Skills = () => {
   const [gridRef, gridVisible] = useReveal(0.1);
 
   return (
-    <section id="skills" className="bg-canvas-light px-4 py-24 sm:px-6 md:py-36">
+    <section id="skills" data-nav-theme="light" className="bg-canvas-light px-4 py-24 sm:px-6 md:py-36">
       <div className="mx-auto max-w-wide">
         <div ref={headRef} className={`text-center ${revealClass(headVisible)}`}>
           <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">Skills</p>

@@ -13,7 +13,7 @@ const About = () => {
   const [statsRef, statsVisible] = useReveal(0.3);
 
   return (
-    <section id="about" className="bg-canvas-light px-4 py-24 sm:px-6 md:py-36">
+    <section id="about" data-nav-theme="light" className="bg-canvas-light px-4 py-24 sm:px-6 md:py-36">
       <div className="mx-auto max-w-content text-center">
         <div ref={headRef} className={revealClass(headVisible)}>
           <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">About</p>
