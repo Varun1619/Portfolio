@@ -23,8 +23,8 @@ const ProjectsPage = ({ onBack }) => {
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-3 md:mt-16 md:grid-cols-2">
-          {projects.map((project, i) => (
-            <ProjectTile key={project.id} project={project} delay={(i % 2) * 0.12} />
+          {projects.map((project) => (
+            <ProjectTile key={project.id} project={project} />
           ))}
         </div>
       </div>

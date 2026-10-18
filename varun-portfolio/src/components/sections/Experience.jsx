@@ -1,5 +1,7 @@
 // Experience.jsx
+import { useRef } from 'react';
 import { useReveal, revealClass } from '../../hooks/useReveal';
+import { useScrollScrub, easeOut } from '../../hooks/useScrollScrub';
 
 const experiences = [
   {
@@ -68,12 +70,23 @@ const Experience = () => {
 };
 
 const ExperienceRow = ({ experience }) => {
-  const [ref, visible] = useReveal(0.2);
+  const ref = useRef(null);
+
+  // Rise and fade in, tied to scroll position.
+  useScrollScrub(
+    ref,
+    (p) => {
+      const e = easeOut(p);
+      ref.current.style.transform = `translateY(${(1 - e) * 48}px)`;
+      ref.current.style.opacity = String(e);
+    },
+    { start: 0.98, end: 0.6 }
+  );
 
   return (
     <li
       ref={ref}
-      className={`grid gap-4 border-t border-black/10 py-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-12 md:py-12 ${revealClass(visible)}`}
+      className={`grid gap-4 border-t border-black/10 py-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-12 md:py-12`}
     >
       <div>
         <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">{experience.period}</p>

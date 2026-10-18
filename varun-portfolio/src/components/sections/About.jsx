@@ -1,5 +1,7 @@
 // About.jsx
+import { useRef } from 'react';
 import { useReveal, revealClass } from '../../hooks/useReveal';
+import { useScrollScrub } from '../../hooks/useScrollScrub';
 
 const stats = [
   { value: '140K+', label: 'Records processed per batch' },
@@ -8,18 +10,44 @@ const stats = [
   { value: '99%', label: 'SLA compliance' },
 ];
 
+// Headline words; the last one is highlighted in the accent colour.
+const headline = 'It doesn’t matter where you start. It’s how you progress.'.split(' ');
+
 const About = () => {
-  const [headRef, headVisible] = useReveal();
+  const headRef = useRef(null);
+  const wordRefs = useRef([]);
+
+  // Each word lights up in turn as the headline scrolls through the viewport.
+  useScrollScrub(
+    headRef,
+    (p) => {
+      const n = wordRefs.current.length;
+      wordRefs.current.forEach((word, i) => {
+        if (!word) return;
+        const lit = Math.min(Math.max(p * n - i, 0), 1);
+        word.style.opacity = String(0.15 + 0.85 * lit);
+      });
+    },
+    { start: 0.85, end: 0.3 }
+  );
   const [statsRef, statsVisible] = useReveal(0.3);
 
   return (
     <section id="about" data-nav-theme="light" className="bg-canvas-light px-4 py-24 sm:px-6 md:py-36">
       <div className="mx-auto max-w-content text-center">
-        <div ref={headRef} className={revealClass(headVisible)}>
+        <div ref={headRef}>
           <p className="font-sans text-eyebrow font-semibold text-ink-dark-muted">About</p>
           <h2 className="mx-auto mt-3 max-w-[18ch] font-display text-headline font-bold text-ink-dark">
-            It doesn’t matter where you start. It’s how you{' '}
-            <span className="text-accent-dark">progress.</span>
+            {headline.map((word, i) => (
+              <span
+                key={i}
+                ref={(el) => (wordRefs.current[i] = el)}
+                className={i === headline.length - 1 ? 'text-accent-dark' : undefined}
+              >
+                {word}
+                {i < headline.length - 1 && ' '}
+              </span>
+            ))}
           </h2>
           <p className="mx-auto mt-6 max-w-[40ch] font-sans text-subhead font-medium text-ink-dark-muted">
             Engineering data at scale and building intelligent systems.
